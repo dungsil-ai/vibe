@@ -30,11 +30,11 @@ Every map and ticket has a **name**. On hosted trackers, the name is the issue t
 
 ## The Map
 
-On a hosted tracker, the map is a single issue labeled `status:draft`, and its tickets are child issues. In local Markdown, the canonical map is `.agents/plans/<effort>/map.md`, and its tickets are typed decision records under `research/`, `interviews/`, `prototypes/`, or `tasks/`.
+On a hosted tracker, the map is a single issue labeled `상태:초안`, and its tickets are child issues. In local Markdown, the canonical map is `.agents/plans/<effort>/map.md`, and its tickets are typed decision records under `research/`, `interviews/`, `prototypes/`, or `tasks/`.
 
 The map is an **index**, not a storehouse. It lists decisions made and points to the tickets containing their details. A decision lives in exactly one place — its ticket — so the map summarizes and links without duplicating decisions.
 
-`status:draft` and hosted triage statuses share the same axis and are therefore **mutually exclusive**. A hosted map and its decision issues never carry triage statuses. Local maps have no triage labels. Local Markdown decision records use a separate `Status: open` → `claimed` → `open`/`resolved` lifecycle. Triage statuses apply again only when the map finishes and `/vibe-plan` posts implementation tickets.
+`상태:초안` and hosted triage statuses share the same axis and are therefore **mutually exclusive**. A hosted map and its decision issues never carry triage statuses. Local maps have no triage labels. Local Markdown decision records use a separate `Status: open` → `claimed` → `open`/`resolved` lifecycle. Triage statuses apply again only when the map finishes and `/vibe-plan` posts implementation tickets.
 
 **Where the map, child tickets, blocking, and frontier queries physically live depends on the tracker.** An issue tracker should have been provided — run `/vibe-init` if missing. Refer to the tracker document's "Wayfinding operations" section for how *this* repository represents them. Default to the local Markdown tracker if no tracker is provided.
 
@@ -76,7 +76,7 @@ Each ticket is a child decision item of the map. Hosted trackers represent them 
 <The decision or investigation this ticket resolves>
 ```
 
-Hosted tickets carry a single `type:` label — `type:research`, `type:prototype`, `type:interview`, or `type:task`. Local Markdown records have a matching `Type:` line (see [Ticket Types](#ticket-types)).
+Hosted tickets carry a single `유형:` label — `유형:조사`, `유형:프로토타입`, `유형:인터뷰`, or `유형:작업`. Local Markdown records have a matching `Type:` line (see [Ticket Types](#ticket-types)). Resolve strings from `docs/agents/triage-labels.md`; never invent English stand-ins such as `type:research`.
 
 Before starting work, a session **claims** the ticket so concurrent sessions skip it. Use the configured tracker's claim operation: hosted trackers assign the ticket to the acting developer. Local Markdown initializes unclaimed records with `Status: open`, updates to `Status: claimed` before work, and returns to `Status: open` after successful charting save. The final answer updates local records to `Status: resolved`. Incomplete handoffs or failed saves remain `claimed`. Local Markdown never uses an `Assignee:` field.
 
@@ -140,7 +140,7 @@ User invokes with a loose idea.
 
 1. **Name the Destination.** Run a `/vibe-grilling` and `/vibe-modeling` session to pin down what this map seeks — a spec, a decision, or a change. Because destination pins scope, it is established first.
 2. **Chart the Frontier.** Grilling again, this time **breadth-first**: fanning out across the full space rather than drilling into any single thread, identifying open decisions and immediate first steps. **If this reveals no fog** — the path to the destination is already clear, and the entire journey fits in one session — a map is unnecessary. Stop and ask the user how they wish to proceed.
-3. **Create the Map**: Hosted trackers create a map issue with `status:draft`. Local Markdown writes `.agents/plans/<effort>/map.md` without hosted triage labels. Populate Destination and Notes, leave Decisions-so-far empty, and sketch fog in **Not yet specified**.
+3. **Create the Map**: Hosted trackers create a map issue with `상태:초안`. Local Markdown writes `.agents/plans/<effort>/map.md` without hosted triage labels. Populate Destination and Notes, leave Decisions-so-far empty, and sketch fog in **Not yet specified**.
 4. **Create Tickets for what can be specified now** as child tickets of the map — hosted trackers link child issues in a second step requiring ids. Local Markdown writes typed records in matching `research/`, `interviews/`, `prototypes/`, or `tasks/` directories. Linking organizes them into frontier and blocked items. Everything not yet specifiable remains in the fog — the **Not yet specified** section.
 5. **Launch Read-Only Research Subagents.** Temporarily claim each `research` ticket before dispatch, launch AFK research in parallel, await all returns, and ensure the calling session saves each result under [RESEARCH.md](RESEARCH.md) before exit.
 6. **Honor Explicit Parallel Work Requests.** If the user asks to spend waiting time on an interview or another named unblocked HITL ticket, switch that ticket to **advancing the map** and claim it before work. Multiple named HITL lanes may interleave, but each asks one question at a time, waits for the user's own answer, and never answers on the user's behalf. Do not infer this exception from idle time or add unnamed tickets.

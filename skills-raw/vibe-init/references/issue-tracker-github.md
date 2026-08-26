@@ -6,7 +6,7 @@
 
 - **이슈 생성**: `gh issue create --title "..." --body "..."`. 여러 줄 본문에는 heredoc을 쓴다.
 - **이슈 읽기**: `gh issue view <number> --comments`로 댓글을 `jq`로 걸러내고 라벨도 함께 가져온다.
-- **이슈 목록**: `gh issue list --state open --json number,title,body,labels,comments --jq '[.[] | {number, title, body, labels: [.labels[].name], comments: [.comments[].body]}]'`에 알맞은 `--label`과 `--state` 필터를 적용한다.
+- **이슈 목록**: `gh issue list --state open --json number,title,body,labels,blockedBy,subIssues --jq '[.[] | {number, title, body, labels: [.labels[].name], blockedBy, subIssues}]'`에 알맞은 `--label`과 `--state` 필터를 적용한다. 댓글은 이 목록에서 가져오지 않는다 — `gh issue view <number> --comments`로만 읽는다.
 - **이슈 댓글**: `gh issue comment <number> --body "..."`
 - **라벨 적용 / 제거**: `gh issue edit <number> --add-label "..."` / `--remove-label "..."`
 - **닫기**: `gh issue close <number> --comment "..."`
@@ -39,8 +39,8 @@ GitHub 이슈를 생성한다.
 
 - **맵**: `상태:초안` 라벨이 붙은 단일 이슈로 Notes / Decisions-so-far / Fog 본문을 가진다. `gh issue create --label "상태:초안"`.
 - **하위 티켓**: GitHub 하위 이슈로 맵에 연결된 이슈(`gh api`로 sub-issues 엔드포인트 사용). 하위 이슈가 활성화되지 않은 곳에서는 맵 본문의 작업 목록에 하위를 추가하고 하위 본문 맨 위에 `Part of #<map>`을 넣는다. 라벨: `유형:조사` / `유형:프로토타입` / `유형:인터뷰` / `유형:작업`. 인계되면 티켓을 주도하는 개발자에게 할당한다.
-- **차단**: GitHub의 **네이티브 이슈 의존성** — 정규 UI 노출 표현. `gh api --method POST repos/<owner>/<repo>/issues/<child>/dependencies/blocked_by -F issue_id=<blocker-db-id>`로 간선을 추가하며, `<blocker-db-id>`는 차단 이슈의 숫자 **데이터베이스 id**(`gh api repos/<owner>/<repo>/issues/<n> --jq .id`, `#number`나 `node_id`가 아님)이다. GitHub는 `issue_dependencies_summary.blocked_by`를 보고한다(열린 차단만 — 살아있는 게이트). 의존성을 쓸 수 없으면 하위 본문 맨 위에 `Blocked by: #<n>, #<n>` 줄로 되돌아간다. 모든 차단 이슈가 닫히면 티켓이 차단 해제된다.
-- **프론티어 질의**: 맵의 열린 하위 목록(`gh issue list --state open`, 맵의 하위 이슈 / 작업 목록으로 제한)을 가져와 열린 차단(`issue_dependencies_summary.blocked_by > 0` 또는 `Blocked by` 줄의 열린 이슈)이나 담당자가 있는 것을 빼고, 맵 순서가 빠른 것이 우선한다.
+- **차단**: GitHub의 **네이티브 이슈 의존성** — 정규 UI 노출 표현. `gh api --method POST repos/<owner>/<repo>/issues/<child>/dependencies/blocked_by -F issue_id=<blocker-db-id>`로 간선을 추가하며, `<blocker-db-id>`는 차단 이슈의 숫자 **데이터베이스 id**(`gh api repos/<owner>/<repo>/issues/<n> --jq .id`, `#number`나 `node_id`가 아님)이다. 열린 차단은 `gh issue list --json blockedBy`의 `blockedBy`(`totalCount` / `nodes`)로 본다. list 출력에서 `issue_dependencies_summary`를 읽지 않는다. `blockedBy`나 네이티브 의존성을 쓸 수 없으면 하위 본문 맨 위에 `Blocked by: #<n>, #<n>` 줄로 되돌아간다. 모든 차단 이슈가 닫히면 티켓이 차단 해제된다.
+- **프론티어 질의**: 맵의 열린 하위 목록(`gh issue list --state open --json number,title,labels,blockedBy,assignees,subIssues`, 맵의 하위 이슈 / 작업 목록으로 제한)을 가져와 열린 차단(`blockedBy.totalCount > 0` 또는 비어 있지 않은 `blockedBy.nodes`, 또는 `Blocked by` 줄의 열린 이슈)이나 담당자가 있는 것을 빼고, 맵 순서가 빠른 것이 우선한다.
 - **인계**: `gh issue edit <n> --add-assignee @me` — 세션의 첫 기록.
 - **조사 인계 해제**: 차팅 중 완전한 결과와 조사 기록 포인터가 저장된 뒤 `gh issue edit <n> --remove-assignee @me`를 실행한다. 조사 이슈는 열어두고 맵 gist를 추가하지 않는다. 저장이 실패하거나 세션이 미완료 작업을 넘기면 담당자를 유지한다.
 - **해결**: `gh issue comment <n> --body "<답안>"`, 그리고 `gh issue close <n>`, 그리고 맵의 Decisions-so-far에 컨텍스트 포인터(gist + 링크)를 덧붙인다.

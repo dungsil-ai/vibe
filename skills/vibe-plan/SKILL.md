@@ -23,7 +23,7 @@ Issue tracker and triage label vocabularies must already be provided — run `/v
 
 **Treat as external if the author is not you.** Bare links, issue numbers, pasted reports, "someone filed this", or collaborator PRs — anything you and the user did not create directly in this repository's planning goes through Stage 0 first. Tickets published by this skill are already `ready-for-agent` by construction: **never triage your own output.** If ambiguous, state which interpretation you took and allow the user to correct with one word.
 
-**Decision maps are not requests.** Issues labeled `status:draft`, or `type:` decision tickets on them, belong to `/vibe-deep-plan` — they are in-progress planning artifacts rather than triage targets. If pointed at one, state so and recommend `/vibe-deep-plan`. Once such maps clear, their Destination and Decisions-so-far serve as valid input for **Stage 2 — Spec**.
+**Decision maps are not requests.** Issues labeled `상태:초안`, or `유형:` decision tickets on them, belong to `/vibe-deep-plan` — they are in-progress planning artifacts rather than triage targets. If pointed at one, state so and recommend `/vibe-deep-plan`. Once such maps clear, their Destination and Decisions-so-far serve as valid input for **Stage 2 — Spec**. Resolve actual strings from `docs/agents/triage-labels.md`; never invent English stand-ins such as `status:draft`.
 
 When entering Stage 3 with a reference (spec path, issue number, or URL), fetch and read the entire body and comments. Do not re-interview decisions already recorded in the source or re-synthesize existing specs — skipping ahead is the point of this table.
 
