@@ -1,0 +1,7 @@
+interface:
+  display_name: "바이브 계획"
+  short_description: "인터뷰·스펙·티켓을 한 흐름으로 계획"
+  default_prompt: "$vibe-plan을 써서 이 아이디어를 인터뷰에서 명세를 거쳐 게시된 티켓까지 가져가라."
+
+policy:
+  allow_implicit_invocation: false

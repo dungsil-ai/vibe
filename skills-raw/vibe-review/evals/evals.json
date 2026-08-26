@@ -1,0 +1,78 @@
+{
+  "skill_name": "vibe-review",
+  "evals": [
+    {
+      "id": "verify-branch-fixed-point-before-review",
+      "prompt": "release/1.4 브랜치 이후의 변경을 코드 리뷰해줘.",
+      "expected_output": "release/1.4가 유효한 기준점인지와 diff가 비어 있지 않은지를 먼저 확인한 뒤, git diff release/1.4...HEAD 및 release/1.4..HEAD 커밋 목록을 근거로 검토한다.",
+      "assertions": [
+        "출력은 두 검토 축 어느 쪽을 시작하기 전에도 주어진 브랜치를 먼저 해결한다.",
+        "출력은 점 세 개 고정점 diff로 HEAD와 비교하여 merge-base 기반 비교가 되도록 한다.",
+        "출력은 diff가 비어 있지 않은지 확인하고 검토에 사용한 커밋 범위를 보고한다."
+      ]
+    },
+    {
+      "id": "discover-spec-from-agents-plans",
+      "prompt": "HEAD~3 이후 변경을 리뷰해줘. 따로 명세 경로는 안 줄게.",
+      "expected_output": "커밋 메시지의 이슈 참조와 docs/, specs/, .agents/plans/ 아래의 기능 관련 문서를 순서대로 찾아 명세 출처를 결정하며, .agents/plans/의 일치 문서도 후보로 사용한다.",
+      "assertions": [
+        "출력은 저장소 명세 파일로 넘어가기 전에 커밋 메시지의 이슈 참조를 먼저 찾는다.",
+        "출력은 docs/, specs/, .agents/plans/ 아래의 일치하는 명세 파일을 후보로 고려한다.",
+        "출력은 그 탐색 출처들이 실패한 후에만 명세를 요청하고, 사용자가 없다고 확인하면 Spec 축을 사용할 수 없다고 밝힌다."
+      ]
+    },
+    {
+      "id": "parallel-standards-and-spec-reports",
+      "prompt": "abc123 이후 이 PR을 리뷰해줘. 요구사항은 specs/export.md에 있어.",
+      "expected_output": "Standards와 Spec 검토를 서로 독립적인 병렬 하위 에이전트에 맡기고, 결과를 ## Standards 및 ## Spec 아래 나란히 분리해 보고한 뒤 각 축의 건수와 최악 문제를 별도로 요약한다.",
+      "assertions": [
+        "출력은 Standards와 Spec 검토를 격리된 지시문으로 병렬 서브에이전트 작업으로 실행한다.",
+        "Standards 지시문은 저장소 표준과 스멜 기준선을 포함하고, 문서화된 위반과 판단 영역 스멜을 구분하며, 도구가 강제하는 규칙은 건너뛴다.",
+        "Spec 지시문은 빠진 요구사항, 범위 확장, 잘못된 구현을 인용된 명세 요구사항에 맞춰 평가한다.",
+        "최종 보고서는 ## Standards와 ## Spec 섹션을 분리해 유지하고, 축 간에 발견 사항을 병합하거나 재순위 매기지 않는다.",
+        "최종 요약은 각 축마다 독립적으로 총 건수와 최악의 문제를 제시한다."
+      ]
+    },
+    {
+      "id": "uses-caller-supplied-fixed-point",
+      "prompt": "vibe-implement가 넘긴 고정점 a1b2c3d와 티켓 #58로 리뷰해줘.",
+      "expected_output": "호출자가 준 고정점을 그대로 사용해 diff를 잡고, 고정점을 다시 묻지 않으며, 티켓을 명세 출처로 두 축 리뷰를 병렬 실행한다.",
+      "assertions": [
+        "출력은 사용자에게 고정점을 묻지 않고 호출자가 제공한 고정점을 그대로 사용한다.",
+        "출력은 서브에이전트를 실행하기 전에 고정점이 해결되는지와 diff가 비어 있지 않은지 확인한다.",
+        "출력은 제공된 티켓을 Spec 축 출처로 사용한다.",
+        "실행된 검토는 보고 전용이며 티켓 #58을 편집, 댓글, 라벨 변경, 상태 변경, 또는 닫지 않는다."
+      ]
+    },
+    {
+      "id": "clean-pass-reports-only-without-tracker-writes",
+      "prompt": "main 이후 변경을 리뷰해줘. 원본 이슈 #58의 요구사항이 충족됐고 두 축 모두 발견 사항이 없다고 확인됐다.",
+      "expected_output": "## Standards와 ## Spec에 각각 발견 사항 없음(0건)을 보고하고, 이슈 #58의 본문·체크박스·댓글·라벨·상태는 바꾸지 않은 채 검토 결과만 보고한다.",
+      "assertions": [
+        "깨끗한 통과는 후속 행동을 수행하는 대신 Standards와 Spec 모두에 발견 사항 0건을 보고한다.",
+        "출력은 이슈 #58의 본문, 인수 체크박스, 댓글, 라벨, 상태, 열림/닫힘 상태를 바꾸지 않는다.",
+        "직접 검토는 트래커, 저장소, 또는 다른 외부 쓰기를 암시하거나 호출하지 않는다."
+      ]
+    },
+    {
+      "id": "findings-report-only-without-tracker-writes",
+      "prompt": "main 이후 이슈 #58 관련 변경을 리뷰해줘. Standards와 Spec에서 발견 사항이 있으면 알려줘.",
+      "expected_output": "Standards와 Spec의 발견 사항을 분리해 보고하고, 발견 사항이 있어도 이슈 #58의 본문·댓글·라벨·상태를 바꾸거나 닫지 않는다.",
+      "assertions": [
+        "출력은 Standards와 Spec 발견 사항을 병합하거나 재순위 매기지 않고 분리해 보고한다.",
+        "발견 사항이 있어도 검토가 이슈 #58을 편집, 댓글 게시, 라벨이나 상태 변경, 작업을 닫거나 다시 여는 원인이 되지 않는다.",
+        "직접 검토는 발견 사항만 보고하며 직접적이거나 암시된 트래커 쓰기를 수행하지 않는다."
+      ]
+    },
+    {
+      "id": "no-spec-reports-limitation-without-tracker-writes",
+      "prompt": "HEAD~2 이후 이슈 #58 관련 변경을 리뷰해줘. 명세는 없어.",
+      "expected_output": "## Spec에 명세 없음으로 인한 검토 한계를 보고하고, 이슈 #58의 본문·체크박스·댓글·라벨·상태를 바꾸지 않는다.",
+      "assertions": [
+        "출력은 명세가 없어 Spec 축을 사용할 수 없다고 보고한다.",
+        "명세 없음 한계는 이슈 #58의 본문, 인수 체크박스, 댓글, 라벨, 상태, 열림/닫힘 상태를 바꾸지 않는다.",
+        "직접 검토는 직접적이거나 암시된 트래커, 저장소, 외부 쓰기를 수행하지 않는다."
+      ]
+    }
+  ]
+}

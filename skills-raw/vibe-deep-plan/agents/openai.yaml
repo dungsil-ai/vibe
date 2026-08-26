@@ -1,0 +1,6 @@
+interface:
+  display_name: "바이브 심층 계획"
+  short_description: "대규모 작업을 결정 티켓 지도로 설계"
+  default_prompt: "$vibe-deep-plan을 사용해 이 대규모 작업의 결정 티켓 지도를 만들고 진행한다."
+policy:
+  allow_implicit_invocation: false

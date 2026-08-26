@@ -1,0 +1,7 @@
+interface:
+  display_name: "바이브 디버그"
+  short_description: "견고한 피드백 루프로 어려운 버그 진단"
+  default_prompt: "red-capable 피드백 루프로 버그를 진단하려면 $vibe-debug를 사용하세요."
+
+policy:
+  allow_implicit_invocation: true

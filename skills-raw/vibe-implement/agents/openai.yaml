@@ -1,0 +1,7 @@
+interface:
+  display_name: "바이브 구현"
+  short_description: "명세·티켓 기반 구현을 테스트와 검토까지 완료"
+  default_prompt: "$vibe-implement를 사용해 제공된 명세나 티켓에서 이 작업을 구현해 줘."
+
+policy:
+  allow_implicit_invocation: false

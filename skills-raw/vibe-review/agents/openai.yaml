@@ -1,0 +1,7 @@
+interface:
+  display_name: "바이브 리뷰"
+  short_description: "변경 diff를 표준과 명세 두 축으로 분리 검토"
+  default_prompt: "고정점 이후의 변경을 저장소 표준과 출처 명세에 맞춰 검토하려면 $vibe-review를 사용하세요."
+
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,7 @@
+interface:
+  display_name: "바이브 그릴링"
+  short_description: "계획을 한 번에 한 질문씩 검토"
+  default_prompt: "$vibe-grilling으로 내 계획을 한 번에 한 질문씩 검토해줘."
+
+policy:
+  allow_implicit_invocation: true

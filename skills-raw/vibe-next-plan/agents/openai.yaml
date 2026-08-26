@@ -1,0 +1,7 @@
+interface:
+  display_name: "바이브 다음 계획"
+  short_description: "코드베이스 방향성 조사 후 다음에 만들 기능을 탐색"
+  default_prompt: "$vibe-next-plan을 사용해 코드베이스를 조사하고 다음에 만들 것의 근거 있는 방향을 찾는다."
+
+policy:
+  allow_implicit_invocation: false

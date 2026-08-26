@@ -1,0 +1,7 @@
+interface:
+  display_name: "바이브 초기화"
+  short_description: "바이브 코딩 프로젝트 기본 구조 정의"
+  default_prompt: "$vibe-init을 사용해 이 저장소의 이슈 트래커, 트리아지 라벨, 도메인 문서 구성을 AGENTS.md에 스캐폴드합니다."
+
+policy:
+  allow_implicit_invocation: false
