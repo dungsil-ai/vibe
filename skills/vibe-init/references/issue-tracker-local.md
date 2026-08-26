@@ -8,10 +8,10 @@ Issues and specifications (specs; also known as PRDs) in this repository are man
 - Specs live at `.agents/plans/<feature-slug>/spec.md`
 - Implementation issues live one file per ticket at `.agents/plans/<feature-slug>/issues/<NN>-<slug>.md`, numbered from `01`. `/vibe-plan` manages this directory.
 - Deep-plan decision records live one file per ticket in typed directories:
-  - `research/<NN>-<slug>.md` — `type:research` (AFK research)
-  - `interviews/<NN>-<slug>.md` — `type:interview` (HITL dialogue)
-  - `prototypes/<NN>-<slug>.md` — `type:prototype` (throwaway artifacts)
-  - `tasks/<NN>-<slug>.md` — `type:task` (manual prerequisites)
+  - `research/<NN>-<slug>.md` — `유형:조사` (AFK research)
+  - `interviews/<NN>-<slug>.md` — `유형:인터뷰` (HITL dialogue)
+  - `prototypes/<NN>-<slug>.md` — `유형:프로토타입` (throwaway artifacts)
+  - `tasks/<NN>-<slug>.md` — `유형:작업` (manual prerequisites)
 - Identifiers for deep-plan records are relative file paths like `research/03-compare-providers.md` or `interviews/04-confirm-scope.md`. Numeric prefixes serve only as sort keys. Blocker references must include type directory and `.md` filename; `issues/` is reserved for implementation tickets.
 - All deep-plan records contain `Type:` and `Status:` lines near the top. Triage statuses apply to implementation tickets published by `/vibe-plan`.
 - Deep-plan records begin with `Status: open`. Claiming sets `Status: claimed`, returning to `Status: open` after completing charting save. Final answers alone set `Status: resolved`. Incomplete handoffs or save failures retain `claimed`.

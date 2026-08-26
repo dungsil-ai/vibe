@@ -32,6 +32,6 @@ Used by `vibe-deep-plan` when charting decision maps. Map labels designate the e
 
 ## Two Axes
 
-`status:` answers "what state is this in", while `type:` answers "how does this resolve". An issue carries **at most one label per axis**.
+`상태:` answers "what state is this in", while `유형:` answers "how does this resolve". An issue carries **at most one label per axis**.
 
-`status:draft` resides on the same axis as triage statuses and therefore excludes triage statuses. A decision map is an in-progress planning artifact rather than a request awaiting evaluation, and is not subject to triage. For the same reason, decision tickets on a map carry only `type:` labels. Triage statuses apply again only after the map finishes and `vibe-plan` publishes implementation tickets.
+`상태:초안` resides on the same axis as triage statuses and therefore excludes triage statuses. A decision map is an in-progress planning artifact rather than a request awaiting evaluation, and is not subject to triage. For the same reason, decision tickets on a map carry only `유형:` labels. Triage statuses apply again only after the map finishes and `vibe-plan` publishes implementation tickets. Skills speak in canonical roles; the right column of the tables above is the only label vocabulary. Do not translate those strings into English (`status:draft`, `type:research`, …).

@@ -1,6 +1,6 @@
 # Prototype Tickets
 
-How `type:prototype` tickets get resolved. Prototypes are a **HITL** type. The artifact exists to give a human something concrete to react to, and resolves solely through that real-time exchange.
+How `유형:프로토타입` tickets get resolved. Prototypes are a **HITL** type. The artifact exists to give a human something concrete to react to, and resolves solely through that real-time exchange.
 
 A prototype is **throwaway code to answer a question**. The question shapes the artifact.
 
