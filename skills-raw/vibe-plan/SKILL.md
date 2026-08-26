@@ -35,6 +35,10 @@ Stage 3을 참조(명세 경로, 이슈 번호나 URL)와 함께 진입할 때, 
 
 세션이 티켓이 들어오기 전에 저하되면, 밀어붙이지 않는다: 스레드를 넘긴다(`/vibe-handoff` 스킬 참조) 새 세션에서 이어간다.
 
+## 산출물 언어
+
+아래 템플릿의 헤딩은 자리표시자이며 그대로 출력할 문구가 아니다. 게시하는 모든 산출물 — 제목, 헤딩, 본문 — 을 이 저장소 문서가 쓰는 언어로 쓰고, 새로 번역하기보다 기존 이슈에 이미 쓰인 헤딩 어휘를 재사용한다. 본문은 번역됐는데 헤딩만 영어인 혼합 출력은 템플릿을 그대로 복사했다는 신호다.
+
 ---
 
 ## Stage 0 — 트리아지
@@ -280,7 +284,11 @@ Stage 2가 `/vibe-deep-plan`에서 정리된 결정 지도를 받으면, 명세�
 
 - **로컬 파일** → 입력이 정리된 지도 `.agents/plans/<effort>/map.md`이면, 같은 `.agents/plans/<effort>/issues/<NN>-<slug>.md` 아래에 티켓당 하나의 구현 이슈를 쓴다; 입력이 `.agents/plans/<effort>/spec.md`의 명세면, 같은 effort의 `issues/` 아래에 쓴다; 그렇지 않고, 다른 로컬 명세 경로를 포함해, `.agents/plans/<feature-slug>/issues/<NN>-<slug>.md`를 쓴다. 티켓을 의존성 순서(차단자 먼저)로 `01`부터 번호를 매긴다. 각 파일의 "선행 작업"은 의존하는 번호/제목을 나열한다. 아래의 티켓당 파일 템플릿을 쓴다 — 티켓당 한 파일, 절대 하나로 합친 파일이 아니다.
 - **GitHub** → 각 티켓을 명세 이슈의 **sub-issue**로 만들어, 부모가 진행을 렌더하고 자식이 UI에서 탐색 가능하게 한다. 먼저 이슈를 만들고(`gh issue create`), 그 뒤 `gh api --method POST repos/<owner>/<repo>/issues/<parent>/sub_issues -F sub_issue_id=<child-db-id>`로 연결한다, 여기서 `<child-db-id>`는 자식의 숫자 **database id**다(`gh api repos/<owner>/<repo>/issues/<n> --jq .id`, `#number`나 `node_id`가 아니다). sub-issues가 활성화되지 않은 곳에서는, 부모 본문의 작업 목록과 각 자식의 맨 위 `상위 이슈: #<parent>`로 폴백한다. 차단 간선은 GitHub의 **네이티브 이슈 의존성**를 쓴다: `gh api --method POST repos/<owner>/<repo>/issues/<child>/dependencies/blocked_by -F issue_id=<blocker-db-id>`.
-- **GitLab** → 각 티켓을 명세 이슈의 **task**(GitLab의 자식 work item 타입)로 만들어, 부모가 일반 텍스트가 아니라 실제 work item의 체크리스트로 추적하게 한다. task를 사용할 수 없는 곳에서는, 각 자식 설명의 맨 위 `상위 이슈: #<parent>`로 폴백한다. 차단 간선은 퀵 액션을 통해 GitLab의 **네이티브 blocking link**를 쓴다: `glab issue note <child> --message "/blocked_by #<blocker>"`(Premium/Ultimate; free tier에서는 설명의 맨 위 `선행 작업: #<n>, #<n>` 줄로 폴백).
+- **GitLab** → 각 티켓을 명세 이슈의 **task**(GitLab의 자식 work item 타입)로 만들어, 부모가 일반 텍스트가 아니라 실제 work item의 체크리스트로 추적하게 한다. 구조를 만들 때 **퀵 액션을 쓰지 않는다** — `/parent`는 존재하지 않고, `/set_parent`와 `/blocked_by`는 인스턴스에 따라 적용되지 않으며, 인식되지 않은 퀵 액션은 실패하는 대신 **본문 그대로 댓글로 올라간다**. 아래 API 경로만 쓴다:
+  - **생성**: `glab api --method POST "projects/:id/issues" -F "title=<제목>" -F "issue_type=task" -F "description=<본문>"`.
+  - **부모 연결**: GraphQL로 자식과 부모의 work item global ID를 얻고(`workItems { nodes { id iid } }`), `workItemUpdate(input: { id: <child-gid>, hierarchyWidget: { parentId: <parent-gid> } })`를 호출한다.
+  - **차단 간선**: `glab api --method POST "projects/:id/issues/<child>/links" -F target_project_id=<id> -F target_issue_iid=<blocker> -F link_type=is_blocked_by`를 한 번 시도한다. `HTTP 400 link_type does not have a valid value`면 네이티브 차단이 없는 티어(Free/CE)이므로, 차단 관계는 티켓 본문의 "선행 작업" 섹션에만 남긴다 — 설명 맨 위에 `선행 작업:` 같은 줄을 따로 덧붙이지 않는다(섹션과 중복된다).
+  - **검증**: 게시 후 계층과 링크를 다시 질의해 확인하고, `/`로 시작하는 댓글이 남았으면 그 티켓은 구조 설정이 실패한 것이다.
 - **다른 트래커(Linear, Jira, …)** → 티켓당 하나의 이슈를 게시하고, 플랫폼의 네이티브 parent/sub-issue 관계를 쓰고, 네이티브 차단 관계가 있으면 그것을 쓴다; 없으면 각 티켓의 "선행 작업"을 차단 이슈로 설정한다.
 
 **프론티어**를 작업한다: 차단자가 모두 끝난 티켓. 순수 선형 사슬이면 위에서 아래로.

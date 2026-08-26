@@ -35,6 +35,10 @@ Maintain executed stages in a **single unbroken context window** — never compr
 
 If the session degrades before tickets are produced, do not force through: hand off the thread (see `/vibe-handoff`) to continue in a fresh session.
 
+## Output Language
+
+Template headings below are placeholders, not literal output. Write every published artifact — titles, headings, and body — in the language this repository's documentation uses, reusing the heading vocabulary already present on existing issues rather than translating afresh. Mixed-language output (English headings over translated body) means the template was copied verbatim.
+
 ---
 
 ## Stage 0 — Triage
@@ -280,7 +284,11 @@ For cleared local Markdown maps, retain the map's existing `<effort>` directory 
 
 - **Local Files** → If input was a cleared map `.agents/plans/<effort>/map.md`, write one implementation issue per ticket under `.agents/plans/<effort>/issues/<NN>-<slug>.md`; if input was a spec at `.agents/plans/<effort>/spec.md`, write under the same effort's `issues/`; otherwise, for other local spec paths, write `.agents/plans/<feature-slug>/issues/<NN>-<slug>.md`. Number tickets from `01` in dependency order (blockers first). List depending numbers/titles under "Prerequisites" in each file. Use per-ticket file template below — one file per ticket, never combined.
 - **GitHub** → Make each ticket a **sub-issue** of the spec issue so parents render progress and children are navigable in UI. Create issue first (`gh issue create`), then link via `gh api --method POST repos/<owner>/<repo>/issues/<parent>/sub_issues -F sub_issue_id=<child-db-id>`, where `<child-db-id>` is child's numeric **database id** (`gh api repos/<owner>/<repo>/issues/<n> --jq .id`, not `#number` or `node_id`). Where sub-issues are unavailable, fall back to task lists in parent body and `Parent Issue: #<parent>` at top of child body. Use GitHub **native issue dependencies** for blocking edges: `gh api --method POST repos/<owner>/<repo>/issues/<child>/dependencies/blocked_by -F issue_id=<blocker-db-id>`.
-- **GitLab** → Make each ticket a **task** (GitLab child work item type) of the spec issue so parents track real work item checklists rather than plain text. Fall back to `Parent Issue: #<parent>` at top of child description where tasks are unavailable. Use GitLab **native blocking links** via quick actions: `glab issue note <child> --message "/blocked_by #<blocker>"` (Premium/Ultimate; free tiers fall back to `Prerequisites: #<n>, #<n>` lines at top of description).
+- **GitLab** → Make each ticket a **task** (GitLab child work item type) of the spec issue so parents track real work item checklists rather than plain text. **Never use quick actions to build structure** — `/parent` does not exist, `/set_parent` and `/blocked_by` fail to apply on some instances, and unrecognized quick actions post **as literal comments** instead of failing. Use these API paths only:
+  - **Create**: `glab api --method POST "projects/:id/issues" -F "title=<title>" -F "issue_type=task" -F "description=<body>"`.
+  - **Parent link**: resolve child and parent work item global IDs via GraphQL (`workItems { nodes { id iid } }`), then call `workItemUpdate(input: { id: <child-gid>, hierarchyWidget: { parentId: <parent-gid> } })`.
+  - **Blocking edges**: attempt once with `glab api --method POST "projects/:id/issues/<child>/links" -F target_project_id=<id> -F target_issue_iid=<blocker> -F link_type=is_blocked_by`. `HTTP 400 link_type does not have a valid value` means the tier lacks native blocking (Free/CE) — then record blockers only in the ticket's own "Prerequisites" section, never appending a separate `Prerequisites:` line at the top of the description (it duplicates the section).
+  - **Verify**: after publishing, re-query hierarchy and links, and treat any remaining comment starting with `/` as a failed structure attempt on that ticket.
 - **Other Trackers (Linear, Jira, ...)** → Publish one issue per ticket using native parent/sub-issue relations and native blocking relations where available; otherwise set "Prerequisites" on each ticket to blocking issues.
 
 Work the **frontier**: tickets whose blockers are all completed. Top-to-bottom for purely linear chains.

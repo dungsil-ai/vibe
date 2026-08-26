@@ -40,8 +40,8 @@ GitLab 이슈를 생성한다.
 
 - **맵**: `상태:초안` 라벨이 붙은 단일 이슈로 Notes / Decisions-so-far / Fog 본문을 가진다. `glab issue create --label "상태:초안"`. (네이티브 에픽이 있는 GitLab 티어에서는 에픽이 맵을 대신할 수 있다. 라벨이 붙은 이슈는 어디서든 작동한다.)
 - **하위 티켓**: 설명 맨 위에 `Part of #<map>`을 가지고 라벨 `유형:조사` / `유형:프로토타입` / `유형:인터뷰` / `유형:작업`을 단 이슈. 인계되면 티켓을 주도하는 개발자에게 할당한다.
-- **차단**: GitLab의 **네이티브 차단 링크** — 정규 UI 노출 표현. `/blocked_by #<n>` 퀵 액션을 노트로 올려 추가한다(`glab issue note <child> --message "/blocked_by #<blocker>"`). 네이티브 차단 링크는 Premium/Ultimate 기능이다. 무료 티어(또는 사용 불가)에서는 설명 맨 위에 `Blocked by: #<n>, #<n>` 줄로 되돌아간다. 모든 차단 이슈가 닫히면 티켓이 차단 해제된다.
-- **프론티어 질의**: 맵의 하위로 제한한 `glab issue list -F json`을 가져와 열린 차단 — 열린 이슈에 대한 네이티브 `blocked_by` 링크(`glab api projects/:id/issues/:iid/links`) 또는 `Blocked by` 줄의 열린 이슈 — 이나 담당자가 있는 것을 빼고, 맵 순서가 빠른 것이 우선한다.
+- **차단**: 링크 API로 추가한다 — `glab api --method POST "projects/:id/issues/<child>/links" -F target_project_id=<id> -F target_issue_iid=<blocker> -F link_type=is_blocked_by`. **퀵 액션을 쓰지 않는다**: `/blocked_by`는 네이티브 차단이 없는 티어에서 인식되지 않아 본문 그대로 댓글로 올라간다. 위 호출이 `HTTP 400 link_type does not have a valid value`를 내면 그 인스턴스는 네이티브 차단이 없으므로(Free/CE), 설명의 `선행 작업` 섹션에 `#<n>` 목록으로만 기록한다. 모든 차단 이슈가 닫히면 티켓이 차단 해제된다.
+- **프론티어 질의**: 맵의 하위로 제한한 `glab issue list -F json`을 가져와 열린 차단 — 열린 이슈에 대한 네이티브 `is_blocked_by` 링크(`glab api projects/:id/issues/:iid/links`) 또는 `선행 작업` 섹션의 열린 이슈 — 이나 담당자가 있는 것을 빼고, 맵 순서가 빠른 것이 우선한다.
 - **인계**: `glab issue update <n> --assignee @me` — 세션의 첫 기록.
 - **조사 인계 해제**: 차팅 중 완전한 결과와 조사 기록 포인터가 저장된 뒤 `glab issue update <n> --assignee=-@me`를 실행한다(필요 시 `@me`를 세션의 실제 사용자 이름으로 바꾼다). 조사 이슈는 열어두고 맵 gist를 추가하지 않는다. 저장이 실패하거나 세션이 미완료 작업을 넘기면 담당자를 유지한다.
 - **해결**: `glab issue note <n> --message "<답안>"`, 그리고 `glab issue close <n>`, 그리고 맵의 Decisions-so-far에 컨텍스트 포인터(gist + 링크)를 덧붙인다.
