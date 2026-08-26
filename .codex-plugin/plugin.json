@@ -1,0 +1,36 @@
+{
+  "name": "vibe",
+  "version": "0.1.0",
+  "description": "A collection of agent skills for practical vibe coding.",
+  "author": {
+    "name": "DUNGSIL",
+    "url": "https://github.com/dungsil-ai"
+  },
+  "homepage": "https://github.com/dungsil-ai/vibe",
+  "repository": "https://github.com/dungsil-ai/vibe",
+  "keywords": [
+    "agent-skills",
+    "vibe-coding",
+    "software-development"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Vibe Skills",
+    "shortDescription": "Plan, code, debug, review",
+    "longDescription": "A collection of agent skills for goal setting, planning, implementation, debugging, refactoring, modeling, and code review.",
+    "developerName": "DUNGSIL",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/dungsil-ai/vibe",
+    "brandColor": "#2563EB",
+    "defaultPrompt": [
+      "Use $vibe-goal to clarify my development goal.",
+      "Use $vibe-plan to make an implementation plan.",
+      "Use $vibe-review to review my code changes."
+    ]
+  }
+}
