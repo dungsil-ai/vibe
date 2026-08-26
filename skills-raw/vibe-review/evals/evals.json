@@ -6,7 +6,7 @@
       "prompt": "release/1.4 브랜치 이후의 변경을 코드 리뷰해줘.",
       "expected_output": "release/1.4가 유효한 기준점인지와 diff가 비어 있지 않은지를 먼저 확인한 뒤, git diff release/1.4...HEAD 및 release/1.4..HEAD 커밋 목록을 근거로 검토한다.",
       "assertions": [
-        "출력은 두 검토 축 어느 쪽을 시작하기 전에도 주어진 브랜치를 먼저 해결한다.",
+        "출력은 켠 검토 축 어느 쪽을 시작하기 전에도 주어진 브랜치를 먼저 해결한다.",
         "출력은 점 세 개 고정점 diff로 HEAD와 비교하여 merge-base 기반 비교가 되도록 한다.",
         "출력은 diff가 비어 있지 않은지 확인하고 검토에 사용한 커밋 범위를 보고한다."
       ]
@@ -23,7 +23,7 @@
     },
     {
       "id": "parallel-standards-and-spec-reports",
-      "prompt": "abc123 이후 이 PR을 리뷰해줘. 요구사항은 specs/export.md에 있어.",
+      "prompt": "abc123 이후 CSV 내보내기 PR을 리뷰해줘. 요구사항은 specs/export.md에 있어.",
       "expected_output": "Standards와 Spec 검토를 서로 독립적인 병렬 하위 에이전트에 맡기고, 결과를 ## Standards 및 ## Spec 아래 나란히 분리해 보고한 뒤 각 축의 건수와 최악 문제를 별도로 요약한다.",
       "assertions": [
         "출력은 Standards와 Spec 검토를 격리된 지시문으로 병렬 서브에이전트 작업으로 실행한다.",
@@ -36,7 +36,7 @@
     {
       "id": "uses-caller-supplied-fixed-point",
       "prompt": "vibe-implement가 넘긴 고정점 a1b2c3d와 티켓 #58로 리뷰해줘.",
-      "expected_output": "호출자가 준 고정점을 그대로 사용해 diff를 잡고, 고정점을 다시 묻지 않으며, 티켓을 명세 출처로 두 축 리뷰를 병렬 실행한다.",
+      "expected_output": "호출자가 준 고정점을 그대로 사용해 diff를 잡고, 고정점을 다시 묻지 않으며, 티켓을 명세 출처로 두고 켠 리뷰 축을 병렬 실행한다.",
       "assertions": [
         "출력은 사용자에게 고정점을 묻지 않고 호출자가 제공한 고정점을 그대로 사용한다.",
         "출력은 서브에이전트를 실행하기 전에 고정점이 해결되는지와 diff가 비어 있지 않은지 확인한다.",
@@ -46,7 +46,7 @@
     },
     {
       "id": "clean-pass-reports-only-without-tracker-writes",
-      "prompt": "main 이후 변경을 리뷰해줘. 원본 이슈 #58의 요구사항이 충족됐고 두 축 모두 발견 사항이 없다고 확인됐다.",
+      "prompt": "main 이후 저위험 문서 변경을 리뷰해줘. 원본 이슈 #58의 요구사항이 충족됐고 Standards와 Spec 모두 발견 사항이 없다고 확인됐다.",
       "expected_output": "## Standards와 ## Spec에 각각 발견 사항 없음(0건)을 보고하고, 이슈 #58의 본문·체크박스·댓글·라벨·상태는 바꾸지 않은 채 검토 결과만 보고한다.",
       "assertions": [
         "깨끗한 통과는 후속 행동을 수행하는 대신 Standards와 Spec 모두에 발견 사항 0건을 보고한다.",
@@ -72,6 +72,45 @@
         "출력은 명세가 없어 Spec 축을 사용할 수 없다고 보고한다.",
         "명세 없음 한계는 이슈 #58의 본문, 인수 체크박스, 댓글, 라벨, 상태, 열림/닫힘 상태를 바꾸지 않는다.",
         "직접 검토는 직접적이거나 암시된 트래커, 저장소, 외부 쓰기를 수행하지 않는다."
+      ]
+    },
+    {
+      "id": "runs-risk-axis-for-high-risk-change-without-rq",
+      "prompt": "main 이후 인증과 권한 처리 변경을 리뷰해줘. 명세는 specs/auth.md야.",
+      "expected_output": "Standards와 Spec에 더해 Risk를 병렬 실행하고 ## Risk로 분리 보고하며, 직접 리뷰이므로 /rq를 자동 호출하지 않는다.",
+      "assertions": [
+        "출력은 보안, 인증, 권한, 영속성, 트랜잭션, 외부 연동 변경을 고위험 신호로 판정해 Risk 축을 실행한다.",
+        "출력은 Standards, Spec, Risk를 같은 메시지의 독립된 병렬 서브에이전트 작업으로 실행한다.",
+        "최종 보고서는 ## Standards, ## Spec, ## Risk를 분리하고 축 간 발견사항을 병합하거나 재순위하지 않는다.",
+        "직접 /vibe-review는 고위험이라는 이유만으로 /rq를 자동 호출하지 않는다."
+      ]
+    },
+    {
+      "id": "skips-risk-axis-for-low-risk-change",
+      "prompt": "main 이후 README 문구 변경을 리뷰해줘. 명세는 specs/docs.md야.",
+      "expected_output": "저위험 변경이므로 Standards와 Spec만 병렬 실행하고 Risk 축은 실행하거나 보고하지 않는다.",
+      "assertions": [
+        "출력은 위험 감사 요청이나 고위험 변경 신호가 없으므로 Risk 서브에이전트를 실행하지 않는다.",
+        "최종 보고서는 ## Standards와 ## Spec만 포함하고 ## Risk를 만들지 않는다."
+      ]
+    },
+    {
+      "id": "runs-risk-axis-when-thermos-requested",
+      "prompt": "HEAD~2 이후 변경을 thermos로 리뷰해줘.",
+      "expected_output": "thermos 요청을 Risk 축 요청으로 해석해 Standards 및 찾은 경우 Spec과 함께 Risk를 실행한다.",
+      "assertions": [
+        "출력은 thermos, thermo nuclear, 위험 감사 요청을 Risk 축의 명시적 실행 조건으로 인식한다.",
+        "출력은 별도 Thermos 스킬이나 Cursor 전용 서브에이전트 타입 대신 vibe-review의 Risk 축을 실행한다."
+      ]
+    },
+    {
+      "id": "runs-risk-without-spec",
+      "prompt": "HEAD~2 이후 결제 트랜잭션 변경을 리뷰해줘. 명세는 없어.",
+      "expected_output": "Spec에는 명세 없음 한계를 보고하면서도 고위험 변경의 Risk 축은 실행해 ## Risk로 분리 보고한다.",
+      "assertions": [
+        "명세가 없다는 이유로 Risk 축을 건너뛰지 않는다.",
+        "최종 보고서는 Spec의 명세 없음 한계와 ## Risk 결과를 함께 유지한다.",
+        "검토 결과는 읽기 전용이며 트래커나 저장소에 쓰지 않는다."
       ]
     }
   ]

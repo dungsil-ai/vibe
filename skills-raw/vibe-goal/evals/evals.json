@@ -167,16 +167,28 @@
       ]
     },
     {
-      "id": "closes-goal-with-standards-review-and-quality-gate",
-      "prompt": "티켓 전부 통합 작업공간에 반영됐어. 마무리해줘.",
-      "expected_output": "Stage 4에서 통합 branch와 기록된 후보 SHA를 기준으로 전체 테스트와 타입 검사를 한 번 실행하고, Stage 2 고정점으로 vibe-review의 표준 축을 돌린 뒤, /rq가 있으면 명세 판정을 rq로 대체하고 없으면 /rq를 건너뛰고 vibe-review Spec 축을 유지한다. 소스 의무는 목표가 실제로 약속한 인수 조건(완료 정의)으로 좁히고, /rq를 쓸 때는 기본 LIGHT 티어로 판정한다. 미충족·불명 항목은 새 티켓으로 되돌리며, 안전한 원본 대상 반영과 그 증거 전에는 tracker를 바꾸지 않는다.",
+      "id": "closes-high-risk-goal-with-risk-review-and-quality-gate",
+      "prompt": "인증과 권한 티켓 전부 통합 작업공간에 반영됐어. 마무리해줘.",
+      "expected_output": "Stage 4에서 통합 branch와 기록된 후보 SHA를 기준으로 전체 테스트와 타입 검사를 한 번 실행하고, Stage 2 고정점으로 vibe-review의 Standards와 Risk 축을 돌린 뒤, /rq가 있으면 Spec을 생략하고 명세 판정을 rq로 수행한다. /rq가 없으면 Risk와 Spec을 모두 유지하고 게이트를 지어내지 않는다. 소스 의무는 목표가 실제로 약속한 인수 조건으로 좁히고, 미충족·불명 항목과 사용자가 고치길 원하는 Standards·Risk 발견사항은 새 티켓으로 되돌린다.",
       "assertions": [
         "전체 테스트 suite과 타입 검사는 기록된 통합 candidate에서 한 번 실행되며, 티켓별이나 사용자 checkout이 아니다.",
-        "출력은 Standards 축을 위해 실행의 원본 고정점부터 통합 branch와 candidate commit까지 /vibe-review를 실행하며, 티켓 사이를 덮는 것으로 표현한다.",
-        "출력은 /rq 스킬이 있으면 빠른 spec 축 대신 /rq를 실행하고, 없으면 /rq를 건너뛰고 vibe-review Spec 축을 유지하며 게이트 결과를 지어내지 않는다. /rq를 실행할 때는 목표가 약속한 완료 정의 — spec의 모든 user story가 아닌 — 를 소스 의무로, 고정점을 change 경계로, 통합 결과를 head로, 기본 LIGHT tier로(고위험 도메인에만 HEAVY) 사용한다.",
-        "Standards 발견사항과, 게이트를 돌렸다면 그 보고는 병합이나 재순위 없이 나란히 제시된다.",
+        "출력은 고위험 목표에서 Standards와 Risk를 위해 실행의 원본 고정점부터 통합 branch와 candidate commit까지 /vibe-review를 실행하며, 티켓 사이를 덮는 것으로 표현한다.",
+        "출력은 /rq 스킬이 있으면 빠른 Spec 축을 생략하고 /rq를 실행하며, 없으면 /rq를 건너뛰고 vibe-review Spec 축을 Risk와 함께 유지하며 게이트 결과를 지어내지 않는다.",
+        "출력은 /rq를 실행할 때 목표가 약속한 완료 정의 — spec의 모든 user story가 아닌 — 를 소스 의무로, 고정점을 change 경계로, 통합 결과를 head로, 고위험 도메인이므로 HEAVY tier로 사용한다.",
+        "Standards와 Risk 발견사항 및, 게이트를 돌렸다면 그 보고는 병합이나 재순위 없이 나란히 제시된다.",
         "실제로 실행한 게이트가 미충족 또는 불명으로 표시한 항목은 오케스트레이터가 patch하는 대신 프런티어 단계를 통해 다시 라우팅된 새 티켓이 된다.",
+        "사용자가 고치길 원하는 Standards 또는 Risk 발견사항도 계획 스킬이 발행하는 새 수정 티켓으로 라우팅된다.",
         "출력은 최종 반영이 안전하지 않을 때 통합 결과를 보존하며, 부모 명세 이슈를 닫거나 수정하지 않는다. /rq가 없다는 이유만으로 반영을 거부하지 않는다."
+      ]
+    },
+    {
+      "id": "keeps-low-risk-goal-review-light",
+      "prompt": "README 문구 티켓 전부 통합 작업공간에 반영됐어. 마무리해줘.",
+      "expected_output": "저위험 목표이므로 Risk 축을 실행하지 않고 Standards와, /rq가 있으면 게이트 또는 없으면 Spec을 유지한다.",
+      "assertions": [
+        "출력은 위험 감사 요청이나 고위험 도메인 변경이 없으므로 Risk 축을 실행하지 않는다.",
+        "출력은 /rq가 있으면 Spec을 생략하고 게이트를 실행하며, 없으면 Spec 축을 유지한다.",
+        "최종 보고서는 실행하지 않은 ## Risk 섹션을 만들지 않는다."
       ]
     },
     {

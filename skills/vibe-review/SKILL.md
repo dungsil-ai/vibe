@@ -1,18 +1,19 @@
 ---
 name: vibe-review
-description: Reviews changes after a fixed point (commit, branch, tag, or merge-base) along two axes — Standards (does code follow repository coding standards?) and Spec (does code match source issue/PRD requirements?) — running two axes in parallel subagents and reporting side by side. Use when reviewing branches, PRs, or working changes, or when asked to "review after X".
+description: Reviews changes after a fixed point against Standards and Spec, adding Risk for risk-audit, thermos, or thermo nuclear requests and for security, auth, permissions, persistence, transaction, or external-integration changes. Runs enabled axes in parallel subagents and reports them separately. Use for branches, PRs, working changes, "review after X", and risk audits.
 ---
 
 # Reviewing Changes
 
-A two-axis review of the diff between `HEAD` and a user-provided fixed point:
+A separated review of the diff between `HEAD` and a user-provided fixed point:
 
 - **Standards** — Does the code adhere to this repository's documented coding standards?
 - **Spec** — Does the code faithfully implement the source issue / PRD / spec?
+- **Risk** — Does added or modified code introduce bugs, security problems, developer-experience breakage, or feature-gate leaks?
 
-The two axes run as **parallel subagents** so they do not pollute each other's context, with this skill aggregating the findings.
+Standards and Spec are the default axes. Enable Risk only when the user requests a risk audit, thermos, or thermo nuclear review, or when the change touches security, authentication, permissions, persistence, transactions, or external integrations. Enabled axes run as **parallel subagents** so they do not pollute each other's context, with this skill aggregating the findings.
 
-The Spec axis is a **fast review** — a single subagent reading the diff against the spec and reporting missing requirements, scope creep, and incorrect implementations within 400 words. When a formal verdict is needed — acceptance criteria with per-item status, separated evidence domains (`CODE` vs `OPERATION` vs `DATA`), independent reviewer passes, aggregate `PASS`/`FAIL`/`NEEDS_REVIEW` — run `/rq` on the same requirements **if that skill is available**. If `/rq` is not available, skip it and keep this Spec axis; do not invent a gate. Use `/rq` when changes are high-risk (security, auth, permissions, persistence, transactions, integration), when the user asks whether requirements are genuinely *satisfied* rather than what is missing, or when findings demand a verdict rather than an enumeration. When `/rq` runs, it replaces this axis; do not run both and merge them.
+The Spec axis is a **fast review** — a single subagent reading the diff against the spec and reporting missing requirements, scope creep, and incorrect implementations within 400 words. When the user requests a formal requirements verdict — acceptance criteria with per-item status, separated evidence domains, independent reviewer passes, or an aggregate `PASS`/`FAIL`/`NEEDS_REVIEW` — run `/rq` separately on the same requirements. When `/rq` runs, it replaces Spec; do not run both and merge them. A direct `/vibe-review` never invokes `/rq` automatically merely because a change is high-risk.
 
 Issue tracker should have been provided — run `/vibe-init` if `docs/agents/issue-tracker.md` is missing.
 
@@ -24,7 +25,7 @@ What the user specified as fixed point — commit SHA, branch name, tag, `main`,
 
 Capture diff command once: `git diff <fixed-point>...HEAD` (three dots for merge-base comparison). Record commit list via `git log <fixed-point>..HEAD --oneline`.
 
-Verify fixed point resolves (`git rev-parse <fixed-point>`) and diff is non-empty before proceeding. Invalid refs or empty diffs must fail here — not inside two parallel subagents.
+Verify fixed point resolves (`git rev-parse <fixed-point>`) and diff is non-empty before proceeding. Invalid refs or empty diffs must fail here — not inside parallel subagents.
 
 ### 2. Identify Spec Source
 
@@ -35,7 +36,16 @@ Locate source spec in this order:
 3. PRD/spec files under `docs/`, `specs/`, or `.agents/plans/` matching branch name or feature.
 4. If none found, ask user for spec location. If user states there is none, skip **Spec** subagent and report "No spec".
 
-### 3. Identify Standards Source
+### 3. Decide Whether to Run Risk
+
+Before launching subagents, enable Risk when either condition holds:
+
+- The user requested a risk audit, thermos, or thermo nuclear review.
+- The diff touches security, authentication, permissions, persistence, transactions, or external integrations.
+
+Otherwise disable Risk. A missing spec does not affect this decision. High-risk signals enable Risk; they do not automatically invoke `/rq`.
+
+### 4. Identify Standards Source
 
 Anything documenting how code should be written in this repository, such as `CODING_STANDARDS.md` or `CONTRIBUTING.md`.
 
@@ -59,14 +69,14 @@ Read each smell as *What it is* → *How to fix*; tailored to diffs:
 - **Middle Man** — Classes or functions mostly delegating. → Cut them and call the real target directly.
 - **Refused Bequest** — Subclasses or implementations ignoring or overriding most inherited behavior. → Abandon inheritance and use composition.
 
-### 4. Run Two Subagents in Parallel
+### 5. Run Enabled Axes in Parallel
 
-Dispatch two `Agent` tool calls in a single message, both using `general-purpose` subagents.
+Dispatch one `Agent` tool call per enabled axis in a single message, all using `general-purpose` subagents. Do not launch Spec when no spec exists or Risk when Step 3 disabled it.
 
 **Standards Subagent Prompt** — Include:
 
 - Full diff command and commit list.
-- List of standards source files found in Step 3, **plus the full Smell Baseline from Step 3** pasted in — subagents have no other access.
+- List of standards source files found in Step 4, **plus the full Smell Baseline from Step 4** pasted in — subagents have no other access.
 - Instructions: "Report — per relevant file/hunk — (a) where diff violates documented standards: cite standard (file + rule); and (b) noticeable baseline smells: name smell and cite hunk. Distinguish hard violations from judgment calls — documented standard violations may be hard, baseline smells are always judgment calls, and documented repo standards override baseline. Skip what tooling enforces. Under 400 words."
 
 **Spec Subagent Prompt** — Include:
@@ -77,15 +87,20 @@ Dispatch two `Agent` tool calls in a single message, both using `general-purpose
 
 If spec is absent, skip Spec subagent and note this in final report.
 
-### 5. Aggregate
+**Risk Subagent Prompt** — Include when Step 3 enabled Risk:
 
-Present both reports under `## Standards` and `## Spec` headers, as-is or lightly trimmed. Do **not** merge or re-rank findings — the two axes are intentionally separated (see *Why Two Axes*).
+- Full diff command, commit list, and changed-file content needed to evaluate risk.
+- Instructions: "Audit added and modified code only. Report (a) bugs and existing-functionality breakage, (b) security problems, (c) developer-experience breakage from secrets, environment-variable or port changes, or new mandatory manual installation, and (d) feature-gate leaks. Adding a dependency through the package manager is not itself developer-experience breakage. Skip feature-gate checks when the repository has no feature gates. Do not report intentional breakage when the branch clearly intends it and its impact is tightly contained. Do not inflate priority. Trace available code to completion and never report an unverified hypothesis. Only after completing your own audit, read PR/MR discussion if present and incorporate valid existing review findings without depending on any named bot. Cite files/hunks and evidence. Under 400 words."
 
-Conclude with a one-line summary: total findings per axis, and worst issue *within each axis* (if any). Do not pick a single winner between axes — that is the re-ranking separation seeks to avoid.
+### 6. Aggregate
 
-### 6. Read-Only Review Contract
+Present reports under `## Standards`, `## Spec` when available, and `## Risk` when enabled, as-is or lightly trimmed. Do **not** merge or re-rank findings across axes or weight overlaps.
 
-Direct reviews and reviews invoked by other workflows are **read-only**. The sole output is the separated Standards and Spec report in Step 5:
+Conclude with a one-line summary: total findings per enabled axis, and worst issue *within each axis* (if any). Do not pick a single winner between axes.
+
+### 7. Read-Only Review Contract
+
+Direct reviews and reviews invoked by other workflows are **read-only**. The sole output is the separated axis report in Step 6:
 
 - On clean passes, report 0 findings; passes are not authority to land, update, or close work.
 - If findings exist, report findings; if spec was absent, report that limitation.
@@ -93,11 +108,12 @@ Direct reviews and reviews invoked by other workflows are **read-only**. The sol
 
 Subsequent persistent actions belong to execution workflows following specific execution requests and explicit approvals immediately before action. Declines or non-responses leave tracker state unchanged.
 
-## Why Two Axes
+## Why Separate Axes
 
 Changes can pass one axis and fail the other:
 
 - Code following all standards but implementing the wrong feature → **Standards Pass, Spec Fail.**
 - Code doing exactly what the issue requested but violating project conventions → **Spec Pass, Standards Fail.**
+- Code satisfying standards and spec but introducing an authentication bypass → **Standards and Spec Pass, Risk Fail.**
 
 Reporting separately prevents one axis from obscuring the other.

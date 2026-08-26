@@ -1,3 +1,6 @@
 ### IntelliJ IDEA ###
 .idea/
 *.iml
+
+### Agent scratch workspaces ###
+.agents/worktrees/
