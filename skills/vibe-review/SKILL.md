@@ -106,7 +106,7 @@ Direct reviews and reviews invoked by other workflows are **read-only**. The sol
 - If findings exist, report findings; if spec was absent, report that limitation.
 - Never edit issue/PR bodies or acceptance boxes, post comments, alter labels/statuses, close/reopen work, or create other tracker, repository, or external side effects.
 
-Subsequent persistent actions belong to execution workflows following specific execution requests and explicit approvals immediately before action. Declines or non-responses leave tracker state unchanged.
+Acceptance checklists belong to `/vibe-implement`, which ticks them after a clean review and before the human merges. Review does not defer those writes until after merge. Closing issues is separate from checklists and is out of this skill's scope.
 
 ## Why Separate Axes
 
