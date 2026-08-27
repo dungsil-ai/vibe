@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Vibe Skills cloud icon</title>
+  <desc id="desc">A blue cloud on a soft blue rounded square.</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#EFF6FF"/>
+      <stop offset="100%" stop-color="#DBEAFE"/>
+    </linearGradient>
+    <linearGradient id="cloud" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#3B82F6"/>
+      <stop offset="100%" stop-color="#1D4ED8"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#background)"/>
+  <path
+    d="M159 366h204c48 0 87-39 87-87s-39-87-87-87c-7 0-14 1-21 2.5C328 150 291 126 248 126c-56 0-103 38-118 91-4-1-9-1.5-14-1.5-42 0-76 34-76 76s34 74.5 76 74.5h43Z"
+    fill="url(#cloud)"
+  />
+</svg>
