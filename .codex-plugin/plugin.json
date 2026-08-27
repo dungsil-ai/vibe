@@ -27,6 +27,8 @@
     ],
     "websiteURL": "https://github.com/dungsil-ai/vibe",
     "brandColor": "#2563EB",
+    "composerIcon": "./assets/cloud-icon.svg",
+    "logo": "./assets/cloud-icon.svg",
     "defaultPrompt": [
       "$vibe-goal을 사용해 개발 목표를 명확히 정리해줘.",
       "$vibe-plan을 사용해 구현 계획을 만들어줘.",
