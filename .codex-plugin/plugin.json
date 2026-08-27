@@ -1,0 +1,38 @@
+{
+  "name": "바이브 코딩",
+  "version": "0.1.0",
+  "description": "이슈 트래커 기반의 반 자동화 바이브 코딩용 스킬 모음집",
+  "author": {
+    "name": "둥실 DUNGSIL",
+    "url": "https://github.com/dungsil-ai"
+  },
+  "homepage": "https://github.com/dungsil-ai/vibe",
+  "repository": "https://github.com/dungsil-ai/vibe",
+  "keywords": [
+    "agent-skills",
+    "vibe-coding",
+    "software-development"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Vibe Skills",
+    "shortDescription": "이슈 트래커 기반 바이브코딩 스킬",
+    "longDescription": "이슈 트래커에 에이전트의 조사 및 결정사항을 기록하여 이후 작업 및 사람이 과거 맥락을 탐색할 수 있게 지원한다. 목표 설정, 계획, 구현, 디버깅, 리팩토링, 모델링 및 코드 리뷰에 따른 각각의 진입점용 스킬셋이 포함되어 있다.",
+    "developerName": "둥실 DUNGSIL",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/dungsil-ai/vibe",
+    "brandColor": "#2563EB",
+    "composerIcon": "./assets/cloud-icon.svg",
+    "logo": "./assets/cloud-icon.svg",
+    "defaultPrompt": [
+      "$vibe-goal을 사용해 개발 목표를 명확히 정리해줘.",
+      "$vibe-plan을 사용해 구현 계획을 만들어줘.",
+      "$vibe-review를 사용해 코드 변경 사항을 검토해줘."
+    ]
+  }
+}
