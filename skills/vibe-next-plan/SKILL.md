@@ -8,6 +8,8 @@ metadata:
 
 # Investigating What to Build Next
 
+**Korean repository text:** When this skill writes or revises Korean documents, commit messages, issues, pull requests, reviews, or comments, apply `/vibe-docs` before saving or sending them. `/vibe-docs` controls wording only and does not expand this skill's authority or external side effects.
+
 **Directional Investigation**: Reads the codebase, discovers what it wants to become, and presents grounded options for maintainers to act upon. This skill produces **decisions rather than deliverables**, handing off to planning skills.
 
 Investigation is **read-only on source code**. Never create persistent files — not under `src/`, `.agents/plans/`, or `docs/agents/out-of-scope/`. Output is a report in dialogue; downstream planning skills own all files. No edits, modifications, or "quick touch-ups".

@@ -6,6 +6,8 @@ disable-model-invocation: true
 
 # Planning Work
 
+**Korean repository text:** When this skill writes or revises Korean documents, commit messages, issues, pull requests, reviews, or comments, apply `/vibe-docs` before saving or sending them. `/vibe-docs` controls wording only and does not expand this skill's authority or external side effects.
+
 Moves from a request or loose idea to agent-executable tickets in one flow. Four stages: **Triage** (judges incoming external requests; can end execution), **Grill** (sharpens through interviews, recording decisions into docs), **Spec** (synthesizes established decisions), and **Tickets** (slices into tracer-bullet units with blocking edges).
 
 Issue tracker and triage label vocabularies must already be provided — run `/vibe-init` if missing.

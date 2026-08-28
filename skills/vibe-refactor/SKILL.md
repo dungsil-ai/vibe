@@ -6,6 +6,8 @@ disable-model-invocation: true
 
 # Improving Codebase Architecture
 
+**Korean repository text:** When this skill writes or revises Korean documents, commit messages, issues, pull requests, reviews, or comments, apply `/vibe-docs` before saving or sending them. `/vibe-docs` controls wording only and does not expand this skill's authority or external side effects.
+
 Surfaces architectural friction and proposes **deepening opportunities** — refactorings that turn shallow modules into deep modules. The goal is testability and ease of navigation for AI and developers.
 
 This command is grounded in the project's domain model and operates on a shared design vocabulary:

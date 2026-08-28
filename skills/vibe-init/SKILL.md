@@ -6,6 +6,8 @@ disable-model-invocation: true
 
 # Vibe Init
 
+**Korean repository text:** When this skill writes or revises Korean documents, commit messages, issues, pull requests, reviews, or comments, apply `/vibe-docs` before saving or sending them. `/vibe-docs` controls wording only and does not expand this skill's authority or external side effects.
+
 Scaffolds repository-specific configurations required by engineering skills:
 
 - **Issue Tracker** — Where issues live (defaults to GitHub; local Markdown supported out of the box)

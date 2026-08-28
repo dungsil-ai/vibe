@@ -5,6 +5,8 @@ description: Reviews changes after a fixed point against Standards and Spec, add
 
 # Reviewing Changes
 
+**Korean repository text:** When this skill writes or revises Korean documents, commit messages, issues, pull requests, reviews, or comments, apply `/vibe-docs` before saving or sending them. `/vibe-docs` controls wording only and does not expand this skill's authority or external side effects.
+
 A separated review of the diff between `HEAD` and a user-provided fixed point:
 
 - **Standards** — Does the code adhere to this repository's documented coding standards?

@@ -8,6 +8,8 @@ metadata:
 
 # Driving a Goal to Completion
 
+**Korean repository text:** When this skill writes or revises Korean documents, commit messages, issues, pull requests, reviews, or comments, apply `/vibe-docs` before saving or sending them. `/vibe-docs` controls wording only and does not expand this skill's authority or external side effects.
+
 Execute a single goal through review to committed code in one run. This skill **orchestrates**; it does not implement directly, and does not plan directly. It may invoke or route to `/vibe-plan` and `/vibe-deep-plan`, but **does not perform planning work itself** — triage, exploration, spec drafting/editing, decomposition, ticket design, and ticket publishing are the responsibilities of those skills. Planning happens via `/vibe-plan` (or `/vibe-deep-plan` first if the effort is too large), each ticket is implemented by a **fresh subagent** running `/vibe-implement`, and the entire goal finishes with standard reviews plus a canonical requirement quality gate when `/rq` is available.
 
 Each ticket gets its own **assigned branch and worktree** — a ticket-specific workspace isolated from all other tickets. Different tickets can run in parallel; the lifecycle of implementation → review → finding fixes → resumption for the same ticket reuses that ticket's exact assigned workspace. The goal maintains a single **integration workspace** separate from assigned workspaces: reviewed ticket results are replayed here for whole-goal verification, and ticket subagents do not commit directly to it. Resumption reuses recorded integration workspaces and each ticket's recorded assigned workspace using exact records — never opening a second one for the same goal or ticket.

@@ -5,6 +5,8 @@ description: Diagnostic loop for difficult bugs and performance regressions. Use
 
 # Vibe Debug
 
+**Korean repository text:** When this skill writes or revises Korean documents, commit messages, issues, pull requests, reviews, or comments, apply `/vibe-docs` before saving or sending them. `/vibe-docs` controls wording only and does not expand this skill's authority or external side effects.
+
 Rules for difficult bugs. Steps are skipped only with explicit justification.
 
 When exploring the codebase, read `CONTEXT.md` (if present) to build a clear model of relevant modules, and check ADRs for the area you intend to modify.

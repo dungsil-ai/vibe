@@ -6,6 +6,8 @@ disable-model-invocation: true
 
 # Task Implementation
 
+**Korean repository text:** When this skill writes or revises Korean documents, commit messages, issues, pull requests, reviews, or comments, apply `/vibe-docs` before saving or sending them. `/vibe-docs` controls wording only and does not expand this skill's authority or external side effects.
+
 Implement work specified by the user in a spec or ticket.
 
 ## Planning Boundary

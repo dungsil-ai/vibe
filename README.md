@@ -12,8 +12,11 @@ pnpm dlx skills add dungsil-ai/vibe -g -y --skill *
 
 ## 출처
 
+`vibe-docs`는 Agent Skill 작업의 한국어 문서, 커밋 메시지, 이슈와 PR을 작성하고 검토합니다. `fluent-korean`의 전체 지침은 `vibe-docs` 안에 직접 포함되어 있으므로 외부 문서를 읽지 않아도 됩니다.
+
 | 스킬 | 출처 |
 | --- | --- |
+| [vibe-docs](skills/vibe-docs) | [snflkd/fluent-korean](https://github.com/snflkd/fluent-korean)의 코딩 버전 (MIT) |
 | [vibe-init](skills/vibe-init) | [mattpocock/skills](https://github.com/mattpocock/skills/)의 `setup-matt-pocock-skills` (MIT) |
 | [vibe-goal](skills/vibe-goal) | 이 프로젝트에서 추가 |
 | [vibe-plan](skills/vibe-plan) | [mattpocock/skills](https://github.com/mattpocock/skills/)의 `grill-with-docs`, `to-spec`, `to-tickets`, `triage` (MIT) |
