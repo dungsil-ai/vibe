@@ -20,10 +20,11 @@ Edit the right column to match the vocabulary actually used in your tracker.
 
 ## Planning Labels
 
-Used by `vibe-deep-plan` when charting decision maps. Map labels designate the effort's index issue, while type labels record how decision tickets get resolved.
+Used by `vibe-plan` and `vibe-deep-plan` to mark planning artifacts. The plan type marks hosted spec/plan issues and decision maps. Map status marks an effort index as in progress, while decision types record how child tickets get resolved.
 
 | Canonical Role | Tracker Label    | Meaning                                                             |
 | -------------- | ---------------- | ------------------------------------------------------------------- |
+| plan           | `유형:계획`       | Parent planning artifact: a spec/plan issue or decision map         |
 | map            | `상태:초안`       | This issue is a decision map — index of effort, not actionable task |
 | research       | `유형:조사`       | Resolved by background subagent reading primary sources             |
 | prototype      | `유형:프로토타입` | Resolved by throwaway artifact to gauge reactions                   |
@@ -32,6 +33,6 @@ Used by `vibe-deep-plan` when charting decision maps. Map labels designate the e
 
 ## Two Axes
 
-`상태:` answers "what state is this in", while `유형:` answers "how does this resolve". An issue carries **at most one label per axis**.
+`상태:` answers "what state is this in", while `유형:` answers "what planning artifact is this, or how does this decision resolve". An issue carries **at most one label per axis**.
 
-`상태:초안` resides on the same axis as triage statuses and therefore excludes triage statuses. A decision map is an in-progress planning artifact rather than a request awaiting evaluation, and is not subject to triage. For the same reason, decision tickets on a map carry only `유형:` labels. Triage statuses apply again only after the map finishes and `vibe-plan` publishes implementation tickets. Skills speak in canonical roles; the right column of the tables above is the only label vocabulary. Do not translate those strings into English (`status:draft`, `type:research`, …).
+A hosted spec/plan issue carries `유형:계획` together with the appropriate triage status. A decision map carries `유형:계획` together with `상태:초안`. Because `상태:초안` shares the state axis with triage statuses, a map does not carry a triage status. Decision tickets on the map carry one of the four decision `유형:` labels and no triage status. Triage statuses apply to implementation tickets only after the map finishes and `vibe-plan` publishes them. Skills speak in canonical roles; the right column of the tables above is the only label vocabulary. Do not translate those strings into English (`status:draft`, `type:plan`, `type:research`, …).

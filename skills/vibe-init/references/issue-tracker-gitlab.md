@@ -38,7 +38,7 @@ Run `glab issue view <number> --comments`.
 
 Used by `/vibe-deep-plan`. A **map** is a single issue with tickets as **sub-issues**.
 
-- **Map**: Single issue labeled `상태:초안` with Notes / Decisions-so-far / Fog body: `glab issue create --label "상태:초안"`. (In GitLab tiers with native Epics, Epics can replace maps. Labeled issues work anywhere.)
+- **Map**: Single issue labeled `상태:초안` and `유형:계획` with Notes / Decisions-so-far / Fog body: `glab issue create --label "상태:초안" --label "유형:계획"`. (In GitLab tiers with native Epics, Epics can replace maps. Labeled issues work anywhere.)
 - **Child Tickets**: Issues with `Part of #<map>` at top of description, labeled `유형:조사` / `유형:프로토타입` / `유형:인터뷰` / `유형:작업`. Assign to the acting developer upon claiming.
 - **Blocking**: Add via the links API — `glab api --method POST "projects/:id/issues/<child>/links" -F target_project_id=<id> -F target_issue_iid=<blocker> -F link_type=is_blocked_by`. **Do not use quick actions**: `/blocked_by` is unrecognized on tiers without native blocking and posts as a literal comment. If that call returns `HTTP 400 link_type does not have a valid value`, the instance has no native blocking (Free/CE) — record blockers as a `#<n>` list in the description's "Prerequisites" section only. A ticket unblocks when all blocking issues close.
 - **Frontier Query**: Fetch `glab issue list -F json` restricted to map children, excluding those with open blockers (native `is_blocked_by` links to open issues via `glab api projects/:id/issues/:iid/links` or open issues in the "Prerequisites" section) or assignees, ordered by map position.

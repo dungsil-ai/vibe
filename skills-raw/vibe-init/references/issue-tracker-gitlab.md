@@ -38,7 +38,7 @@ GitLab 이슈를 생성한다.
 
 `/vibe-deep-plan`이 사용한다. **맵**은 티켓을 **하위 이슈**로 가진 단일 이슈이다.
 
-- **맵**: `상태:초안` 라벨이 붙은 단일 이슈로 Notes / Decisions-so-far / Fog 본문을 가진다. `glab issue create --label "상태:초안"`. (네이티브 에픽이 있는 GitLab 티어에서는 에픽이 맵을 대신할 수 있다. 라벨이 붙은 이슈는 어디서든 작동한다.)
+- **맵**: `상태:초안`과 `유형:계획` 라벨이 붙은 단일 이슈로 Notes / Decisions-so-far / Fog 본문을 가진다. `glab issue create --label "상태:초안" --label "유형:계획"`. (네이티브 에픽이 있는 GitLab 티어에서는 에픽이 맵을 대신할 수 있다. 라벨이 붙은 이슈는 어디서든 작동한다.)
 - **하위 티켓**: 설명 맨 위에 `Part of #<map>`을 가지고 라벨 `유형:조사` / `유형:프로토타입` / `유형:인터뷰` / `유형:작업`을 단 이슈. 인계되면 티켓을 주도하는 개발자에게 할당한다.
 - **차단**: 링크 API로 추가한다 — `glab api --method POST "projects/:id/issues/<child>/links" -F target_project_id=<id> -F target_issue_iid=<blocker> -F link_type=is_blocked_by`. **퀵 액션을 쓰지 않는다**: `/blocked_by`는 네이티브 차단이 없는 티어에서 인식되지 않아 본문 그대로 댓글로 올라간다. 위 호출이 `HTTP 400 link_type does not have a valid value`를 내면 그 인스턴스는 네이티브 차단이 없으므로(Free/CE), 설명의 `선행 작업` 섹션에 `#<n>` 목록으로만 기록한다. 모든 차단 이슈가 닫히면 티켓이 차단 해제된다.
 - **프론티어 질의**: 맵의 하위로 제한한 `glab issue list -F json`을 가져와 열린 차단 — 열린 이슈에 대한 네이티브 `is_blocked_by` 링크(`glab api projects/:id/issues/:iid/links`) 또는 `선행 작업` 섹션의 열린 이슈 — 이나 담당자가 있는 것을 빼고, 맵 순서가 빠른 것이 우선한다.

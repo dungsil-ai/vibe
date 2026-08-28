@@ -29,7 +29,7 @@ disable-model-invocation: true
 - `docs/agents/` — 이 스킬의 이전 출력이 이미 있는가?
 - `.agents/plans/` — 로컬 마크다운 이슈 트래커 관행이 이미 쓰이고 있다는 신호
 - `docs/agents/out-of-scope/`(또는 기존 `.agents/out-of-scope/`) — 거부된 요청 지식베이스가 이미 쓰이고 있다는 신호
-- `vibe-plan` / `vibe-deep-plan`이 설치되어 있는가? (이 스킬 폴더 옆의 스킬 폴더, 또는 사용 가능 스킬 목록의 이름). 이들은 라벨 어휘를 소비한다 — `vibe-plan`은 트리아지 상태를, `vibe-deep-plan`은 계획 라벨을 — 그러므로 이것이 B절이 실행될지를 결정한다.
+- `vibe-plan` / `vibe-deep-plan`이 설치되어 있는가? (이 스킬 폴더 옆의 스킬 폴더, 또는 사용 가능 스킬 목록의 이름). 이들은 라벨 어휘를 소비한다 — 둘 다 계획 유형을, `vibe-plan`은 트리아지 상태를, `vibe-deep-plan`은 지도 상태와 결정 유형을 쓴다 — 그러므로 이것이 B절이 실행될지를 결정한다.
 - 모노레포 신호 — `pnpm-workspace.yaml`, `package.json`의 `workspaces` 필드, 또는 자체 `src/`를 가진 채워진 `packages/*`. 진짜로 큰 다중 패키지 저장소에서만 제시한다. 없으면 단일 컨텍스트이며, 이는 거의 모든 저장소에 해당한다.
 
 ### 2. 발견한 것을 제시하고 묻기
@@ -60,7 +60,8 @@ disable-model-invocation: true
 기본값은 한국어, 축별 접두사:
 
 - **트리아지 상태**(`vibe-plan`) — `상태:분류필요` (needs-triage), `상태:정보필요` (needs-info), `상태:에이전트작업` (ready-for-agent), `상태:사람작업` (ready-for-human), `상태:처리안함` (wontfix)
-- **계획 라벨**(`vibe-deep-plan`) — 결정 맵용 `상태:초안`, 그리고 네 티켓 유형용 `유형:조사` / `유형:프로토타입` / `유형:인터뷰` / `유형:작업`
+- **계획 유형**(`vibe-plan` 또는 `vibe-deep-plan`) — 호스트형 명세/계획 이슈와 결정 맵용 `유형:계획`
+- **결정 지도 라벨**(`vibe-deep-plan`) — 결정 맵 상태용 `상태:초안`, 그리고 네 결정 티켓 유형용 `유형:조사` / `유형:프로토타입` / `유형:인터뷰` / `유형:작업`
 
 설치된 스킬의 계열만 작성한다. **예**이면 그대로 작성한다. 사용자가 아니라고 할 때만 — 보통 트래커가 이미 다른 이름을 쓰기 때문(예: needs-triage를 `bug:triage`) — 중복을 만드는 대신 기존 라벨을 적용하도록 재정의를 모은다.
 

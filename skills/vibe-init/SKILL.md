@@ -29,7 +29,7 @@ Inspect the current repository to determine starting state. Read what exists; do
 - `docs/agents/` — Does prior output from this skill already exist?
 - `.agents/plans/` — Signal that local Markdown issue tracker conventions are already in use
 - `docs/agents/out-of-scope/` (or preexisting `.agents/out-of-scope/`) — Signal that rejected request knowledge base is in use
-- Are `vibe-plan` / `vibe-deep-plan` installed? (Skill folders beside this folder, or names in available skills list). They consume label vocabulary — `vibe-plan` for triage statuses, `vibe-deep-plan` for planning labels — determining whether Section B runs.
+- Are `vibe-plan` / `vibe-deep-plan` installed? (Skill folders beside this folder, or names in available skills list). They consume label vocabulary — both use the plan type, `vibe-plan` uses triage statuses, and `vibe-deep-plan` uses map status and decision types — determining whether Section B runs.
 - Monorepo signals — `pnpm-workspace.yaml`, `workspaces` field in `package.json`, or populated `packages/*` with own `src/`. Present only in genuinely large multi-package repositories. Absence implies single context, matching nearly all repositories.
 
 ### 2. Present Findings and Ask
@@ -60,7 +60,8 @@ If either is installed, ask exactly one question:
 Default values use Korean / prefixed axes:
 
 - **Triage Status** (`vibe-plan`) — `상태:분류필요` (needs-triage), `상태:정보필요` (needs-info), `상태:에이전트작업` (ready-for-agent), `상태:사람작업` (ready-for-human), `상태:처리안함` (wontfix)
-- **Planning Labels** (`vibe-deep-plan`) — `상태:초안` for decision maps, and `유형:조사` / `유형:프로토타입` / `유형:인터뷰` / `유형:작업` for four ticket types
+- **Plan Type** (`vibe-plan` or `vibe-deep-plan`) — `유형:계획` for hosted spec/plan issues and decision maps
+- **Decision-Map Labels** (`vibe-deep-plan`) — `상태:초안` for decision-map status, and `유형:조사` / `유형:프로토타입` / `유형:인터뷰` / `유형:작업` for four decision-ticket types
 
 Write only families for installed skills. If **Yes**, write as-is. Only when user says no — usually because the tracker already uses different names (e.g. `bug:triage` for needs-triage) — collect overrides to map existing labels instead of creating duplicates.
 
