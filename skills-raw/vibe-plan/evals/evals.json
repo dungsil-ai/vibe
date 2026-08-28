@@ -88,13 +88,13 @@
     {
       "id": "adr-commit-before-publish",
       "prompt": "docs/agents/issue-tracker.md가 아직 없어. vibe-plan에서 필요한 vibe-init 설정부터 하고 계획을 계속해줘. 질문은 모두 끝났고, 알림 전달은 직접 전송과 outbox를 비교한 뒤 장애 때 유실을 막기 위해 outbox로 정했어. 나중에 바꾸기 어렵고 코드만 봐서는 이유를 알 수 없어. 이 결정으로 GitHub 스펙 이슈를 만들어줘. README.md에는 시작 전부터 내 변경이 있어.",
-      "expected_output": "vibe-init 설정 문서를 먼저 작성하고 그 설정만 commit한 뒤 vibe-plan으로 돌아온다. Stage 2로 바로 들어가더라도 확정된 outbox 선택이 ADR 세 조건을 만족하는지 확인하고 새 ADR을 별도 commit한다. 두 commit SHA를 확인한 뒤에만 GitHub 스펙 이슈를 게시하고, 기존 README.md 변경은 섞지 않는다.",
+      "expected_output": "vibe-init 설정 문서를 먼저 작성하고 그 설정만 commit 및 push한 뒤 remote SHA를 확인하고 vibe-plan으로 돌아온다. Stage 2로 바로 들어가더라도 확정된 outbox 선택이 ADR 세 조건을 만족하는지 확인하고 새 ADR을 별도 commit 및 push한다. 두 commit의 remote SHA를 확인한 뒤에만 GitHub 스펙 이슈를 게시하고, 기존 README.md 변경은 섞지 않는다.",
       "assertions": [
-        "출력은 vibe-init이 만든 설정 문서를 먼저 commit하고 SHA를 확인한 뒤 vibe-plan으로 돌아오며, 그전에는 원격 label이나 이슈를 바꾸지 않는다.",
+        "출력은 vibe-init이 만든 설정 문서를 먼저 commit 및 push하고 remote SHA를 확인한 뒤 vibe-plan으로 돌아오며, 그전에는 원격 label이나 이슈를 바꾸지 않는다.",
         "출력은 Stage 1을 거치지 않고 Stage 2로 바로 들어가도 확정된 결정에 ADR 조건을 적용하며, 같은 결정을 담은 기존 ADR이 없을 때 기록한다.",
         "출력은 git add .을 쓰지 않고 이번 실행의 CONTEXT.md 또는 ADR 경로만 stage하며 기존 README.md 변경을 commit에 섞지 않는다.",
-        "출력은 설정 commit과 모델링 문서 commit의 staged diff 및 SHA를 모두 확인한 뒤에만 GitHub 스펙 이슈나 label을 만들거나 수정한다.",
-        "출력은 commit 실패나 안전하게 나눌 수 없는 기존 변경이 있으면 원격 게시 전에 멈추고, 별도 요청 없이 push하지 않는다."
+        "출력은 설정 commit과 모델링 문서 commit을 force 없이 각각 push하고 두 remote SHA를 확인한 뒤에만 GitHub 스펙 이슈나 label을 만들거나 수정한다.",
+        "출력은 commit, push, remote SHA 확인이 실패하거나 기존 변경을 안전하게 나눌 수 없으면 원격 게시 전에 멈춘다."
       ]
     },
     {

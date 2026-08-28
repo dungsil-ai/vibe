@@ -54,12 +54,12 @@
     {
       "id": "commit-before-remote",
       "prompt": "GitHub 저장소를 vibe-init으로 설정해줘. local 설정 문서를 만든 뒤 필요한 한국어 label도 GitHub에 만들어줘. 시작 전부터 src/app.ts에는 내 변경이 있어.",
-      "expected_output": "시작 상태를 기록하고 local 설정 문서를 작성한 뒤, 이번 실행의 정확한 설정 파일만 stage하고 커밋 SHA를 확인한다. 기존 src/app.ts 변경은 커밋에 넣지 않는다. 커밋이 성공한 뒤에만 GitHub label을 만든다.",
+      "expected_output": "시작 상태를 기록하고 local 설정 문서를 작성한 뒤, 이번 실행의 정확한 설정 파일만 stage하고 커밋 SHA를 확인한다. 기존 src/app.ts 변경은 커밋에 넣지 않는다. 현재 브랜치를 일반 push하고 remote SHA를 확인한 뒤에만 GitHub label을 만든다.",
       "assertions": [
         "출력은 편집 전에 git status로 기존 변경 경로를 기록하고, 이번 실행의 설정 파일만 정확한 경로로 stage한다.",
         "출력은 git add .을 쓰지 않고 기존 src/app.ts 변경을 staged diff나 commit에 섞지 않는다.",
-        "출력은 local 설정 commit과 SHA 확인이 끝나기 전에 GitHub label 생성이나 다른 원격 변경을 하지 않는다.",
-        "출력은 commit 또는 확인이 실패하면 원격 변경 전에 멈추며, 별도 요청 없이 push하지 않는다."
+        "출력은 local 설정 commit 뒤 현재 브랜치를 force 없이 push하고, remote branch에 commit SHA가 반영되었는지 확인한다.",
+        "출력은 commit, push 또는 remote SHA 확인이 실패하면 GitHub label 생성이나 다른 원격 변경 전에 멈춘다."
       ]
     }
   ]

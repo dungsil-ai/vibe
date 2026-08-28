@@ -24,6 +24,7 @@ Inspect the current repository to determine starting state. Read what exists; do
 
 - `git remote -v` and `.git/config` — Is it a GitHub repository? Which repository?
 - `git status --short` — Which changes already exist before this run? Record exact paths so they are not mixed with this skill's changes later.
+- Current branch and upstream difference — Which branch must be pushed for a hosted tracker? Are any commits already unpushed before this run?
 - `AGENTS.md` at repo root — Does it exist? Does it already have an `## Agent skills` section?
 - `CONTEXT.md` and `CONTEXT-MAP.md` at repo root
 - `docs/adr/` and `src/*/docs/adr/` directories
@@ -125,9 +126,11 @@ When this is a Git repository and this run changed files, commit this skill's ch
 2. Stage only exact files created or changed by this run; never use `git add .` or a broad path.
 3. If a target file contains preexisting user changes, separate only this run's hunks when that can be done safely. Otherwise do not commit; report the conflicting path and ask the user.
 4. Confirm the staged diff contains only this run's setup changes, then create one commit using the repository's existing message style.
-5. Verify the commit SHA. If commit or verification fails, stop before creating or editing GitHub/GitLab labels or making any other issue-tracker mutation.
+5. Verify the commit SHA. Stop if commit or verification fails.
+6. For GitHub, GitLab, or another hosted tracker, push the current branch normally before creating a label or issue, then verify that the remote branch contains the commit SHA. Never force-push.
+7. If commits were already unpushed during exploration, this push would publish them too. Do not push automatically; show the commits that would be included and ask the user.
 
-If no file changed or this is not a Git repository, skip the commit and state why. Pushing is outside this skill's scope.
+If no file changed or this is not a Git repository, skip the commit and state why. If the required push or remote-SHA verification fails, do not create or edit GitHub/GitLab labels or make any other issue-tracker mutation.
 
 ### 6. Done
 

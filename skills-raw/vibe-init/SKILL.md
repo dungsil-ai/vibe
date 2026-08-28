@@ -24,6 +24,7 @@ disable-model-invocation: true
 
 - `git remote -v`와 `.git/config` — GitHub 저장소인가? 어느 저장소인가?
 - `git status --short` — 이 실행 전에 이미 있던 변경은 무엇인가? 나중에 이 스킬의 변경과 섞지 않도록 정확한 경로를 기록한다.
+- 현재 브랜치와 upstream의 차이 — 원격 트래커를 사용할 때 어느 브랜치를 push해야 하는가? 이 실행 전에 이미 push되지 않은 commit이 있는가?
 - 저장소 루트의 `AGENTS.md` — 있는가? 이미 `## Agent skills` 섹션이 있는가?
 - 저장소 루트의 `CONTEXT.md`와 `CONTEXT-MAP.md`
 - `docs/adr/`과 `src/*/docs/adr/` 디렉터리
@@ -125,9 +126,11 @@ Git 저장소이고 이 실행이 파일을 바꿨으면, 다음 원격 변경�
 2. `git add .`이나 넓은 경로를 쓰지 않고, 이 실행에서 만든 또는 바꾼 정확한 파일만 stage한다.
 3. 대상 파일에 기존 사용자 변경이 섞여 있으면, 이 실행의 hunk만 안전하게 stage할 수 있을 때만 분리한다. 안전하게 나눌 수 없으면 커밋하지 말고 충돌한 경로를 알린 뒤 사용자에게 묻는다.
 4. staged diff가 이 실행의 설정 변경만 담는지 확인하고, 저장소의 기존 형식에 맞는 한 개의 커밋을 만든다.
-5. commit SHA를 확인한다. 커밋이나 확인이 실패하면 멈추고, GitHub/GitLab 라벨 생성·수정이나 다른 이슈 트래커 변경을 하지 않는다.
+5. commit SHA를 확인한다. 커밋이나 확인이 실패하면 멈춘다.
+6. GitHub, GitLab 또는 다른 원격 트래커를 사용한다면, 라벨이나 이슈를 등록하기 전에 현재 브랜치를 일반 push하고 remote branch에 commit SHA가 반영되었는지 확인한다. force push는 하지 않는다.
+7. 탐색할 때부터 push되지 않은 기존 commit이 있었다면, 이 스킬의 push가 그 commit도 함께 게시한다. 자동으로 push하지 말고 포함될 commit을 보여준 뒤 사용자에게 묻는다.
 
-변경할 파일이 없거나 Git 저장소가 아니면 커밋을 만들지 말고 그 이유를 알린다. push는 이 스킬의 범위가 아니다.
+변경할 파일이 없거나 Git 저장소가 아니면 커밋을 만들지 말고 그 이유를 알린다. 필수 push나 remote SHA 확인이 실패하면 GitHub/GitLab 라벨 생성·수정이나 다른 이슈 트래커 변경을 하지 않는다.
 
 ### 6. 완료
 
