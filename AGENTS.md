@@ -10,4 +10,4 @@ PLEASE STRICTLY FOLLOW THE BEST PRACTICES FOR SKILL: https://platform.claude.com
 
 ## Korean Writing Rule
 
-When a task creates or updates an Agent Skill, or writes related documents, commit messages, issues, or pull requests, use the local [`vibe-docs`](skills-raw/vibe-docs/SKILL.md) skill. It contains the complete Korean writing rules and must not depend on an external document at runtime.
+Before drafting Korean Agent Skills, related documents, commit messages, issues, or pull requests, read the local [`vibe-docs`](skills-raw/vibe-docs/SKILL.md) skill and follow its required application order. Preserve established domain terms exactly; do not translate, generalize, or neutralize them. The skill contains the complete Korean writing rules and must not depend on an external document at runtime.

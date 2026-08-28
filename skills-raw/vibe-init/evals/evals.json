@@ -61,6 +61,17 @@
         "출력은 local 설정 commit 뒤 현재 브랜치를 force 없이 push하고, remote branch에 commit SHA가 반영되었는지 확인한다.",
         "출력은 commit, push 또는 remote SHA 확인이 실패하면 GitHub label 생성이나 다른 원격 변경 전에 멈춘다."
       ]
+    },
+    {
+      "id": "korean-writing-rule-preserves-domain-terms",
+      "prompt": "GitHub 저장소를 설정해줘. CONTEXT.md에서 `Generation-safe Session`을 도메인 용어로 확정했어. 한국어 이슈를 만들 때도 이 표기를 유지해야 해.",
+      "expected_output": "AGENTS.md와 docs/agents/issue-tracker.md가 한국어 초안 전에 설치된 vibe-docs 스킬을 읽도록 안내하고, `Generation-safe Session`처럼 확정된 도메인 용어를 번역·일반화·중립화하지 않도록 기록한다.",
+      "assertions": [
+        "출력은 AGENTS.md의 ## Agent skills 블록에 한국어 초안 전 vibe-docs 적용 규칙을 기록한다.",
+        "출력은 docs/agents/issue-tracker.md에도 한국어 이슈와 댓글의 초안 전 vibe-docs 적용 규칙을 기록한다.",
+        "출력은 CONTEXT.md, ADR, docs/agents에 확정된 도메인 용어의 원래 표기를 유지하며 번역, 일반화 또는 중립화하지 않는다고 기록한다.",
+        "출력은 다른 개별 스킬 파일을 편집하지 않는다."
+      ]
     }
   ]
 }

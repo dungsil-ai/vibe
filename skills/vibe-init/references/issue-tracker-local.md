@@ -2,6 +2,10 @@
 
 Issues and specifications (specs; also known as PRDs) in this repository are managed as Markdown files inside `.agents/plans/`.
 
+## Korean writing
+
+Before drafting Korean specifications, issues, or comments, read the installed `vibe-docs` skill and follow its `Required application order`. Preserve the exact form of domain terms and label strings defined in `CONTEXT.md`, relevant ADRs, and `docs/agents/`; do not translate, generalize, or neutralize them.
+
 ## Rules
 
 - One directory per feature: `.agents/plans/<feature-slug>/`

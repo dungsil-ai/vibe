@@ -8,8 +8,6 @@ metadata:
 
 # Vibe Handoff
 
-**Korean repository text:** When this skill writes or revises Korean documents, commit messages, issues, pull requests, reviews, or comments, apply `/vibe-docs` before saving or sending them. `/vibe-docs` controls wording only and does not expand this skill's authority or external side effects.
-
 Write a handoff document summarizing the current conversation so a fresh agent can continue the work. Save it to the user's OS temporary directory, not in the current workspace.
 
 Include a "Suggested Skills" section in the document, recommending skills the incoming agent should invoke.

@@ -42,6 +42,8 @@ Multi-context repository (when `CONTEXT-MAP.md` is at root):
 
 When naming domain concepts in outputs (issue titles, refactor proposals, hypotheses, test names), use terms defined in `CONTEXT.md` as-is. Do not drift into synonyms that the glossary explicitly avoids.
 
+Do not translate, transliterate, explain away, generalize, neutralize, or replace a term with a synonym, whether its form is Korean, English, or mixed. Protect narrower forms established by relevant ADRs or `docs/agents/` in the same way.
+
 If a needed concept is not yet in the glossary, that is a signal — either you invented vocabulary the project does not use (rethink), or an actual gap exists (record in `/vibe-modeling`).
 
 ## Flagging ADR Conflicts

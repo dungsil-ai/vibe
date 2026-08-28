@@ -6,8 +6,6 @@ disable-model-invocation: true
 
 # Charting a Decision Map
 
-**Korean repository text:** When this skill writes or revises Korean documents, commit messages, issues, pull requests, reviews, or comments, apply `/vibe-docs` before saving or sending them. `/vibe-docs` controls wording only and does not expand this skill's authority or external side effects.
-
 A loose idea has arrived — too large for a single agent session, shrouded in fog. The path from here to the **Destination** is not yet visible. Wayfinding is not rushing toward the destination; it is finding the path. This skill charts the path as a **shared map** on the repository issue tracker, then works through its **decision tickets** — questions whose resolution is a decision, not an execution build step — one at a time until the path is clear.
 
 The destination varies by effort, and naming it is the first act of charting — it shapes every ticket. It may be a spec to hand off for iteration, decisions to lock before planning begins, or an in-place change like a data structure migration. Maps are domain-agnostic — engineering tasks, course content, or whatever fits the shape.

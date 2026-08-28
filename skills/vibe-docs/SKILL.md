@@ -18,7 +18,34 @@ Preserve repository templates and structural rules, such as title formats and co
 
 This skill only governs writing and review. It does not grant authority to create commits, publish issues or pull requests, or send comments. The calling skill and the user's request control those side effects.
 
-Before saving or sending an output, review it once against the complete rules below. Do not replace the complete rules with a summary.
+## Required application order
+
+1. Read every rule in this file **before** drafting any Korean output.
+2. Apply every rule from the first draft, including titles, bodies, lists, and comments.
+3. After completing the final draft, review it against every rule again immediately before any save, commit, publish, or send action.
+4. Pass only the reviewed final text to the real command.
+
+If this skill is read after drafting has started, do not treat the existing text as compliant; review it again from the start against every rule. Reading it before drafting does not allow the final review to be skipped. When producing multiple issues or comments in one run, review every title and body separately. Do not replace the complete rules with a summary.
+
+The text fails the review if any of these conditions apply:
+
+- Unneeded English wording hides the meaning of normal Korean prose.
+- A particle, predicate, or sentence ending is missing and breaks the meaning.
+- A title or list awkwardly joins Korean and English nouns.
+- Only some items in a multi-item output were reviewed.
+
+Preserve code identifiers, commands, API names, file paths, quotations, and technical terms that must stay in their original form. Do not extend this exception to normal English wording.
+
+## Protect established domain terms
+
+Before drafting, check domain terms established by the user and by repository sources such as `CONTEXT.md`, relevant ADRs, and issue tracker documents. Treat these terms as project contracts, not wording choices.
+
+- Keep the exact form, whether it is Korean, English, or mixed.
+- Do not translate, transliterate, explain away, generalize, neutralize, or replace it with a synonym for smoother prose.
+- Change it only when a source defines a new name or the user requests the change.
+- If sources conflict, report the conflict instead of silently choosing a replacement.
+
+This section overrides general vocabulary rules below. An established domain term does not fail the "unneeded English wording" check above.
 
 ## Complete Korean writing rules
 

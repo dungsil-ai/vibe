@@ -2,6 +2,10 @@
 
 이 저장소의 이슈와 PRD는 GitLab 이슈로 관리된다. 모든 작업에 [`glab`](https://gitlab.com/gitlab-org/cli) CLI를 사용한다.
 
+## 한국어 작성
+
+한국어 이슈, MR, 리뷰 또는 댓글의 초안을 쓰기 전에 설치된 `vibe-docs` 스킬을 읽고 `필수 적용 순서`를 따른다. `CONTEXT.md`, 관련 ADR, `docs/agents/`에 정의된 도메인 용어와 라벨 문자열은 번역하거나 일반화하거나 중립화하지 않고 원래 표기를 그대로 쓴다.
+
 ## 규칙
 
 - **이슈 생성**: `glab issue create --title "..." --description "..."`. 여러 줄 설명에는 heredoc을 쓴다. `--description -`을 주면 편집기가 열린다.

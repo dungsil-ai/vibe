@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Vibe Init
 
-**Korean repository text:** When this skill writes or revises Korean documents, commit messages, issues, pull requests, reviews, or comments, apply `/vibe-docs` before saving or sending them. `/vibe-docs` controls wording only and does not expand this skill's authority or external side effects.
+**Korean repository text:** Before drafting Korean documents, commit messages, issues, pull requests, reviews, or comments, read the installed `vibe-docs` skill and follow its `Required application order`. `vibe-docs` controls wording only and does not expand this skill's authority or external side effects.
 
 Scaffolds repository-specific configurations required by engineering skills:
 
@@ -95,6 +95,10 @@ Block:
 ```markdown
 ## Agent skills
 
+### Korean repository text
+
+Before drafting Korean documents, commit messages, issues, pull requests, reviews, or comments, read the installed `vibe-docs` skill and follow its `Required application order`. Preserve the exact form of domain terms and label strings defined in `CONTEXT.md`, relevant ADRs, and `docs/agents/`.
+
 ### Issue tracker
 
 [One-line summary of where issues are tracked]. See `docs/agents/issue-tracker.md`.
@@ -118,7 +122,7 @@ Then write documentation files using seed templates in this skill folder as star
 - [triage-labels.md](references/triage-labels.md) — Label mapping (only when planning skills installed)
 - [domain.md](references/domain.md) — Domain doc consumption rules + structure
 
-For "Other" issue trackers, author `docs/agents/issue-tracker.md` from scratch using user descriptions.
+For "Other" issue trackers, author `docs/agents/issue-tracker.md` from scratch using user descriptions. Include the same Korean-writing and domain-term protection rule used by the seed templates above.
 
 ### 5. Commit
 

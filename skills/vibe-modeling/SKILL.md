@@ -5,8 +5,6 @@ description: Defines domain terms and records significant architectural decision
 
 # Vibe Modeling
 
-**Korean repository text:** When this skill writes or revises Korean documents, commit messages, issues, pull requests, reviews, or comments, apply `/vibe-docs` before saving or sending them. `/vibe-docs` controls wording only and does not expand this skill's authority or external side effects.
-
 Use this skill when the domain model changes. Read the glossary before altering terms. Use concrete examples for non-obvious relationships. Record agreed terms immediately. Propose ADRs only for decisions meeting ADR criteria. Do not use this skill merely to read `CONTEXT.md`.
 
 ## File Structure

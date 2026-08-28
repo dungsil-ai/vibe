@@ -2,6 +2,10 @@
 
 Issues and PRDs in this repository are managed as GitLab Issues. Use the [`glab`](https://gitlab.com/gitlab-org/cli) CLI for all operations.
 
+## Korean writing
+
+Before drafting Korean issues, merge requests, reviews, or comments, read the installed `vibe-docs` skill and follow its `Required application order`. Preserve the exact form of domain terms and label strings defined in `CONTEXT.md`, relevant ADRs, and `docs/agents/`; do not translate, generalize, or neutralize them.
+
 ## Rules
 
 - **Create Issue**: `glab issue create --title "..." --description "..."`. Use heredocs for multi-line descriptions. Passing `--description -` opens an editor.

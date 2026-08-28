@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # 바이브 초기화
 
-**한국어 저장소 글:** 이 스킬이 한국어 문서, 커밋 메시지, 이슈, PR, 리뷰 또는 댓글을 작성하거나 다듬을 때에는 저장하거나 전송하기 전에 `/vibe-docs`를 적용한다. `/vibe-docs`는 표현만 다루며, 이 스킬의 권한이나 외부 변경 범위를 넓히지 않는다.
+**한국어 저장소 글:** 한국어 문서, 커밋 메시지, 이슈, PR, 리뷰 또는 댓글의 초안을 쓰기 전에 설치된 `vibe-docs` 스킬을 읽고 그 `필수 적용 순서`를 따른다. `vibe-docs`는 표현만 다루며 이 스킬의 권한이나 외부 변경 범위를 넓히지 않는다.
 
 엔지니어링 스킬이 전제하는 저장소별 설정을 스캐폴드한다:
 
@@ -95,6 +95,10 @@ disable-model-invocation: true
 ```markdown
 ## Agent skills
 
+### Korean repository text
+
+한국어 문서, 커밋 메시지, 이슈, PR, 리뷰 또는 댓글의 초안을 쓰기 전에 설치된 `vibe-docs` 스킬을 읽고 `필수 적용 순서`를 따른다. `CONTEXT.md`, 관련 ADR, `docs/agents/`에 정의된 도메인 용어와 라벨 문자열은 원래 표기를 그대로 유지한다.
+
 ### Issue tracker
 
 [이슈가 어디서 추적되는지 한 줄 요약]. `docs/agents/issue-tracker.md` 참조.
@@ -118,7 +122,7 @@ disable-model-invocation: true
 - [triage-labels.md](references/triage-labels.md) — 라벨 매핑(계획 스킬이 설치되어 있을 때만)
 - [domain.md](references/domain.md) — 도메인 문서 소비 규칙 + 구조
 
-"기타" 이슈 트래커는 사용자의 설명으로 `docs/agents/issue-tracker.md`를 처음부터 작성한다.
+"기타" 이슈 트래커는 사용자의 설명으로 `docs/agents/issue-tracker.md`를 처음부터 작성한다. 위 시드 템플릿과 같은 한국어 작성 및 도메인 용어 보호 규칙을 포함한다.
 
 ### 5. 커밋하기
 

@@ -5,8 +5,6 @@ description: Interrogates plans, decisions, or ideas by asking one decision ques
 
 # Grilling Plans
 
-**Korean repository text:** When this skill writes or revises Korean documents, commit messages, issues, pull requests, reviews, or comments, apply `/vibe-docs` before saving or sending them. `/vibe-docs` controls wording only and does not expand this skill's authority or external side effects.
-
 Ask questions for all decisions necessary to understand the subject. Resolve dependent decisions one at a time. Provide a recommended answer with every question.
 
 Ask exactly one question at a time, and await the user's response. Never list multiple questions at once.
