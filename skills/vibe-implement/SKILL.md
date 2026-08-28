@@ -69,4 +69,4 @@ If unrelated dirty states, conflict ambiguities, or other unsafe conditions prev
   - **Checklist.** If read-only review has no unresolved findings, tick the ticket's acceptance checkboxes before publishing the PR/MR (standalone) or returning to the caller (caller-supplied). Do not await landing proof or request checkbox-only approval. Do not close the issue.
   - **Close/status.** Closing an issue is not the merge gate. Only after independently obtaining authoritative proof that the exact reviewed commit SHA is on the designated target branch (e.g. `git merge-base --is-ancestor <commit> <target-branch>` succeeds) may follow-up or resumption standalone actions show an exact preview of close, status, and comments. Await separate explicit approval immediately before writing. Implementation requests, completed reviews, declines, or non-responses do not constitute close approval. Never close issues without approval.
 
-Never propose or modify parent spec issues on any tracker.
+Never propose or modify parent spec issues on any tracker. On hosted trackers, an issue that is both spec and the sole ticket is the ticket — tick its acceptance checkboxes there.
