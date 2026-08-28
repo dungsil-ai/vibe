@@ -172,6 +172,12 @@ Do not proceed to Stage 2 until the user confirms shared understanding.
 Synthesize a spec (also known as a PRD) from established decisions. Do **not** interview the user here — questioning belongs to Stage 1; this stage is purely synthesis.
 When Stage 2 receives a cleared decision map from `/vibe-deep-plan`, read the map and follow all resolved records or ticket links in `Decisions so far` before synthesizing. First load each linked decision's question and final answer: `## Question` and `## Answer` in local Markdown, or issue body/question and final decision comment/note in hosted trackers. Follow raw `## Research`, comments, attachments, or prototype artifacts only when final answers reference them or spec requires evidence. Maps are indexes, not replacements for linked decisions. In local Markdown, if the map is at `.agents/plans/<effort>/map.md`, reuse `.agents/plans/<effort>/` and write `spec.md` there; do not create a new `<feature-slug>` directory. Hosted trackers use provided map URLs/numbers and configured spec publishing surfaces.
 
+### Local Decision Gate
+
+However Stage 2 was entered, review established decisions against `/vibe-modeling` before writing the spec. Do not reopen settled choices. Record new domain terms in `CONTEXT.md`, and write any decision that meets all three ADR conditions but is not yet recorded. Do not duplicate an existing decision record.
+
+Before the first hosted-tracker spec, label, or ticket is published or edited, commit `CONTEXT.md` and ADR changes made by this planning run. Never use `git add .`; stage only exact paths from this run and do not mix preexisting user changes. Review the staged diff and verify the commit SHA. If existing changes cannot be separated safely or the commit fails, stop without mutating the remote tracker. Push only when separately requested. If no local modeling document changed, do not create a commit.
+
 1. Explore repository to understand current codebase state (if not already done). Use domain glossary vocabulary throughout the spec, respecting ADRs in touched areas.
 
 2. Sketch boundaries for testing the feature. Prefer existing boundaries over new ones. Use the outermost boundary you can. Propose a new boundary at the outermost level if needed. Fewer boundaries across the codebase are better — ideal count is one.
