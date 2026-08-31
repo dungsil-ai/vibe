@@ -13,7 +13,7 @@ Before drafting Korean issues, pull requests, reviews, or comments, read the ins
 - **List Issues**: `gh issue list --state open --json number,title,body,labels,blockedBy,subIssues --jq '[.[] | {number, title, body, labels: [.labels[].name], blockedBy, subIssues}]'`, applying appropriate `--label` and `--state` filters. Do not request `comments` here — read comments with `gh issue view <number> --comments`.
 - **Comment on Issue**: `gh issue comment <number> --body "..."`
 - **Apply / Remove Labels**: `gh issue edit <number> --add-label "..."` / `--remove-label "..."`
-- **Close**: `gh issue close <number> --comment "..."`
+- **Close**: `gh issue close <number> --comment "..."`. For an issue in another repository, add `-R <owner>/<repo>` — `gh` infers the repository from the current clone's remote, so omitting it closes this repository's issue of the same number.
 
 Repository is inferred from `git remote -v` — running `gh` inside a clone handles this automatically.
 
@@ -36,6 +36,89 @@ Create a GitHub Issue.
 ## When a Skill Says "Fetch Relevant Tickets"
 
 Run `gh issue view <number> --comments`.
+
+## Publishing PRs with Auto-Close References
+
+Used when standalone `/vibe-implement` publishes a PR. A human pressing **Merge** in the UI is the close approval — passing review is not approval.
+
+**Eligibility.** Use a closing keyword only when all three hold:
+
+1. This repository uses a hosted tracker (GitHub Issues).
+2. The PR base is the repository's default branch — check with `gh repo view --json defaultBranchRef --jq .defaultBranchRef.name`.
+3. There is **exactly one** implementation ticket whose acceptance is complete at merge.
+
+**Reference Syntax**
+
+- Same repository: one `Closes #<ticket>` line in the PR body.
+- Different repository: the full reference `Closes <owner>/<repo>#<ticket>`. A bare `#<n>` cannot point at another repository.
+- Keywords are `close` / `closes` / `closed` / `fix` / `fixes` / `fixed` / `resolve` / `resolves` / `resolved`, and uppercase plus colons work (`Closes: #10`). GitHub does not treat the `implement` family as a keyword.
+- One keyword for one ticket. A single PR never closes several tickets.
+- The closing keyword lives **only in the PR body**. The PR title and every commit message in the PR must be free of closing keywords — a squash merge uses the PR title as the merge commit subject, and commit-message keywords also close issues when merged into the default branch. Neither appears in `closingIssuesReferences`, so both slip past the "exactly one" check.
+- The parent spec issue is never a closing target — write only `Part of #<parent>` in the same repository, or `Part of <owner>/<repo>#<parent>` for another repository. Never shorten a cross-repository parent to a bare `#<parent>`. Sub-issue links and task list checkmarks cause no close.
+- An issue manually linked via the GitHub UI **Development** panel also closes on merge and appears in `closingIssuesReferences`. Do not create manual links to any ticket other than the intended one.
+- Research / prototype / interview tickets, and tickets whose acceptance continues after merge (deploy, manual verification, and so on), are not closing targets — write them as `Refs #<n>` in the same repository, or `Refs <owner>/<repo>#<n>` across repositories.
+- **A downgrade changes the keyword only.** When lowering a closing reference to a non-closing one, replace just the keyword (the `Closes` family) with `Refs` and keep the issue reference verbatim: `Closes #<n>` → `Refs #<n>`, `Closes <owner>/<repo>#<n>` → `Refs <owner>/<repo>#<n>`, `Closes https://github.com/<owner>/<repo>/issues/<n>` → `Refs https://github.com/<owner>/<repo>/issues/<n>`. Shortening a cross-repository reference to a bare `Refs #<n>` points at this repository's issue of the same number and loses the ticket's identity — which issue in which repository it was can no longer be recovered from the body. Every downgrade in the fallback and in the `Above 250` hard stop below follows this rule.
+
+**Target Verification After Publishing.** Run right after publishing:
+
+```bash
+gh pr view <PR> --json baseRefName,closingIssuesReferences \
+  --jq '{base: .baseRefName, closes: [.closingIssuesReferences[].url]}'
+gh pr view <PR> --json body --jq .body
+```
+
+- `base` must exactly equal the default branch name.
+- `closes` must have length exactly 1 and that URL must be the intended ticket. Entries also carry `number` and `repository.owner.login`, so cross-repository targets can be confirmed too.
+- Length 0 means no link exists — fix the syntax or the base. When the base is not the default branch, keywords are ignored and no link is created at all.
+- Length 2 or more means first classify where the extra entries came from. For a PR-body keyword, downgrade the keyword alone to `Refs` and leave the reference untouched, so a same-repository entry becomes `Refs #<n>` and a cross-repository entry becomes `Refs <owner>/<repo>#<n>` (`gh pr edit <PR> --body "..."`). A manual link from the UI Development panel is unlinked in the UI — editing the body does not remove it. After the fix, do not run this verification alone — start from the commit count check and re-run the whole verification from scratch in the order count → direct body scan + body target verification (manual links included) → title scan → full commit message scan. If the count exceeds 250, do not proceed to the full commit message scan — go to the `Above 250` hard stop section below.
+- The last command prints the whole PR body. Count closing keyword+issue reference pairs directly in that text, independent of base or link state — everything except the one intended line must be **0**. When the base is not the default branch, keywords are ignored so `closingIssuesReferences` is empty and body residue is invisible there — if the PR is later retargeted to the default branch, that residue fires and closes the issue.
+- The two checks answer different questions. The direct body scan reports **body residue**; `closingIssuesReferences` reports **body-linked closing references plus manual links from the UI Development panel**. If the body scan is 0 and `closingIssuesReferences` is not empty, the remaining entry is a manual link — unlink it in the UI.
+- This list reflects **PR-body closing keywords plus manual links from the UI Development panel**. Keywords in the PR title and in commit messages do not appear here, so this verification alone cannot catch a hidden close. Conversely, treating every extra entry as a body keyword and editing only the body leaves a manual link in place.
+
+**Title / Commit Count Check After Publishing.** Run both commands alongside the verification above:
+
+```bash
+gh pr view <PR> --json title --jq .title
+gh api 'repos/{owner}/{repo}/pulls/<PR>' --jq .commits
+```
+
+- The first command prints the PR title. A squash merge uses the PR title as the merge commit subject, so a title pairing a closing keyword with an issue reference closes that issue on merge.
+- The second prints the PR's total commit count. **Above 250**, the REST pull-commits endpoint returns at most 250 commits, so the commit messages cannot be fully verified — neither native auto-close nor the manual-close fallback is used. Go to the **`Above 250` hard stop** section below.
+- This count check is not for the first publish only. Re-run this command **first** on **every** path that rewrites the PR title, the body, or a commit message and pushes again — a rewrite changes the commit count, so any number taken before the push is untrustworthy, and a PR that was at 250 or fewer can cross 250 through the rewrite. Above 250, do not continue into the full commit message scan — go straight to the **`Above 250` hard stop** section below. At 250 or fewer, re-run the whole verification from scratch in the order count → direct body scan + body target verification (manual links included) → title scan → full commit message scan.
+
+**Commit Message Scan After Publishing.** Run only when the commit count is **250 or fewer**:
+
+```bash
+gh api --paginate 'repos/{owner}/{repo}/pulls/<PR>/commits?per_page=100' --jq '.[].commit.message'
+```
+
+- The command walks every commit page via `--paginate` and prints each commit's full message. `gh pr view <PR> --json commits` returns only the first page, so it misses hidden keywords on later pages of PRs with more than 100 commits — hence the REST scan. Wrap the path in single quotes so the shell does not touch `{owner}`/`{repo}` (`gh api` fills them from the current clone); for a foreign repository write `owner/repo` literally.
+- Neither the title output nor the commit message output may pair a closing keyword (`close` / `closes` / `closed` / `fix` / `fixes` / `fixed` / `resolve` / `resolves` / `resolved`, uppercase and colons included) with an issue reference anywhere. Commit messages span multiple lines, so a keyword and a reference on different lines of the same message still count as a hit.
+- A human editing the merge title or merge message in the UI must not add any closing keyword+issue reference beyond the intended PR body link. UI edits happen after the post-publishing checks, escape the scans, and land directly in the merge commit, closing extra issues — tell the human this when handing the PR over.
+- On any hit, fix it and push: `gh pr edit <PR> --title "..."` for the title, `gh pr edit <PR> --body "..."` for the body, or a commit rewrite (`git commit --amend` or `git rebase -i`) followed by a `--force-with-lease` push for commit messages. After the fix, re-check the PR's total commit count **first** with `gh api 'repos/{owner}/{repo}/pulls/<PR>' --jq .commits` — a rewrite changes the commit count, so the number from before the fix is untrustworthy. Above 250, do not continue into the full commit message scan — go straight to the `Above 250` hard stop section. At 250 or fewer, re-run all four checks from scratch in the order count → direct body scan + body target verification (manual links included) → title scan → full commit message scan.
+- If fixing is impossible or unsafe, do not use auto-close — downgrade the closing line in the PR body by changing the keyword only, to a non-closing reference (`Refs #<n>` in the same repository, `Refs <owner>/<repo>#<n>` across repositories, a full URL left as the URL), and safe-stop into the manual-close fallback.
+- Exactly one issue closes only when all four hold: the PR's total commit count is ≤ 250, `closingIssuesReferences` = 1 (that entry is the intended ticket), PR title closing keyword+issue reference = 0, and every commit message closing keyword+issue reference = 0. Above 250 commits the last condition cannot be checked at all, so auto-close is not eligible — and because full verification is impossible above 250, the manual-close fallback is not eligible either (see the **`Above 250` hard stop** section below).
+**Fallback.** Applies **only when the commit count is ≤ 250**. Above 250 commits, go to the **`Above 250` hard stop** section below. In the fallback, skip auto-close and close manually with landing proof + an exact preview + separate approval:
+
+- The base is not the default branch, or the PR was retargeted after publishing.
+- The PR was closed without merging — auto-close never fires and the issue stays open.
+- There is not exactly one ticket eligible for closing (zero, several, or only the parent issue).
+- The verification command returns a list other than the expected one.
+- The PR title or a commit message in the PR still carries a closing keyword and cannot be safely fixed.
+- An extra entry in `closingIssuesReferences` is a manual link from the UI Development panel that cannot be unlinked in the UI.
+- After removing or downgrading, re-check the commit count **first** with `gh api 'repos/{owner}/{repo}/pulls/<PR>' --jq .commits` — above 250 there is no way to check item (4), so this zero proof cannot hold and you go to the `Above 250` hard stop section below. At 250 or fewer, check all four in this order after the count: (1) direct body scan (`gh pr view <PR> --json body --jq .body`) closing keyword+issue reference = 0, (2) `closingIssuesReferences` = 0 (body links and UI Development panel manual links both 0), (3) PR title closing keyword+issue reference = 0, (4) every commit message closing keyword+issue reference = 0 — and only when all four report zero proceed to the manual-close fallback.
+
+Run the manual close with the target issue's repository named explicitly — for a cross-repository ticket, `gh issue close <number> -R <owner>/<repo> --comment "..."`. Without `-R`, `gh` infers the repository from the current clone's remote and closes this repository's issue of the same number. In the same repository `-R` is optional and harmless either way. Read the target straight from the reference preserved on the downgraded `Refs` line — which is why a downgrade must never strip the `<owner>/<repo>` part.
+
+**`Above 250` hard stop.** When the PR's total commit count exceeds 250, full verification is impossible, so neither native auto-close nor the manual-close fallback is attempted:
+
+1. Strip every strippable residue — downgrade the closing line in the PR body by changing the keyword only (`Refs #<n>` in the same repository, `Refs <owner>/<repo>#<n>` across repositories, a full URL left as the URL), and unlink manual links from the UI Development panel in the UI.
+2. After stripping as much as possible, re-scan and record what remains with the two directly verifiable checks: direct body scan closing keyword+issue reference, and `closingIssuesReferences`. A Development panel manual link that cannot be unlinked in the UI may remain — this step records the residue state rather than requiring zero, and the hard stop proceeds either way. The commit messages themselves are still unverified, so both outcomes lead to the next step.
+3. Then **hard-stop** the merge handoff — do not return the PR as complete, do not request a merge, and do not mark the fallback complete.
+4. Squash / rewrite / split the history until the PR's total commit count is 250 or fewer, then push with `--force-with-lease`.
+5. Re-run the review and every verification in this document from scratch in the order commit count check (`gh api 'repos/{owner}/{repo}/pulls/<PR>' --jq .commits`) → direct body scan + body target verification (manual links included) → title scan → full commit message scan. The commit count check comes first — if the squash / rewrite instead raised the count, or it still exceeds 250, do not go on to the full commit message scan; return to step 4. Do not return or merge until all pass.
+
+How to undo a closing target depends on its source. For a PR-body keyword, first decide on intent. To remove the closing target entirely, edit the PR body and delete that line outright. To stop auto-close but keep the reference for the fallback, hard stop, or manual close, change only the keyword from the `Closes` family to `Refs` and leave the issue reference untouched — `Refs #<n>` in the same repository, `Refs <owner>/<repo>#<n>` across repositories, a full URL left as the URL. The manual close reads its target repository and number from the reference preserved on that line, so deleting a reference you intend to keep loses which issue in which repository it was. For a manual link from the UI Development panel, unlink it in the UI — it cannot be removed by editing the body or with `gh pr edit --body`.
 
 ## Wayfinding Operations
 
