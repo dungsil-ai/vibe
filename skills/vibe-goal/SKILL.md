@@ -12,6 +12,8 @@ Execute a single goal through review to committed code in one run. This skill **
 
 Each ticket gets its own **assigned branch and worktree** — a ticket-specific workspace isolated from all other tickets. Different tickets can run in parallel; the lifecycle of implementation → review → finding fixes → resumption for the same ticket reuses that ticket's exact assigned workspace. The goal maintains a single **integration workspace** separate from assigned workspaces: reviewed ticket results are replayed here for whole-goal verification, and ticket subagents do not commit directly to it. Resumption reuses recorded integration workspaces and each ticket's recorded assigned workspace using exact records — never opening a second one for the same goal or ticket.
 
+`Caller-supplied` is an internal contract supplied only by this orchestrator via ledger/handoff to invoke `/vibe-implement`. Direct invocations of `/vibe-implement` outside this orchestration use `Standalone` and execute a single ticket atomically. Do not infer mode from current worktree path or branch name alone.
+
 Issue trackers and triage label vocabularies must already be provided — run `/vibe-init` if `docs/agents/issue-tracker.md` is missing.
 
 ## Landing and Tracker State
