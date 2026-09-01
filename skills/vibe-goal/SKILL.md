@@ -12,7 +12,7 @@ Execute a single goal through review to committed code in one run. This skill **
 
 Each ticket gets its own **assigned branch and worktree** — a ticket-specific workspace isolated from all other tickets. Different tickets can run in parallel; the lifecycle of implementation → review → finding fixes → resumption for the same ticket reuses that ticket's exact assigned workspace. The goal maintains a single **integration workspace** separate from assigned workspaces: reviewed ticket results are replayed here for whole-goal verification, and ticket subagents do not commit directly to it. Resumption reuses recorded integration workspaces and each ticket's recorded assigned workspace using exact records — never opening a second one for the same goal or ticket.
 
-`Caller-supplied` is an internal contract supplied only by this orchestrator via ledger/handoff to invoke `/vibe-implement`. Direct invocations of `/vibe-implement` outside this orchestration use `Standalone` and execute a single ticket atomically. Do not infer mode from current worktree path or branch name alone.
+This orchestrator supplies assignment records via ledger/handoff to invoke `/vibe-implement`, which executes atomically for a single ticket without branching by mode name. Direct invocations outside this orchestration execute identically. Do not infer state from current worktree path or branch name alone.
 
 Issue trackers and triage label vocabularies must already be provided — run `/vibe-init` if `docs/agents/issue-tracker.md` is missing.
 
@@ -119,8 +119,8 @@ For each ready ticket on the frontier, create a ticket-specific **assigned works
 
 - Ticket reference and full body (fetched from tracker — never make subagents guess where it lives).
 - Spec link for readable context if needed.
-- **Caller-supplied** invocation: ticket's assigned branch and worktree, plus exact wave base SHA.
-- Instruction: **Run `/vibe-implement` on this ticket in caller-supplied mode, and do nothing else.**
+- Assigned workspace: ticket's assigned branch and worktree, plus exact wave base SHA.
+- Instruction: **Run `/vibe-implement` atomically on this ticket in the assigned workspace, and do nothing else.**
 - Boundaries: Implement **only** this ticket. Report out-of-scope issues without fixing.
 - Linearity rules: Commit **directly to assigned ticket branch** in worktree — stay linear from wave base, never merge original target or integration branch, create no extra branches or worktrees, and report if base shifted instead of rebasing/merging.
 
@@ -128,7 +128,7 @@ Each ledger ticket holds **canonical ticket ID**, **assigned branch and worktree
 
 **Retries of the same ticket** — fixing review findings or corrective redispatch — reuse that ticket's **exact assigned workspace**: same assigned branch and worktree recorded for that canonical ticket ID. Fresh subagents are permitted; new branches, worktrees, or ticket IDs are prohibited. If an assigned workspace is stale, dirty, or head mismatches recorded state, that is a stop-and-report condition, not a reset shortcut; preserve the exact workspace and surface mismatches for explicit resolution. Never guess workspaces by name, slug, number, or latest `vibe/*` branch; reuse solely via exact recorded records. Truly **new** tickets (split slices with own canonical IDs, or Stage 4 fix tickets) alone receive new assigned workspaces and ledger entries.
 
-All goal-dispatched implementers adhere to this **shared return contract**: in caller-supplied mode, commit directly to assigned ticket branch in worktree, maintain linearity from wave base, and return assigned branch name, exact wave base SHA, exact reviewed head SHA, verification proof, and read-only `/vibe-review` verdict. Must not merge target or integration branches into ticket branch, create additional branches/worktrees, alter working checkouts or integration workspaces, clean/delete assigned workspaces, or close hosted issues — they may tick acceptance checkboxes per `/vibe-implement` tracker updates; for version-controlled local Markdown trackers, ticket files are branch content belonging in the same commit, not separate commits. If wave base moved, report instead of rebasing or merging. Missing branch, head SHA, wave base SHA, verification records, or review verdicts constitute incomplete returns, not completed tickets.
+All goal-dispatched implementers adhere to this **shared return contract**: commit directly to assigned ticket branch in worktree atomically, maintain linearity from wave base, and return assigned branch name, exact wave base SHA, exact reviewed head SHA, verification proof, and read-only `/vibe-review` verdict. Must not merge target or integration branches into ticket branch, create additional branches/worktrees, alter working checkouts or integration workspaces, clean/delete assigned workspaces, or close hosted issues — they may tick acceptance checkboxes per `/vibe-implement` tracker updates; for version-controlled local Markdown trackers, ticket files are branch content belonging in the same commit, not separate commits. If wave base moved, report instead of rebasing or merging. Missing branch, head SHA, wave base SHA, verification records, or review verdicts constitute incomplete returns, not completed tickets.
 
 Do not paste conversations, other tickets, or planning history. A ticket unintelligible from its own body is a planning defect — route back to planning skills to fix rather than compensating in prompts.
 

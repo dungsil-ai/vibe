@@ -12,7 +12,7 @@ metadata:
 
 각 티켓은 자신만의 **할당된 branch와 worktree**를 갖는다 — 다른 모든 티켓과 격리된 티켓별 작업공간이다. 서로 다른 티켓은 병렬로 실행할 수 있다; 같은 티켓의 구현 → 리뷰 → 발견사항 수정 → 재개는 그 티켓의 정확히 하나의 할당된 작업공간을 재사용한다. 목표는 할당된 작업공간들과 분리된 단일 **통합 작업공간**을 유지한다: 리뷰를 거친 티켓 결과가 전체 목표 검증을 위해 여기에 재생되며, 티켓 서브에이전트가 여기에 직접 커밋하지는 않는다. 재개는 기록된 통합 작업공간과 각 티켓의 기록된 할당된 작업공간을 정확한 기록으로 재사용한다 — 같은 목표나 같은 티켓에 대해 두 번째를 열지 않는다.
 
-`Caller-supplied`는 오직 이 오케스트레이터가 원장/handoff로 명시적 할당 기록을 공급해 `vibe-implement`를 호출하는 **내부 계약**이다. 사용자가 `vibe-implement`를 직접 호출할 때는 `Standalone`을 쓰며, `vibe-implement`는 티켓 1개를 원자적으로만 실행한다. 현재 worktree 경로나 브랜치 이름만으로 모드를 추측하지 않는다.
+이 오케스트레이터가 원장/handoff로 할당 기록을 공급해 `vibe-implement`를 호출한다. `vibe-implement`는 모드를 나누지 않고 티켓 1개를 원자적으로만 실행한다. 직접 호출과 동일한 원자 실행이며, 현재 worktree 경로나 브랜치 이름만으로 상태를 추측하지 않는다.
 
 이슈 트래커와 트리아지 라벨 어휘는 이미 제공되어 있어야 한다 — `docs/agents/issue-tracker.md`가 없으면 `/vibe-init`을 실행한다.
 
@@ -119,8 +119,8 @@ metadata:
 
 - 티켓 참조와 전체 본문(트래커에서 가져온다 — 서브에이전트가 어디 있는지 추측하게 하지 않는다).
 - 명세 링크, 필요하면 읽을 수 있는 문맥용.
-- **caller-supplied** 호출: 티켓 자신의 할당된 branch와 worktree, 그리고 정확한 wave base SHA.
-- 지시: **이 티켓에서 caller-supplied mode로 `/vibe-implement`를 실행하고, 그 외에는 아무것도 하지 않는다.**
+- 할당된 작업공간 공급: 티켓 자신의 할당된 branch와 worktree, 그리고 정확한 wave base SHA.
+- 지시: **이 티켓을 할당된 작업공간에서 원자적으로 `/vibe-implement`를 실행하고, 그 외에는 아무것도 하지 않는다.**
 - 경계: **오직** 이 티켓만 구현한다. 범위 밖 문제는 고치지 않고 보고한다.
 - 선형성 규칙: worktree에서 **할당된 티켓 branch에 직접** 커밋한다 — wave base에서 선형을 유지하고, 원본 대상이나 통합 branch를 병합하지 않고, 추가 branch나 worktree를 만들지 않으며, 밑이 옮겨갔으면 rebase나 merge 대신 보고한다.
 
@@ -128,7 +128,7 @@ metadata:
 
 **같은 티켓의 재시도** — 리뷰 발견사항 수정 또는 정정 재파견 — 는 그 티켓의 **정확한 할당된 작업공간**을 재사용한다: 그 정규 티켓 ID에 대해 기록된 같은 할당된 branch와 worktree. 새 서브에이전트는 허용된다; 새 branch, worktree, 또는 티켓 ID는 금지된다. 할당된 작업공간이 stale, dirty하거나, head가 기록된 상태와 불일치하면, 그것은 멈추고 보고하는 조건이지, reset 단축키가 아니다; 정확한 작업공간을 보존하고 불일치를 드러내 명시적으로 해결되게 한다. 이름, slug, 번호, 또는 최신 `vibe/*` branch로 작업공간을 절대 추측하지 않는다; 오직 정확한 기록된 기록으로만 재사용한다. 진짜 **새** 티켓(자체 정규 ID를 가진 split slice, 또는 Stage 4의 수정 티켓)만 자체 새 할당된 작업공간과 원장 항목을 얻는다.
 
-모든 목표 파견 구현자는 이 **공유 반환 계약**을 따른다: caller-supplied mode에서, worktree의 할당된 티켓 branch에 직접 커밋하고, wave base에서 선형을 유지하고, 할당된 branch 이름, 정확한 wave base SHA, 정확한 리뷰된 head SHA, 검증 증거, 읽기 전용 `/vibe-review` 판정을 반환한다. 티켓 branch에 원본 대상이나 통합 branch를 병합하거나, 추가 branch나 worktree를 만들거나, 원본 checkout이나 통합 작업공간을 변경하거나, 할당된 작업공간을 clean하거나 delete하거나, 호스티드 이슈를 닫아서는 안 된다 — 인수 체크박스는 `/vibe-implement` 트래커 갱신에 따라 켤 수 있다; 버전 관리되는 local Markdown 트래커의 경우 자기 티켓 파일은 branch content이며 같은 commit에 속하지, 별도 commit이 아니다. wave base가 옮겨갔으면 rebase나 merge 대신 그것을 보고한다. 빠진 branch, head SHA, wave base SHA, 검증 기록, 또는 리뷰 판정은 불완전한 반환으로, 완료된 티켓이 아니다.
+모든 목표 파견 구현자는 이 **공유 반환 계약**을 따른다: 할당된 작업공간에서 원자적으로, worktree의 할당된 티켓 branch에 직접 커밋하고, wave base에서 선형을 유지하고, 할당된 branch 이름, 정확한 wave base SHA, 정확한 리뷰된 head SHA, 검증 증거, 읽기 전용 `/vibe-review` 판정을 반환한다. 티켓 branch에 원본 대상이나 통합 branch를 병합하거나, 추가 branch나 worktree를 만들거나, 원본 checkout이나 통합 작업공간을 변경하거나, 할당된 작업공간을 clean하거나 delete하거나, 호스티드 이슈를 닫아서는 안 된다 — 인수 체크박스는 `/vibe-implement` 트래커 갱신에 따라 켤 수 있다; 버전 관리되는 local Markdown 트래커의 경우 자기 티켓 파일은 branch content이며 같은 commit에 속하지, 별도 commit이 아니다. wave base가 옮겨갔으면 rebase나 merge 대신 그것을 보고한다. 빠진 branch, head SHA, wave base SHA, 검증 기록, 또는 리뷰 판정은 불완전한 반환으로, 완료된 티켓이 아니다.
 
 대화, 다른 티켓, 또는 계획 이력를 붙여넣지 않는다. 자기 본문만으로 이해할 수 없는 티켓은 계획 결함이다 — 계획 스킬로 다시 라우팅해 고치게 하고, 프롬프트에서 보완하지 않는다.
 
