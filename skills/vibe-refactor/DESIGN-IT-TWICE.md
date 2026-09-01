@@ -2,7 +2,7 @@
 
 Use this parallel sub-agent pattern when exploring other interfaces for a chosen deepening candidate. Based on "Design It Twice" (Ousterhout) — the first idea is rarely the best.
 
-Use [VOCABULARY.md](VOCABULARY.md) — **module**, **interface**, **boundary**, **adapter**. Compare in plain language.
+Use [VOCABULARY.md](VOCABULARY.md) — **모듈**, **인터페이스**, **경계**, **어댑터**. Compare in easy Korean.
 
 ## Process
 
@@ -39,6 +39,6 @@ Each sub-agent returns:
 
 ### 3. Present and compare
 
-Show each design one at a time, then compare in prose. Contrast how deep it is, whether fixes stay in one place, and where the boundary sits. Do not label the comparison with `depth`, `locality`, or `seam`.
+Show each design one at a time, then compare in easy Korean prose. Contrast how deep it is, whether fixes stay in one place, and where the boundary sits. Do not label the comparison with `depth`, `locality`, or `seam`.
 
-Then recommend: which design is stronger, and why. Propose a hybrid if pieces fit. Speak with conviction.
+Then recommend in Korean: which design is stronger, and why. Propose a hybrid if pieces fit. Speak with conviction.

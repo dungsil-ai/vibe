@@ -10,7 +10,7 @@ Surfaces architectural friction and proposes **deepening opportunities** — ref
 
 This command is grounded in the project's domain model and operates on a shared design vocabulary:
 
-- See [VOCABULARY.md](VOCABULARY.md) for architectural concepts (**module**, **interface**, **depth**, **boundary**, **adapter**) and principles (the deletion test, "the interface is where you test", "do not add a boundary for one adapter"). Use those words in user-facing text. Do not stamp `seam`, `leverage`, or `locality` as labels. Do not drift into "component", "service", or "API".
+- See [VOCABULARY.md](VOCABULARY.md) for Korean architectural terms (**모듈**, **인터페이스**, **깊이**, **경계**, **어댑터**) and principles (`삭제 테스트`, `인터페이스가 테스트하는 면이다`, `어댑터가 하나면 경계를 만들지 마라`). Use those Korean terms and Korean plain explanations in user-facing text. Do not stamp `seam`, `leverage`, or `locality` as labels. Do not drift into "component", "service", or "API".
 - Domain language in `CONTEXT.md` provides names for good boundaries. ADRs in `docs/adr/` record decisions this command must not re-adjudicate.
 
 ## Process
@@ -40,26 +40,26 @@ See [DEEPENING.md](DEEPENING.md) for dependency classification, boundary rules, 
 
 Write a self-contained HTML file to the OS temporary directory to avoid leaving artifacts in the repository. Determine the temp directory from `$TMPDIR`, falling back to `/tmp` (or `%TEMP%` on Windows), writing to `<tmpdir>/architecture-review-<timestamp>.html` so each run produces a fresh file. Open it for the user (`xdg-open <path>` on Linux, `open <path>` on macOS, `start <path>` on Windows) and report the absolute path.
 
-The report uses **Tailwind (CDN)** for layout and styling, and **Mermaid (CDN)** for diagrams where graphs/flows/sequences clearly communicate structure. Mix Mermaid with bespoke CSS/SVG visualizations — use Mermaid for graph-shaped relations (call graphs, dependencies, sequences) and bespoke divs/SVGs when an editorial feel (mass diagrams, cross-sections, folding animations) is needed. Each candidate includes **before/after visualizations**. Make it visual. Write the report in plain language.
+The report uses **Tailwind (CDN)** for layout and styling, and **Mermaid (CDN)** for diagrams where graphs/flows/sequences clearly communicate structure. Mix Mermaid with bespoke CSS/SVG visualizations — use Mermaid for graph-shaped relations (call graphs, dependencies, sequences) and bespoke divs/SVGs when an editorial feel (mass diagrams, cross-sections, folding animations) is needed. Each candidate includes **before/after visualizations**. Make it visual. Write the report in plain Korean.
 
 For each candidate, render a card containing:
 
-- **Files** — Relevant files/modules
-- **Problem** — Why current architecture causes friction
-- **Solution** — Plain-language description of what changes
-- **Benefits** — Whether fixes stay in one place, whether one interface covers many callers, and how testing improves
-- **Before/After Diagrams** — Side-by-side bespoke illustrations showing shallowness vs deepening
-- **Recommendation Strength** — Rendered as a badge: `Strong`, `Worth exploring`, or `Speculative`
+- **파일** — Relevant files/modules
+- **문제** — Why current architecture causes friction
+- **해결** — What changes, explained in plain Korean
+- **이점** — Whether fixes stay in one place, whether one interface covers many callers, and how testing improves
+- **전/후 다이어그램** — Side-by-side bespoke illustrations showing shallowness vs deepening
+- **권고 강도** — Rendered as a badge: `추천`, `검토`, or `불확실`
 
-Conclude the report with a **Top Recommendation** section: which candidate to tackle first and why.
+Conclude the report with a **최우선 권고** section: which candidate to tackle first and why.
 
-**Use domain vocabulary from CONTEXT.md and unpacked architectural language from [VOCABULARY.md](VOCABULARY.md).** If `CONTEXT.md` defines "Order", say "Order intake module" rather than "FooBarHandler" — and not "Order service".
+**Use domain vocabulary from CONTEXT.md and the Korean plain explanations from [VOCABULARY.md](VOCABULARY.md).** If `CONTEXT.md` defines `주문 (Order)`, write `주문 접수 모듈` rather than `FooBarHandler` or `Order service`.
 
-**ADR Conflicts**: When candidates contradict existing ADRs, surface them only when friction is substantial enough to warrant reopening the ADR. Mark clearly on cards (e.g. warning callout: _"Conflicts with ADR-0007 — but worth revisiting because..."_). Do not list every theoretical refactor prohibited by ADRs.
+**ADR Conflicts**: When candidates contradict existing ADRs, surface them only when friction is substantial enough to warrant reopening the ADR. Mark clearly on cards (e.g. warning callout: _"ADR-0007과 충돌 — 하지만 재검토할 가치가 있는 이유는…"_). Do not list every theoretical refactor prohibited by ADRs.
 
 See [HTML-REPORT.md](HTML-REPORT.md) for HTML scaffolding, diagram patterns, and styling guidance.
 
-Do not propose interfaces yet. After writing the file, ask the user: "Which of these would you like to explore?"
+Do not propose interfaces yet. After writing the file, ask the user: "이 중 어느 것을 탐색해 보겠습니까?"
 
 ### 3. Deep Dive Loop
 
@@ -69,5 +69,5 @@ Side effects occur inline as decisions solidify — run `/vibe-modeling` as you 
 
 - **Naming deepened modules with concepts not in `CONTEXT.md`?** Add terms to `CONTEXT.md`. Create file lazily if missing.
 - **Sharpening ambiguous terms during discussion?** Update `CONTEXT.md` on the spot.
-- **User rejects a candidate for substantive reasons?** Propose an ADR: _"Should we record this as an ADR so future architecture reviews avoid proposing it again?"_ Propose only when reasons are genuinely necessary to prevent future explorers from suggesting the same thing — skip temporary reasons ("not worth it right now") and self-evident rationale.
+- **User rejects a candidate for substantive reasons?** Propose an ADR: _"이것을 ADR로 기록하여 향후 아키텍처 검토에서 다시 제안하지 않게 할까요?"_ Propose only when reasons are genuinely necessary to prevent future explorers from suggesting the same thing — skip temporary reasons ("not worth it right now") and self-evident rationale.
 - **Want to explore alternative interfaces for deepened modules?** Use the design-it-twice parallel sub-agent pattern in [DESIGN-IT-TWICE.md](DESIGN-IT-TWICE.md).

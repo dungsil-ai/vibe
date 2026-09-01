@@ -20,7 +20,7 @@ The research ticket and canonical findings record reside in a single file:
 .agents/plans/<effort>/research/<ticket-stem>.md
 ```
 
-The file contains `Type: research`, `Status`, question, and source-aware full findings under `## Research`. The final decision is added under `## Answer`. Human-driven interview records use a separate `.agents/plans/<effort>/interviews/<ticket-stem>.md` directory.
+The file contains `Type: 조사`, `Status`, question, and source-aware full findings under `## Research`. The final decision is added under `## Answer`. Human-driven interview records use a separate `.agents/plans/<effort>/interviews/<ticket-stem>.md` directory.
 
 In local Markdown, do not create separate `.agents/research/` notes or pointer comments. Keep repository ignore policies intact. Do not create, checkout, commit, or push research-only branches. These records are local handoff artifacts, not shippable changes.
 

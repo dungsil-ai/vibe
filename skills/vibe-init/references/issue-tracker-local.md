@@ -47,10 +47,10 @@ Read provided local plan artifacts as-is: `map.md`, `spec.md`, deep-plan decisio
 Used by `/vibe-deep-plan`. A map is a file with one decision record per ticket.
 
 - **Map**: `.agents/plans/<effort>/map.md` — Notes / Decisions-so-far / Fog body.
-- **Research Record**: `.agents/plans/<effort>/research/NN-<slug>.md` with `Type: research` and `Status:` line.
-- **Interview Record**: `.agents/plans/<effort>/interviews/NN-<slug>.md` with `Type: interview` and `Status:` line.
-- **Prototype Record**: `.agents/plans/<effort>/prototypes/NN-<slug>.md` with `Type: prototype`, `Status:`, and `.agents/prototype/<name>/` pointer if artifacts exist.
-- **Task Record**: `.agents/plans/<effort>/tasks/NN-<slug>.md` with `Type: task` and `Status:` line.
+- **Research Record**: `.agents/plans/<effort>/research/NN-<slug>.md` with `Type: 조사` and `Status:` line.
+- **Interview Record**: `.agents/plans/<effort>/interviews/NN-<slug>.md` with `Type: 인터뷰` and `Status:` line.
+- **Prototype Record**: `.agents/plans/<effort>/prototypes/NN-<slug>.md` with `Type: 프로토타입`, `Status:`, and `.agents/prototype/<name>/` pointer if artifacts exist.
+- **Task Record**: `.agents/plans/<effort>/tasks/NN-<slug>.md` with `Type: 작업` and `Status:` line.
 - **Blocking**: `Blocked by: research/03-compare-providers.md, interviews/04-confirm-scope.md`. Unblocks when each listed record resolves.
 - **Frontier**: Union of `research/`, `interviews/`, `prototypes/`, `tasks/` finding records with `Status: open` and no open blockers, sorted by numeric prefix then canonical relative path.
 - **Claim**: Set to `Status: claimed` and save before work. Local Markdown has no `Assignee:` field. Do not serialize hosted tracker assignee metadata.
