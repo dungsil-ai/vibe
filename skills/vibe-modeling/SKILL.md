@@ -44,17 +44,18 @@ Create files only when there is content. If `CONTEXT.md` is missing, create it a
 ### Use Direct Language
 
 - Use short, literal sentences for all questions, explanations, and records. Avoid idioms, metaphors, or culturally dependent expressions.
-- In `CONTEXT.md`, write canonical terms in `Korean (English)` if in a bilingual context, or plain English.
-- Use clear everyday terms (CEFR A1–A2) for general English names.
-- Specialized English technical terms are used only when clearly standard for that domain.
+- In `CONTEXT.md`, write every canonical term in `Korean (English)` order. Write Korean first. Write definitions in Korean.
+- Use CEFR B1-or-lower vocabulary in Korean terms, definitions, questions, explanations, and records. Apply the CEFR A1–A2 standard only to English names, not Korean.
+- All general English names must use everyday CEFR A1–A2 English words. This is required.
+- Use an English technical term only when it is clearly used in Korea as the name of that domain. This is the only exception to the English-name rule.
 
 ### Compare Against Glossary
 
-If the user uses a term or meaning conflicting with `CONTEXT.md`, surface the conflict immediately. Ask: "`CONTEXT.md` defines `Cancel` as X. Do you mean X or Y?"
+If the user uses a term or meaning conflicting with `CONTEXT.md`, surface the conflict immediately. Ask: "`CONTEXT.md`는 `취소 (Cancel)`를 X로 정의한다. X와 Y 중 어느 뜻인가?"
 
 ### Clarify Ambiguous Language
 
-If the user uses a term with multiple meanings, propose a single precise canonical term. Ask: "Do you mean `Customer` or `User`? They are distinct concepts."
+If the user uses a term with multiple meanings, propose a single precise canonical term. Ask: "`고객 (Customer)`와 `사용자 (User)` 중 어느 뜻인가? 둘은 다른 개념이다."
 
 ### Use Concrete Examples
 
@@ -62,7 +63,7 @@ Use concrete examples when discussing domain relationships. Check edge cases aro
 
 ### Compare with Code
 
-When the user describes how something works, compare their description with the code. Highlight differences: "Code cancels the entire `Order`. You mentioned cancelling part of an order. Which behavior is correct?"
+When the user describes how something works, compare their description with the code. Highlight differences: "코드는 `주문 (Order)` 전체를 취소한다. 당신은 주문의 일부를 취소할 수 있다고 했다. 어느 동작이 맞는가?"
 
 ### Update CONTEXT.md Immediately
 

@@ -11,8 +11,8 @@ Ask exactly one question at a time, and await the user's response. Never list mu
 
 Find facts using available tools before asking questions. Ask the user only for decisions.
 
-Write questions, recommendations, and shared understanding summaries directly and literally. Avoid idioms, metaphors, or culturally dependent expressions.
+Write questions, recommendations, and shared understanding summaries directly and literally. Use CEFR B1-or-lower vocabulary in Korean wording. Do not apply the CEFR A1–A2 standard to Korean. Avoid idioms, metaphors, or culturally dependent expressions.
 
-When defining or proposing CONTEXT terms, use the `Korean (English)` format if working in bilingual contexts. Write definitions clearly. All general English CONTEXT names must use everyday CEFR A1–A2 English words. The only exceptions are specialized domain terms clearly accepted as standard domain vocabulary.
+When defining or proposing CONTEXT terms, use the `Korean (English)` format. Write definitions in Korean. Use CEFR B1-or-lower vocabulary in Korean CONTEXT terms and definitions. Do not apply the CEFR A1–A2 standard to Korean. All general English CONTEXT names must use everyday CEFR A1–A2 English words. The only exception is an English technical term clearly used in Korea as the name of that domain.
 
 Do not act before the user confirms shared understanding.
