@@ -1,12 +1,18 @@
 ---
 name: vibe-plan
-description: Triages incoming requests, records glossaries and ADRs, refines ideas through interviews into synthesized specs, and breaks work into tracer-bullet tickets published with blocking edges to configured trackers. Use when triaging issues or external PRs, planning features, drafting specs/PRDs, or splitting work into tickets.
+description: Triages incoming requests, records glossaries and ADRs, and refines interviews into specs and tracer-bullet tickets. Use for issue or external PR triage, feature planning, specs/PRDs, and tickets. Explicit plan/review-plan/reconcile or confirmed audit/next selections route to self-contained execution-plan authoring, refinement, and status reconciliation.
 disable-model-invocation: true
 ---
 
 # Planning Work
 
 Moves from a request or loose idea to agent-executable tickets in one flow. Four stages: **Triage** (judges incoming external requests; can end execution), **Grill** (sharpens through interviews, recording decisions into docs), **Spec** (synthesizes established decisions), and **Tickets** (slices into tracer-bullet units with blocking edges).
+
+## Check the Execution-Plan Route First
+
+For explicit `/vibe-plan plan <description>`, `review-plan <file>`, `reconcile`, or confirmed selections handed off by `/vibe-audit` or `/vibe-next-plan`, read [EXECUTION-PLAN.md](EXECUTION-PLAN.md) and follow only that route. For an unselected investigation list, first apply that document's selection gate. Do not convert an input into an execution plan merely because it mentions "plan" or supplies an existing spec, ticket, or decision map.
+
+This route changes only plan files and the index, applying that document's GitHub publishing procedure only with explicit `--issues`. The Stage 0–3 rules below for automatic modeling-document edits, commits/pushes, and ordinary ticket publication do not apply. Execution belongs to `/vibe-implement execute <plan>`. Otherwise retain the existing Stage 0–3 flow.
 
 Read [Configuration Documents and Defaults](../vibe-init/references/defaults.md) to resolve tracker, label, and domain-document rules. When configuration is absent, proceed with local Markdown without requiring initialization.
 
@@ -38,6 +44,8 @@ Maintain executed stages in a **single unbroken context window** — never compr
 If the session degrades before tickets are produced, do not force through: hand off the thread (see `/vibe-handoff`) to continue in a fresh session.
 
 ## Output Language
+
+Write execution plans in the repository's documentation language too, but do not translate machine-consumed keys and literals such as `Kind`, `Status`, `Planned at`, or `Depends on`. Restrictions on file paths/code excerpts apply only to ordinary specs, tickets, and agent briefs; execution plans include exact paths and excerpts of current code.
 
 Template headings below are placeholders, not literal output. Write every published artifact — titles, headings, and body — in the language this repository's documentation uses, reusing the heading vocabulary already present on existing issues rather than translating afresh. Mixed-language output (English headings over translated body) means the template was copied verbatim.
 

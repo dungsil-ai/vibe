@@ -2,6 +2,89 @@
   "skill_name": "vibe-plan",
   "evals": [
     {
+      "id": "execution-plan-is-local-and-self-contained",
+      "prompt": "/vibe-plan plan 주문 조회의 N+1을 고칠 계획을 써줘. GitHub 트래커가 설정되어 있지만 --issues는 요청하지 않았어. src/orders/query.ts:80과 tests/orders/query.test.ts를 확인하고 기존 CONTEXT.md와 ADR을 존중해줘. 코드는 고치지 마.",
+      "expected_output": "Stage 0~3 대신 EXECUTION-PLAN.md 경로로 진입해 직접 확인한 코드와 검증 명령을 담은 실행계획 및 색인만 저장한다.",
+      "assertions": [
+        "새 계획은 .agents/plans/<work-slug>/execution-plan.md, 색인은 .agents/plans/execution-index.md에 작성하며 기존 명세나 티켓을 이동하지 않는다.",
+        "Kind: execution-plan, Status, 실제 commit SHA인 Planned at, 실제 계획 경로 또는 []인 Depends on을 기록한다.",
+        "직접 확인한 file:line 및 발췌, 관례·ADR, 정확한 수정 범위, 단계별 명령·예상 결과, 테스트·완료·중단 조건과 유지보수 메모를 포함한다.",
+        "소스, CONTEXT.md, ADR, 설정을 수정하거나 커밋·push·원격 이슈 게시를 수행하지 않는다."
+      ]
+    },
+    {
+      "id": "audit-selection-gate-and-explicit-noninteractive-default",
+      "prompt": "audit에서 기술 문제 7개와 별도의 방향 제안 3개를 받았어. 아직 선택하지 않았고 지금은 대화형이야. 이 중 계획을 만들어줘. 다음 실행을 명시적으로 비대화형으로 요청하면 어떻게 선택하는지도 설명해줘.",
+      "expected_output": "현재는 사용자 선택을 기다리고 파일을 작성하지 않는다. 명시적 비대화형에서는 대상 집합과 근거를 기록하며 상위 3~5개만 기본 선택한다고 설명한다.",
+      "assertions": [
+        "대화형에서는 모든 조사 항목을 자동으로 계획화하지 않고 선택을 기다린다.",
+        "명시적 비대화형 기본 선택만 3~5개로 제한하고 적은 후보를 억지로 채우지 않으며 선택 근거를 색인에 남긴다.",
+        "기술 문제와 방향 제안을 하나의 순위로 섞지 않고 선택 대상 집합을 구분한다."
+      ]
+    },
+    {
+      "id": "confirmed-next-low-confidence-handoff",
+      "prompt": "/vibe-plan plan next에서 선택한 플러그인 확장 방향을 계획으로 작성해줘. 선택은 이미 확정했어. deep 조사에서 LOW 신뢰도였고 패키지 2개는 조사하지 못했어. 근거 src/plugins/registry.ts:30, 높은 영향, 노력 L, 위험 HIGH, 대안은 고정된 확장점이야. 검증 명령은 pnpm test -- plugins이며 ADR-004와 선행 계획 .agents/plans/contracts/execution-plan.md가 있어. 그 계획은 BLOCKED야. --issues는 요청하지 않았어.",
+      "expected_output": "이미 확정한 선택을 재질문하지 않고 design-spike를 작성한다. LOW 항목을 전체 구현으로 확장하지 않으며 누락 조사 범위와 선행 차단을 보존한다.",
+      "assertions": [
+        "Kind: design-spike로 가설·조사 질문·증거 산출물·채택 및 기각 기준과 종료 한계를 작성한다.",
+        "근거·영향·노력·위험·신뢰도·trade-offs·미해결 질문·미조사 범위·deep·명령·ADR·의존성·--issues 부재를 인계받는다.",
+        "선행 계획 경로와 BLOCKED 상태를 확인하고 실행 가능한 계획으로 오인하지 않으며 전체 감사를 다시 시작하거나 코드를 구현하지 않는다."
+      ]
+    },
+    {
+      "id": "review-plan-refines-with-fresh-reviewer",
+      "prompt": "/vibe-plan review-plan .agents/plans/cache/execution-plan.md. 방금 네가 이 세션에서 쓴 계획인데 단계에는 '테스트가 통과해야 한다'만 있고 파일 범위와 예상 결과가 없어. 보완해줘.",
+      "expected_output": "현재 코드와 명령을 확인해 계획 내용까지 보완하고 새 맥락의 읽기 전용 독립 검토자를 사용한다. 사용할 수 없으면 그 한계를 명시한다.",
+      "assertions": [
+        "단순 비평만 반환하지 않고 파일 범위, 검증 명령과 예상 결과, 완료·중단 조건을 실제 계획에 보완한다.",
+        "동일 세션 작성 계획은 작성자의 기대 결론 없이 전체 계획과 저장소를 받은 새 검토자가 읽으며, 검토자를 사용할 수 없으면 독립 검토 완료를 주장하지 않는다.",
+        "계획·색인 외 파일을 고치거나 보완한 계획을 실행하지 않는다."
+      ]
+    },
+    {
+      "id": "review-existing-plan-preserves-format-and-language",
+      "prompt": "/vibe-plan review-plan docs/plans/cache.md. 이 파일은 기존 형식의 계획이고 영어 문서 저장소야. 계획의 검증 조건만 보완해줘. 별도 execution-plan으로 옮기지는 마.",
+      "expected_output": "지정한 계획에서 검증 조건을 영어로 보완하고 기존 형식과 위치를 유지한다.",
+      "assertions": [
+        "docs/plans/cache.md를 임의로 .agents/plans 아래로 이동하거나 실행계획 형식으로 변환하지 않는다.",
+        "본문과 헤딩은 저장소 문서 언어를 유지하며 한국어 본문을 강제하지 않는다.",
+        "새 실행계획의 기계용 Kind/Status/Planned at/Depends on 키와 리터럴은 번역하지 않는다는 계약을 유지한다."
+      ]
+    },
+    {
+      "id": "reconcile-distinguishes-execution-and-integration",
+      "prompt": "/vibe-plan reconcile. A는 검토 증거와 보존된 worktree가 있는 DONE이지만 원본 HEAD에 미반영이야. B는 활성 실행자가 있는 IN PROGRESS, C는 오래된 IN PROGRESS, D는 원인이 남은 BLOCKED야. E는 범위 안의 더티 변경이 있는 TODO이고 F는 이미 독립적으로 해결됐어.",
+      "expected_output": "완료 검증과 원본 반영 여부를 분리하고 활성 소유권을 보존한다. 오래된 실행을 보고하고 차단 원인과 TODO 드리프트를 조사하며 독립 해결 항목은 이유와 함께 기각한다.",
+      "assertions": [
+        "A의 가능한 저비용 완료조건을 재실행하고 미반영을 별도 기록하며, 미반영만으로 DONE을 취소하거나 merge하지 않는다.",
+        "B를 수정·재파견하지 않고 C의 소유자·worktree·활동을 확인해 사용자와 재개 여부를 조정하며 worktree를 삭제하지 않는다.",
+        "D의 원인을 조사하고 E의 commit 차이 및 staged/unstaged/untracked 변경을 확인하며 안전한 기준을 정할 수 없으면 BLOCKED로 남긴다.",
+        "F는 REJECTED와 이유를 기록해 이력을 보존하고 이슈를 닫거나 기각된 계획을 자동 재개하지 않는다."
+      ]
+    },
+    {
+      "id": "issues-public-sensitive-approval-and-tracker-conflict",
+      "prompt": "/vibe-plan plan deep 보안 감사에서 선택한 토큰 노출 항목 --issues. GitLab 트래커가 설정돼 있지만 GitHub remote도 있어. 공개 GitHub 이슈로 게시하려는 항목에는 자격증명 위치가 있어. 지금은 비대화형이고 별도의 공개 승인은 없어.",
+      "expected_output": "로컬 계획은 저장하되 GitLab 설정과 GitHub 요청의 충돌, 대상 저장소, 공개 승인 부재를 해결하기 전 게시하지 않는다.",
+      "assertions": [
+        "인증·GitHub remote·대상·공개 여부를 확인하고 다른 트래커 설정을 임의 변경하지 않는다.",
+        "--issues나 비대화형 요청만으로 민감한 공개 게시를 승인받았다고 간주하지 않는다.",
+        "어느 산출물에도 비밀 값을 복제하지 않으며 자격증명 종류와 file:line만 사용한다.",
+        "로컬 계획을 보존하고 게시하지 못한 이유를 보고한다."
+      ]
+    },
+    {
+      "id": "issues-retry-does-not-duplicate",
+      "prompt": "/vibe-plan plan 선택된 캐시 오류 수정 --issues. 대상 GitHub 저장소와 공개 범위는 확인했고 제목과 본문도 승인했어. 직전 게시 시 응답이 유실됐고 로컬 계획에는 URL을 아직 기록하지 못했어. 다시 처리해줘.",
+      "expected_output": "원격 이슈를 먼저 조회해 기존 게시 여부를 확인하고 기존 이슈가 있으면 재생성하지 않는다. 확인된 URL을 계획과 색인에 기록한다.",
+      "assertions": [
+        "응답 유실을 생성 실패로 단정해 바로 이슈 생성을 재시도하지 않는다.",
+        "계획·색인·원격 이슈를 대조하고 대상·본문·URL을 다시 읽어 검증한다.",
+        "검증된 Issue URL을 계획과 색인에 기록하며 새 라벨·일반 티켓 계층·커밋·push를 만들지 않는다."
+      ]
+    },
+    {
       "id": "explicit-hosted-choice-without-config",
       "prompt": "vibe-init 설정 파일은 없지만 이 작업은 GitHub Issues로 관리할 거야. 대상은 https://github.com/acme/app이고 합의된 명세를 기준으로 이슈 초안만 작성해줘. 아직 게시하지 마.",
       "expected_output": "사용자가 지정한 GitHub와 저장소를 유지하고 내장 GitHub 참고 문서 및 기본 역할 매핑으로 초안을 작성한다. 로컬 파일 발행이나 초기화, 원격 게시를 수행하지 않는다.",

@@ -23,6 +23,8 @@
 
 ## 버전 관리와 완료 갱신
 
+실행 계획은 일반 명세·구현 티켓·deep-plan 결정 기록과 별개다. `/vibe-plan plan`, `review-plan`, `reconcile`은 [실행 계획 계약](../../vibe-plan/EXECUTION-PLAN.md)을 따른다. 새 계획은 `.agents/plans/<work-slug>/execution-plan.md`, 색인은 `.agents/plans/execution-index.md`에 둔다. 기존 산출물이나 사용자가 지정한 계획은 임의로 이동·변환하지 않는다. 실행 계획의 `Kind:`·`Status:` 등은 그 계약의 값을 쓰며, 아래 구현 티켓 체크박스 규칙이나 deep-plan의 `open`·`claimed`·`resolved` 상태를 적용하지 않는다. `DONE`은 검토된 실행 완료이며, 원본 브랜치 반영이나 원격 이슈 닫기 권한이 아니다.
+
 - `.agents/plans/`는 git에서 추적하고, 스크래치 경로(`.agents/worktrees/`, `.agents/prototype/`)는 무시한다. 따라서 티켓 파일은 **브랜치 콘텐츠**이다 — 티켓의 체크리스트 상태는 읽는 브랜치가 말하는 대로이다.
 - 구현 티켓의 인수 체크박스는 그것을 구현하는 **기능 브랜치**에서, 구현과 **같은 커밋**에 `[X]`로 바꾼다 — 별도 트래커 커밋이나 타깃 브랜치에서 코드보다 먼저 커밋하지 않는다. 머지는 사람의 결정이며, 머지가 코드와 체크리스트를 함께 가져오거나 둘 다 가져오지 않는다. `상태:` 줄은 바꾸지 않는다.
 

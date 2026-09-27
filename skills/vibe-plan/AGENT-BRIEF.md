@@ -1,5 +1,7 @@
 # Writing an Agent Brief
 
+This document applies to ordinary triage/ticket briefs. The explicit execution-plan route follows [EXECUTION-PLAN.md](EXECUTION-PLAN.md), not the file-path/line-number restrictions below.
+
 An agent brief is a structured comment posted to a GitHub issue or PR when moved to `ready-for-agent`. It is the authoritative specification against which an AFK agent works. The original body and discussion provide context — the agent brief is the contract.
 
 The brief describes **what the agent must do**, applying to both surfaces: building changes from scratch for issues, or finishing remaining work *on* existing diffs for PRs — closing gaps and addressing review feedback. Principles remain identical; PR examples below illustrate the differences.

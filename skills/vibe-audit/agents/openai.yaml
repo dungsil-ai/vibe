@@ -1,0 +1,4 @@
+interface:
+  display_name: "Vibe Audit"
+  short_description: "Find technical improvements through read-only codebase audits"
+  default_prompt: "Use $vibe-audit to audit the codebase read-only and prioritize technical improvements with supporting evidence."

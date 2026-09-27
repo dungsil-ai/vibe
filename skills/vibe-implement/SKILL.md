@@ -6,17 +6,27 @@ disable-model-invocation: true
 
 # Task Implementation
 
-Implement work specified by the user in a spec or ticket.
+Implement work specified by the user in a spec or ticket. `/vibe-implement execute <plan>` is a supervisory entrypoint that delegates an agreed execution plan to a separate executor and reviews the result.
+
+## Invocation Boundary
+
+Identify the input and caller role before applying other sections.
+
+- For `execute <plan>` or a request to execute a plan with `Kind: execution-plan` / `Kind: design-spike`, read all of [EXECUTE.md](EXECUTE.md) and follow supervision. Plan-only input must not become ordinary direct invocation even when the word `execute` is absent.
+- A **dispatched atomic executor** given the full plan and a workspace assignment by the supervisor must not become a supervisor or redelegate execution. Reuse the same implementation core (TDD, verification, read-only review), subject to the authority, status, and return contract in `EXECUTE.md`.
+- Ordinary spec/ticket invocations and existing `vibe-goal` workspace assignments retain the contract below. Do not convert existing specs, tickets, or decision maps into execution plans arbitrarily. Return insufficient `execute` input to `/vibe-plan` instead of falling back to ordinary direct invocation.
+
+The small-change/non-Git in-place exceptions, ordinary completion disposition, tracker updates, publishing, and cleanup below do not apply to supervision or its executor. Supervisors never implement directly and may record only execution status and evidence in the plan/index. Executors do not update the plan/index either. [vibe-plan's EXECUTION-PLAN.md](../vibe-plan/EXECUTION-PLAN.md) owns execution-plan authoring, review, reconcile, and `--issues`.
 
 ## Planning Boundary
 
-This skill never performs planning-family activities. It does not perform triage, exploration, spec drafting/editing, decomposition, ticket creation/splitting, ticket publishing, or plan modification. Implementation begins only from an already-agreed spec or ticket.
+This skill never performs planning-family activities. It does not perform triage, exploration, spec drafting/editing, decomposition, ticket creation/splitting, ticket publishing, or plan modification. Implementation begins only from an already-agreed spec/ticket or an execution plan validated by supervision. Supervisory execution-status recording is distinct from changing plan content.
 
 If input requires planning, or if the plan is incorrect or the spec is insufficient, stop implementation and return work to the caller or `/vibe-plan`/`/vibe-deep-plan`. Do not fix or alter plans inside this skill.
 
 ## Completion Ownership
 
-`vibe-implement` executes atomically for a single ticket only. It does not branch by mode name. If the caller (e.g. `vibe-goal`) supplies an assignment record (task unit ID, original target/ref, fixed point, branch, worktree path, owner/status) via ledger/handoff, reuse that workspace; otherwise create a single workspace according to Workspace Isolation below. Implementation → review → finding fixes → resumption for the same logical task reuses that exact single workspace without adding a second one. Do not infer state from current worktree path (`.agents/worktrees/*`) or branch name (`vibe/*`) alone. This skill does not own a `caller-supplied` mode branch.
+`vibe-implement` has one atomic single-task implementation core, not copies per mode. The supervisory entrypoint is a boundary that delegates this core to a separate executor, not a second implementation mode. If the caller (e.g. `vibe-goal`) supplies an assignment record (task unit ID, original target/ref, fixed point, branch, worktree path, owner/status) via ledger/handoff, reuse that workspace; otherwise create a single workspace according to Workspace Isolation below. Implementation → review → finding fixes → resumption for the same logical task reuses that exact single workspace without adding a second one. Do not infer state from current worktree path (`.agents/worktrees/*`) or branch name (`vibe/*`) alone. This skill does not own a `caller-supplied` mode branch.
 
 Before touching anything, locate existing **workspace records** for the same logical task. Implementation, review, review-fix, and resuming prior runs are all the same task. Workspace records bind the task unit ID to original target/ref, fixed point, branch, worktree path, and current owner/status. This resides in the externally supplied assignment record or the run's own prior return record. If exactly one matching record exists with no other active owner, reuse as-is. Continue all work in the existing worktree; if the worktree was removed, reattach to the preserved branch (do not create a newly numbered branch), preserve the original fixed point (do not recompute from current HEAD), and create no new branch or worktree. If records are missing, multiple candidates exist, other active owners exist, or unexpected head/unsafe dirty states occur, stop and report. Do not guess by branch name, number, slug, or latest `vibe/*`, and do not create new siblings. Only for new logical tasks with no matching record do you capture the current commit (`git rev-parse HEAD`) as the **fixed point** for review, create a single workspace according to Workspace Isolation below, and record it in return results.
 

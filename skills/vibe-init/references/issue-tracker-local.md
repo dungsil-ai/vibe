@@ -23,6 +23,8 @@ Before drafting Korean specifications, issues, or comments, read the installed `
 
 ## Version Control and Completion Updates
 
+Execution plans are distinct from ordinary specs, implementation tickets, and deep-plan decision records. `/vibe-plan plan`, `review-plan`, and `reconcile` follow the [execution-plan contract](../../vibe-plan/EXECUTION-PLAN.md). Store new plans at `.agents/plans/<work-slug>/execution-plan.md` and their index at `.agents/plans/execution-index.md`. Never silently move or convert existing artifacts or a user-specified plan. Use that contract's values for `Kind:`, `Status:`, and other execution-plan fields; neither the implementation-ticket checkbox rules below nor deep-plan's `open`, `claimed`, and `resolved` statuses apply. `DONE` means reviewed execution is complete, not that changes have landed on the original branch or that a remote issue may be closed.
+
 - Track `.agents/plans/` in git, ignoring scratch paths (`.agents/worktrees/`, `.agents/prototype/`). Ticket files are **branch content** — checklist states reflect the branch being read.
 - Flip acceptance checkboxes on implementation tickets to `[X]` on the **feature branch** implementing them, within the **same commit** as the implementation — no separate tracker commits or pre-code commits on target branches. Merging is a human decision; merge brings code and checklist together or neither. Do not edit `상태:` lines.
 

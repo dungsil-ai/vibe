@@ -13,6 +13,8 @@ Use the same substitute documents when later skill instructions refer to these c
 
 ## Authority and Artifacts
 
+Explicit `plan`, `review-plan`, or `reconcile` requests and execution-plan handoffs for selected audit or direction findings follow `/vibe-plan`'s [execution-plan contract](../../vibe-plan/EXECUTION-PLAN.md). That path keeps the local plan authoritative and handles GitHub publication under its contract only with `--issues`. It does not change existing tracker settings for ordinary specs and tickets. Resolve any conflict between existing configuration and the publication target first.
+
 Never invoke or require `/vibe-init` merely because configuration is absent. Applying defaults does not create `AGENTS.md`, configuration files under `docs/agents/`, or initialization-only commits or pushes. Run `/vibe-init` only when the user requests creating or changing configuration.
 
 Local defaults grant no additional write authority. Planning skills create planning files within the requested scope; implementation skills update tickets under their existing completion contract. Review only reads existing local specs and tickets. Missing configuration does not authorize moving existing artifacts or creating remote issues or PR/MRs.
