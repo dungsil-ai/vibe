@@ -15,7 +15,7 @@ Standards and Spec are the default axes. Enable Risk only when the user requests
 
 The Spec axis is a **fast review** — a single subagent reading the diff against the spec and reporting missing requirements, scope creep, and incorrect implementations within 400 words. When the user requests a formal requirements verdict — acceptance criteria with per-item status, separated evidence domains, independent reviewer passes, or an aggregate `PASS`/`FAIL`/`NEEDS_REVIEW` — run `/rq` separately on the same requirements. When `/rq` runs, it replaces Spec; do not run both and merge them. A direct `/vibe-review` never invokes `/rq` automatically merely because a change is high-risk.
 
-Issue tracker should have been provided — run `/vibe-init` if `docs/agents/issue-tracker.md` is missing.
+Read [Configuration Documents and Defaults](../vibe-init/references/defaults.md). Without configuration, find and review specs and tickets using local Markdown without requiring initialization. Review remains read-only: applying defaults creates or modifies no configuration, spec, or ticket files. Report limitations under the spec-discovery rules below only when the needed spec is actually absent.
 
 ## Process
 
@@ -49,6 +49,10 @@ Otherwise disable Risk. A missing spec does not affect this decision. High-risk 
 
 Anything documenting how code should be written in this repository, such as `CODING_STANDARDS.md` or `CONTRIBUTING.md`.
 
+When evaluating relevant violations, inspect the repository's actual check commands, linter configuration, hooks, and CI wiring. A configuration file alone does not establish enforcement. Do not duplicate rules that are already effectively enforced.
+
+Classify findings as **mechanically checkable** or **judgment-dependent**. For repeatable violations such as banned APIs, import shapes, or file locations, propose a deterministic check using existing repository tooling. If a check exists but is unwired or broken, report that problem rather than inventing another check. Use documented standards for context-dependent design or consistency judgments. Check proposals are follow-up recommendations distinct from the code violation itself; a proposal alone is not an unresolved violation or merge blocker. Do not turn missing checks alone into an unrelated repository-wide improvement request, and never edit linter, hook, CI, or standards files during review.
+
 On top of repository documentation, the Standards axis always includes the **Smell Baseline** below — a fixed set of Fowler code smells (*Refactoring*, ch.3) applying even when repos document nothing. Two rules bind this:
 
 - **Repository takes precedence.** Documented repo standards always win; if repo endorses what the baseline flags, suppress the smell.
@@ -77,6 +81,7 @@ Dispatch one `Agent` tool call per enabled axis in a single message, all using `
 
 - Full diff command and commit list.
 - List of standards source files found in Step 4, **plus the full Smell Baseline from Step 4** pasted in — subagents have no other access.
+- Relevant check commands, configuration, hook and CI paths, and verified wiring status. Classify each finding as mechanically checkable or judgment-dependent; for repeatable violations, include a follow-up deterministic-check recommendation within that finding, preferring existing tooling. Proposals alone do not block merge. Do not create checks or change configuration.
 - Instructions: "Report — per relevant file/hunk — (a) where diff violates documented standards: cite standard (file + rule); and (b) noticeable baseline smells: name smell and cite hunk. Distinguish hard violations from judgment calls — documented standard violations may be hard, baseline smells are always judgment calls, and documented repo standards override baseline. Skip what tooling enforces. Under 400 words."
 
 **Spec Subagent Prompt** — Include:

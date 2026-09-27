@@ -9,6 +9,12 @@ Rules for difficult bugs. Steps are skipped only with explicit justification.
 
 When exploring the codebase, read `CONTEXT.md` (if present) to build a clear model of relevant modules, and check ADRs for the area you intend to modify.
 
+## Protect Secrets in Diagnostic Material
+
+Before sharing or saving commands, output, logs, HAR files, or other diagnostic material, replace tokens, passwords, authentication headers, cookies, and personally identifiable information with `<REDACTED>`. Reference credentials through environment variables in reproduction commands; never print expanded values or dump the environment. Quote only the excerpts needed to evaluate the symptom, not entire artifacts.
+
+The HITL script's `capture` echoes its input into output the agent reads. Collect only redacted observations and leave signing in to a user-operated `step`. If redacted material is insufficient, explain what information is missing and request additional observations without secrets. Never request or reprint raw credentials.
+
 ## Intent and Authority Boundary
 
 Classify the requested action before starting the loop:
@@ -63,11 +69,11 @@ The goal is not a clean reproduction, but a **higher reproduction rate**. Repeat
 
 ### When a Loop Really Cannot Be Built
 
-Stop explicitly and state so. List what was attempted. Ask the user for (a) access to a reproducing environment, (b) captured artifacts (HAR files, log dumps, core dumps, timestamped screen recordings), or (c) explicit approval after previewing exact isolated workspace temporary diagnostic changes and cleanup. Do **not** proceed to hypothesis generation without a loop.
+Stop explicitly and state so. List what was attempted. Ask the user for (a) access to a reproducing environment, (b) redacted captured artifacts (HAR files, log dumps, core dumps, timestamped screen recordings), or (c) explicit approval after previewing exact isolated workspace temporary diagnostic changes and cleanup. Do **not** proceed to hypothesis generation without a loop.
 
 ### Completion Criteria — A Tight Red-Capable Loop
 
-Phase 1 is complete when the loop is **tight** and **red-capable**: you can state **a single command** — script path, test invocation, curl — that has **already been run at least once** (paste invocation and output), and that is:
+Phase 1 is complete when the loop is **tight** and **red-capable**: you can state **a single command** — script path, test invocation, curl — that has **already been run at least once** (paste redacted invocation and output), and that is:
 
 - [ ] **Red-capable** — Drives the actual bug code path and verifies the **user's exact symptom**, so it turns red on this bug and green when fixed. Not "runs without error" — it must be able to *catch this specific bug*.
 - [ ] **Deterministic** — Yields the same verdict on every run (for flaky bugs: a consistently high reproduction rate as described above).

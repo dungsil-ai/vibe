@@ -24,7 +24,7 @@ Before drafting Korean specifications, issues, or comments, read the installed `
 ## Version Control and Completion Updates
 
 - Track `.agents/plans/` in git, ignoring scratch paths (`.agents/worktrees/`, `.agents/prototype/`). Ticket files are **branch content** — checklist states reflect the branch being read.
-- Flip acceptance checkboxes on implementation tickets to `[X]` on the **feature branch** implementing them, within the **same commit** as the implementation — no separate tracker commits or pre-code commits on target branches. Merging is a human decision; merge brings code and checklist together or neither. Do not edit `Status:` lines.
+- Flip acceptance checkboxes on implementation tickets to `[X]` on the **feature branch** implementing them, within the **same commit** as the implementation — no separate tracker commits or pre-code commits on target branches. Merging is a human decision; merge brings code and checklist together or neither. Do not edit `상태:` lines.
 
 ## Research Record Persistence
 

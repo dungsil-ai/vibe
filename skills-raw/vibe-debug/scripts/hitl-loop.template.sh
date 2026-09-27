@@ -11,6 +11,8 @@
 #   capture VAR "<질문>"   → 질문을 보여주고, 응답을 VAR에 읽는다
 #
 # 마지막에, 캡처한 값이 에이전트가 파싱할 수 있도록 KEY=VALUE 형태로 출력된다.
+# capture에는 비밀값을 가린 관찰 결과만 입력한다. 로그인은 사용자가 step으로 수행한다.
+# 이 스크립트는 입력을 자동으로 가리지 않는다.
 
 set -euo pipefail
 
@@ -22,6 +24,7 @@ step() {
 capture() {
   local var="$1" question="$2" answer
   printf '\n>>> %s\n' "$question"
+  printf '    토큰, 비밀번호, 쿠키, 개인 식별 정보를 <REDACTED>로 바꾼 관찰 결과만 입력하세요. 입력은 그대로 출력됩니다.\n'
   read -r -p "    > " answer
   printf -v "$var" '%s' "$answer"
 }
@@ -32,7 +35,7 @@ step "http://localhost:3000에서 앱을 열고 로그인하세요."
 
 capture ERRORED "'내보내기' 버튼을 클릭하세요. 에러가 발생했나요? (y/n)"
 
-capture ERROR_MSG "에러 메시지를 붙여넣으세요 (또는 'none'):"
+capture ERROR_MSG "비밀값을 가린 에러 메시지를 붙여넣으세요 (또는 'none'):"
 
 # --- 위를 편집 ---------------------------------------------------------
 

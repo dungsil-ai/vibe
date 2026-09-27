@@ -36,7 +36,7 @@ The map is an **index**, not a storehouse. It lists decisions made and points to
 
 `상태:초안` and hosted triage statuses share the same status axis and are therefore **mutually exclusive**. `유형:계획` is on a separate type axis, so the map carries it together with `상태:초안`. A hosted map and its decision issues never carry triage statuses. Local maps have no hosted labels. Local Markdown decision records use a separate `Status: open` → `claimed` → `open`/`resolved` lifecycle. Triage statuses apply again only when the map finishes and `/vibe-plan` posts implementation tickets.
 
-**Where the map, child tickets, blocking, and frontier queries physically live depends on the tracker.** An issue tracker should have been provided — run `/vibe-init` if missing. Refer to the tracker document's "Wayfinding operations" section for how *this* repository represents them. Default to the local Markdown tracker if no tracker is provided.
+**Where the map, child tickets, blocking, and frontier queries physically live depends on the tracker.** Read [Configuration Documents and Defaults](../vibe-init/references/defaults.md). Without configuration, use the local Markdown tracker's map, record, blocking, and status rules without initialization. When configured, follow that tracker's wayfinding operations.
 
 ### Map Body
 

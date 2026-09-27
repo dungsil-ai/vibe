@@ -60,6 +60,8 @@ Lifecycle:
 
 The full frame must fit on one screen.
 
+Alongside free play, provide **guided scenarios** that answer the question. Select relevant happy paths, tricky edge cases, and actions that should be illegal. Briefly explain each situation and its ordered actions. Starting or restarting a scenario resets prototype-local state to a known initial state. Each step calls the same pure logic interface as free play and advances on user input. Show the selected scenario and progress within the current-state area, and add selection, advance, and restart shortcuts. Retain free play; display the logic's rejection of illegal actions rather than bypassing it. Do not add HTML or a separate framework.
+
 ### 5. Runnable via a Single Local Command
 
 Document exactly one copy/paste command in `.agents/prototype/<name>/README.md`. It must launch the prototype from local code and, if used, local manifests and dependencies — e.g. `pnpm --dir .agents/prototype/<name> start`.

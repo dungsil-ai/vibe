@@ -11,6 +11,8 @@
 #   capture VAR "<prompt>" → Displays prompt, reads response into VAR
 #
 # At the end, captured values are output in KEY=VALUE format for agent parsing.
+# Capture redacted observations only. Leave signing in to the user as a step.
+# This script does not redact input automatically.
 
 set -euo pipefail
 
@@ -22,6 +24,7 @@ step() {
 capture() {
   local var="$1" question="$2" answer
   printf '\n>>> %s\n' "$question"
+  printf '    Replace tokens, passwords, cookies, and personal data with <REDACTED> before entering observations. Input is echoed unchanged.\n'
   read -r -p "    > " answer
   printf -v "$var" '%s' "$answer"
 }
@@ -32,7 +35,7 @@ step "Open the app at http://localhost:3000 and log in."
 
 capture ERRORED "Click the 'Export' button. Did an error occur? (y/n)"
 
-capture ERROR_MSG "Paste the error message (or 'none'):"
+capture ERROR_MSG "Paste the redacted error message (or 'none'):"
 
 # --- Edit above ---------------------------------------------------------
 

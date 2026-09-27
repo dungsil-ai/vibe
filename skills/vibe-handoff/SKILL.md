@@ -10,7 +10,7 @@ metadata:
 
 Write a handoff document summarizing the current conversation so a fresh agent can continue the work. Save it to the user's OS temporary directory, not in the current workspace.
 
-Include a "Suggested Skills" section in the document, recommending skills the incoming agent should invoke.
+Include a "제안 스킬" section in the document, recommending skills the incoming agent should invoke. Preserve this Korean heading literally.
 
 Do not duplicate content already captured in other artifacts (specs, plans, ADRs, issues, commits, diffs). Reference them by path or URL instead.
 

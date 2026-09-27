@@ -14,7 +14,7 @@ Each ticket gets its own **assigned branch and worktree** — a ticket-specific 
 
 This orchestrator supplies assignment records via ledger/handoff to invoke `/vibe-implement`, which executes atomically for a single ticket without branching by mode name. Direct invocations outside this orchestration execute identically. Do not infer state from current worktree path or branch name alone.
 
-Issue trackers and triage label vocabularies must already be provided — run `/vibe-init` if `docs/agents/issue-tracker.md` is missing.
+Read [Configuration Documents and Defaults](../vibe-init/references/defaults.md). Without configuration, proceed with local Markdown without requiring initialization. Pass the same tracker rules and local artifact paths to downstream planning, implementation, and review.
 
 ## Landing and Tracker State
 

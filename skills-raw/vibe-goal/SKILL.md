@@ -14,7 +14,7 @@ metadata:
 
 이 오케스트레이터가 원장/handoff로 할당 기록을 공급해 `vibe-implement`를 호출한다. `vibe-implement`는 모드를 나누지 않고 티켓 1개를 원자적으로만 실행한다. 직접 호출과 동일한 원자 실행이며, 현재 worktree 경로나 브랜치 이름만으로 상태를 추측하지 않는다.
 
-이슈 트래커와 트리아지 라벨 어휘는 이미 제공되어 있어야 한다 — `docs/agents/issue-tracker.md`가 없으면 `/vibe-init`을 실행한다.
+[설정 문서와 기본값](../vibe-init/references/defaults.md)을 읽는다. 설정이 없으면 초기화를 요구하지 않고 로컬 Markdown으로 진행한다. 하위 계획·구현·리뷰에도 같은 트래커 규칙과 로컬 산출물 경로를 전달한다.
 
 ## 반영과 트래커 상태
 

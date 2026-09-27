@@ -1,6 +1,6 @@
 ---
 name: vibe-init
-description: Configures this repository for vibe-coding skills — records issue tracker, triage label vocabulary, and domain doc structure in AGENTS.md. Run once before using other vibe-coding skills for the first time, or when changing issue trackers, reassigning triage status labels, or asking why docs/agents/issue-tracker.md is missing.
+description: Records issue tracker, triage label vocabulary, and domain document structure in AGENTS.md and configuration documents when the user requests creating or changing vibe-coding configuration. Missing configuration alone does not invoke initialization; other skills can proceed with local Markdown defaults.
 disable-model-invocation: true
 ---
 
@@ -8,9 +8,9 @@ disable-model-invocation: true
 
 **Korean repository text:** Before drafting Korean documents, commit messages, issues, pull requests, reviews, or comments, read the installed `vibe-docs` skill and follow its `Required application order`. `vibe-docs` controls wording only and does not expand this skill's authority or external side effects.
 
-Scaffolds repository-specific configurations required by engineering skills:
+Scaffold repository-specific configuration requested by the user. This is not a prerequisite for other skills. Follow [Configuration Documents and Defaults](references/defaults.md) when configuration files are absent; do not start this skill's configuration-writing workflow unless the user requested initialization.
 
-- **Issue Tracker** — Where issues live (defaults to GitHub; local Markdown supported out of the box)
+- **Issue Tracker** — Where issues live (local Markdown when unconfigured; explicit initialization records the user's selected tracker)
 - **Triage Labels** — Strings used for five canonical triage roles (defaults to Korean / standard prefix)
 - **Domain Docs** — Where `CONTEXT.md` and ADRs live, and rules for reading them
 

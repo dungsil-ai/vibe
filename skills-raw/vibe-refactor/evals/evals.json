@@ -2,6 +2,16 @@
   "skill_name": "vibe-refactor",
   "evals": [
     {
+      "id": "translated-deepening-keeps-korean-terms",
+      "prompt": "영어 번역본 vibe-refactor의 DEEPENING.md로 내가 고른 주문 처리 후보의 의존성을 설명해줘. 주문 규칙은 메모리 안에 있고 배송 조회는 우리가 소유한 원격 서비스야. 구현은 하지 마.",
+      "expected_output": "프로세스 안의 규칙과 소유한 원격 의존성을 구분하고, 사용자 설명에는 용어집의 모듈·인터페이스·경계·어댑터를 사용한다. 영어 설명 문서를 읽었다는 이유로 사용자 용어를 영어로 바꾸지 않는다.",
+      "assertions": [
+        "의존성 분류와 포트·어댑터 전략을 한국어 용어집의 확정된 용어로 설명한다.",
+        "사용자에게 보이는 용어를 module, interface, boundary, adapter로 대체하지 않고 모듈, 인터페이스, 경계, 어댑터로 유지한다.",
+        "소스 식별자는 필요할 때 원형을 유지하며 저장소 코드를 수정하지 않는다."
+      ]
+    },
+    {
       "id": "temp-report-with-visual-candidates",
       "prompt": "최근 변경이 잦은 영역을 찾아 코드베이스 구조 개선 기회를 검토해줘.",
       "expected_output": "저장소를 변경하지 않고 OS 임시 디렉터리에 타임스탬프가 포함된 자체 완결 HTML 보고서를 쓰고 열며, 절대 경로를 알려 준다. 각 후보에는 전후 시각화와 권고 강도 배지가 있다. 보고서는 한국어이며 seam, leverage, locality 같은 영어 전문용어를 라벨로 쓰지 않는다.",

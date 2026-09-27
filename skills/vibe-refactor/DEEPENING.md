@@ -1,6 +1,6 @@
 # Deepening
 
-How to safely deepen shallow module clusters given their dependencies. Uses [VOCABULARY.md](VOCABULARY.md) — **module**, **interface**, **boundary**, **adapter**. Use those words in user-facing text. Do not say `seam`.
+How to safely deepen shallow module clusters given their dependencies. Use the Korean terms from [VOCABULARY.md](VOCABULARY.md): **모듈**, **인터페이스**, **경계**, **어댑터**. Preserve those Korean terms in user-facing text. Do not say `seam`.
 
 ## Dependency Classification
 
