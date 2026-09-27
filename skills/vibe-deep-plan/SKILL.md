@@ -130,6 +130,16 @@ Out of scope work never graduates — the frontier stops at the destination — 
 
 Marking something out of scope is a scope-defining act, not a step along the path. If an existing ticket turns out to lie beyond the destination — mistakenly scoped during charting, or revealed by a resolution — **close it** (closed tickets are unambiguously off the frontier) and add a line to the **Out of scope** section: summary, why it is out of scope, and a link to the closed ticket. It is omitted from **Decisions so far** (which records the actual path walked) — scope boundaries are not steps on that path.
 
+## Visualizing Ticket Decomposition
+
+When presenting a proposed ticket decomposition during map charting or expansion, include a dependency diagram in the conversation rather than listing tickets alone. Use Mermaid when supported; otherwise use a text diagram.
+
+- Label each node with the ticket name and type, and direct arrows from prerequisite tickets to the downstream tickets they block. Place tickets that can proceed in parallel at the same stage.
+- Distinguish the frontier from blocked or claimed tickets. Explicitly mark tickets and relationships not yet created as proposals, and depict saved tickets using the current tracker state.
+- Show **Not yet specified** separately from tickets. Do not split unspecified areas into tickets or invent dependencies to fill the visualization.
+
+This diagram is explanatory and does not replace the tracker's child or blocking relationships. Preserve the rule that open tickets are not listed in the map body.
+
 ## Invocation
 
 Two modes. By default, a work session claims and resolves a single ticket. Research persistence during charting follows [RESEARCH.md](RESEARCH.md). It is a handoff record, not a resolution, and does not count against that limit. An explicit user request may continue the same charting invocation into parallel work across multiple **named, unblocked HITL** tickets. Only those named tickets join the exception; all claims, human exchanges, approvals, resolutions, and map updates still follow their standard rules.
