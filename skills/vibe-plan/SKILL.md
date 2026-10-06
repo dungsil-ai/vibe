@@ -41,7 +41,7 @@ Before entering a stage that may change local planning documents, record `git st
 
 Maintain executed stages in a **single unbroken context window** — never compressing or clearing until tickets are published — so triage findings, grilling, specs, and tickets build upon the same foundation. Each ticket is subsequently implemented in a fresh session focused on that ticket alone.
 
-If the session degrades before tickets are produced, do not force through: hand off the thread (see `/vibe-handoff`) to continue in a fresh session.
+If the session degrades before tickets are produced, do not force through: ask the user to run `/vibe-handoff` to continue in a fresh session.
 
 ## Output Language
 
@@ -171,7 +171,7 @@ When prior triage notes exist on an issue/PR, read them, check if reporter answe
 
 ## Stage 1 — Grill
 
-Run a `/vibe-grilling` session using `/vibe-modeling`: interview one question at a time until reaching shared understanding, sharpening domain terms and writing `CONTEXT.md` / ADR updates immediately as decisions solidify.
+Load the `vibe-grilling` and `vibe-modeling` skills separately and apply both: interview one question at a time until reaching shared understanding, sharpening domain terms and writing `CONTEXT.md` / ADR updates immediately as decisions solidify.
 
 Do not proceed to Stage 2 until the user confirms shared understanding.
 
@@ -184,7 +184,7 @@ When Stage 2 receives a cleared decision map from `/vibe-deep-plan`, read the ma
 
 ### Local Decision Gate
 
-However Stage 2 was entered, review established decisions against `/vibe-modeling` before writing the spec. Do not reopen settled choices. Record new domain terms in `CONTEXT.md`, and write any decision that meets all three ADR conditions but is not yet recorded. Do not duplicate an existing decision record.
+However Stage 2 was entered, load the `vibe-modeling` skill and review established decisions against its criteria before writing the spec. Do not reopen settled choices. Record new domain terms in `CONTEXT.md`, and write any decision that meets all three ADR conditions but is not yet recorded. Do not duplicate an existing decision record.
 
 Before the first hosted-tracker spec, label, or ticket is published or edited, commit `CONTEXT.md` and ADR changes made by this planning run, then push the current branch normally. Never use `git add .`; stage only exact paths from this run and do not mix preexisting user changes. Review the staged diff and commit SHA, then verify that the remote branch contains that SHA after the push. Never force-push. If commits were already unpushed at the start, show every commit that would be published and ask the user first. If existing changes cannot be separated safely, commit or push fails, or remote-SHA verification fails, stop without mutating the remote tracker. If no local modeling document changed, do not create a new commit or push.
 

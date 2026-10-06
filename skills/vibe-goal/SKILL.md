@@ -8,7 +8,7 @@ metadata:
 
 # Driving a Goal to Completion
 
-Execute a single goal through review to committed code in one run. This skill **orchestrates**; it does not implement directly, and does not plan directly. It may invoke or route to `/vibe-plan` and `/vibe-deep-plan`, but **does not perform planning work itself** — triage, exploration, spec drafting/editing, decomposition, ticket design, and ticket publishing are the responsibilities of those skills. Planning happens via `/vibe-plan` (or `/vibe-deep-plan` first if the effort is too large), each ticket is implemented by a **fresh subagent** running `/vibe-implement`, and the entire goal finishes with standard reviews plus a canonical requirement quality gate when `/rq` is available.
+Execute a single goal through review to committed code in one run. This skill **orchestrates**; it does not implement directly, and does not plan directly. `/vibe-plan` and `/vibe-deep-plan` are user-invoked, so route to them by telling the user to run them rather than loading them inline. It **does not perform planning work itself** — triage, exploration, spec drafting/editing, decomposition, ticket design, and ticket publishing are the responsibilities of those skills. Planning happens via `/vibe-plan` (or `/vibe-deep-plan` first if the effort is too large), each ticket is implemented by a **fresh subagent** running `/vibe-implement`, and the entire goal finishes with standard reviews plus a canonical requirement quality gate when `/rq` is available.
 
 Each ticket gets its own **assigned branch and worktree** — a ticket-specific workspace isolated from all other tickets. Different tickets can run in parallel; the lifecycle of implementation → review → finding fixes → resumption for the same ticket reuses that ticket's exact assigned workspace. The goal maintains a single **integration workspace** separate from assigned workspaces: reviewed ticket results are replayed here for whole-goal verification, and ticket subagents do not commit directly to it. Resumption reuses recorded integration workspaces and each ticket's recorded assigned workspace using exact records — never opening a second one for the same goal or ticket.
 
@@ -28,7 +28,7 @@ Context is the only thing holding the goal together: the ticket graph, what has 
 
 - **Never edit source files directly.** All code changes go through ticket subagents.
 - **Never read full diffs.** Read subagent reports and review verdicts; open code only when adjudicating specific disagreements.
-- **Stay in one context window** — from Stage 1 routing to the final ticket. If performance degrades nonetheless, hand off via `/vibe-handoff` — pass the ledger, not the history.
+- **Stay in one context window** — from Stage 1 routing to the final ticket. If performance degrades nonetheless, ask the user to run `/vibe-handoff` — pass the ledger, not the history.
 
 No exceptions. Planning stages belong to `/vibe-plan` and `/vibe-deep-plan`: route to them, let them produce tickets, and consume what they publish. If plans need changing later, route back to Stage 1 and planning skills — never modify plans directly.
 
@@ -120,7 +120,7 @@ For each ready ticket on the frontier, create a ticket-specific **assigned works
 - Ticket reference and full body (fetched from tracker — never make subagents guess where it lives).
 - Spec link for readable context if needed.
 - Assigned workspace: ticket's assigned branch and worktree, plus exact wave base SHA.
-- Instruction: **Run `/vibe-implement` atomically on this ticket in the assigned workspace, and do nothing else.**
+- Instruction: **Implement this ticket atomically in the assigned workspace, following the implementation skill's TDD, verification, and read-only review core, and do nothing else.**
 - Boundaries: Implement **only** this ticket. Report out-of-scope issues without fixing.
 - Linearity rules: Commit **directly to assigned ticket branch** in worktree — stay linear from wave base, never merge original target or integration branch, create no extra branches or worktrees, and report if base shifted instead of rebasing/merging.
 
@@ -149,8 +149,8 @@ After successful replay, record ticket's returned reviewed SHA, verification, an
 Diagnose which case applies:
 
 - **Ticket too large for single context** — Route back to planning skills to split and publish as blocked slices; published slices enter ledger as new tickets, each with own assigned workspace. Slices execute next in dependency order.
-- **Insufficient ticket specification** — Halt implementation and route back to `/vibe-plan` for missing decisions and ticket edits. `/vibe-goal` does not interrogate users or edit tickets directly; retry only after planning skills republish.
-- **Genuinely broken codebase** — Report blockers to `/vibe-plan`; only blocker tickets published by planning skills enter ledger to execute in assigned workspaces via `/vibe-debug`.
+- **Insufficient ticket specification** — Halt implementation and ask the user to run `/vibe-plan` for missing decisions and ticket edits. `/vibe-goal` does not interrogate users or edit tickets directly; retry only after planning skills republish.
+- **Genuinely broken codebase** — Report blockers to `/vibe-plan`; only blocker tickets published by planning skills enter ledger to execute in assigned workspaces by loading the `vibe-debug` skill.
 - **Incorrect plan** — Stop execution, report, return to Stage 1: planning skills own corrections, never edit plans directly. Downstream tickets built on wrong plans waste more than restarts.
 
 Failures or review findings staying within the same ticket execute in that ticket's **same assigned workspace** — retries of the same canonical ticket, not new workspaces, branches, or ticket IDs. New Stage 4 fix tickets must first be designed and published by `/vibe-plan`; only then can `/vibe-goal` add canonical IDs and assigned workspaces. If assigned workspaces are dirty or state is ambiguous, stop, preserve, and report; do not reset or guess.
@@ -160,7 +160,7 @@ Failures or review findings staying within the same ticket execute in that ticke
 When all tickets are `integrated` with no `pending`, `running`, `blocked`, or `failed` remaining, record integration branch and exact current head SHA as review candidates. Confirm integration workspace is clean; unexplained dirty states or files halt execution, preserving branch and SHA.
 
 1. **Full suite once.** Run type checks, tests, and all repo checks across the recorded candidate in the integration workspace — not per ticket and not in user checkout.
-2. **Separated Review Axes.** Run `/vibe-review` from Stage 2 fixed point to recorded integration branch and commit. Per-ticket reviews saw single slices; this review examines the space between them, where interesting findings reside. Always run Standards. Also run Risk when the goal touched security, authentication, permissions, persistence, transactions, or external integrations, or requested a risk audit. If `/rq` will run in Step 3, skip Spec because the gate handles it. If `/rq` is unavailable, retain Spec — high-risk goals run Standards + Spec + Risk; low-risk goals run Standards + Spec.
+2. **Separated Review Axes.** Load the `vibe-review` skill and run it from Stage 2 fixed point to recorded integration branch and commit. Per-ticket reviews saw single slices; this review examines the space between them, where interesting findings reside. Always run Standards. Also run Risk when the goal touched security, authentication, permissions, persistence, transactions, or external integrations, or requested a risk audit. If `/rq` will run in Step 3, skip Spec because the gate handles it. If `/rq` is unavailable, retain Spec — high-risk goals run Standards + Spec + Risk; low-risk goals run Standards + Spec.
 3. **Spec Verdict.** If the `/rq` skill is available in this session, run it with Stage 2 fixed point as change boundary, recorded integration results as head, scoped to implementation domains (`CODE`, plus `MIGRATION` if needed). Source requirements represent the goal's **definition of done** — acceptance criteria actually promised by execution (spec acceptance criteria, or ledger goal line if absent from spec). User stories beyond that remain tracking rows and are out of scope; gating every story in large specs duplicates per-ticket reviews. Gate returns per-item status and aggregate `PASS` / `WARNING` / `NEEDS_REVIEW` / `FAIL`.
    - Default to gate's `LIGHT` tier. Use `HEAVY` only when the goal touched domains consistently requiring heavy tiers — security, auth, permissions, persistence, transactions, external integrations. These are also Risk-enabling signals, but they do not make direct `/vibe-review` invoke `/rq` automatically.
    - Keep operational, deployment, and data obligations as **separate gates**. They do not downgrade implementation verdicts and do not run here unless requested.

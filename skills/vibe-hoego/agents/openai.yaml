@@ -1,0 +1,7 @@
+interface:
+  display_name: "Vibe Hoego"
+  short_description: "Derive agent-environment improvements from session records"
+  default_prompt: "Use $vibe-hoego to look back at this session and propose agent-environment improvements."
+
+policy:
+  allow_implicit_invocation: false

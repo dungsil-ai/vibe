@@ -172,4 +172,4 @@ Mandatory before declaring completion:
 - [ ] One-off prototypes deleted, or preserved only under `.agents/prototype/<name>/`
 - [ ] Confirmed hypothesis stated in commit / PR message — so the next debugger can learn
 
-**And ask: What could have prevented this bug?** If the answer involves structural changes (lack of a good test boundary, tangled callers, hidden coupling), hand off with specific details to the `/vibe-refactor` skill. Make recommendations **after** the fix lands, not beforehand — you possess far more information now than when you started.
+**And ask: What could have prevented this bug?** If the answer involves structural changes (lack of a good test boundary, tangled callers, hidden coupling), hand off with specific details and tell the user to run `/vibe-refactor`. Make recommendations **after** the fix lands, not beforehand — you possess far more information now than when you started.

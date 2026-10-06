@@ -63,9 +63,9 @@ Do not propose interfaces yet. After writing the file, ask the user: "이 중 �
 
 ### 3. Deep Dive Loop
 
-Once the user selects a candidate, run `/vibe-grilling` to walk the decision tree together — constraints, dependencies, shape of deepened modules, what lies behind the boundary, surviving tests.
+Once the user selects a candidate, load the `vibe-grilling` skill and run it to walk the decision tree together — constraints, dependencies, shape of deepened modules, what lies behind the boundary, surviving tests.
 
-Side effects occur inline as decisions solidify — run `/vibe-modeling` as you go to keep domain models current:
+Side effects occur inline as decisions solidify — load the `vibe-modeling` skill as you go to keep domain models current:
 
 - **Naming deepened modules with concepts not in `CONTEXT.md`?** Add terms to `CONTEXT.md`. Create file lazily if missing.
 - **Sharpening ambiguous terms during discussion?** Update `CONTEXT.md` on the spot.

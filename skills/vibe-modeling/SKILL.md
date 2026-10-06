@@ -1,6 +1,6 @@
 ---
 name: vibe-modeling
-description: Defines domain terms and records significant architectural decisions for the project. Use when defining domain vocabulary, recording architectural decisions, or when other skills need to update the domain model.
+description: Defines domain terms and records significant architectural decisions for the project. Use when discussing codebase terminology, when writing or editing a glossary or an ADR, or when other skills need to update the domain model.
 ---
 
 # Vibe Modeling

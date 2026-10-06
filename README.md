@@ -34,3 +34,4 @@ pnpm dlx skills add dungsil-ai/vibe -g -y --skill *
 | [vibe-debug](skills/vibe-debug) | [mattpocock/skills](https://github.com/mattpocock/skills/)의 `diagnosing-bugs` (MIT) |
 | [vibe-modeling](skills/vibe-modeling) | [mattpocock/skills](https://github.com/mattpocock/skills/)의 `domain-modeling` (MIT) |
 | [vibe-grilling](skills/vibe-grilling) | [mattpocock/skills](https://github.com/mattpocock/skills/)의 `grilling` (MIT) |
+| [vibe-hoego](skills/vibe-hoego) | [mattpocock/skills](https://github.com/mattpocock/skills/)의 `retro` (MIT) |

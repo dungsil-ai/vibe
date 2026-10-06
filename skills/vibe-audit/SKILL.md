@@ -64,7 +64,7 @@ Perform this section only in branch mode. Resolve the default branch from local 
 
 ### 3. Category investigation and delegation
 
-Read the selected categories and `Finding format` in [AUDIT-PLAYBOOK.md](AUDIT-PLAYBOOK.md). For a full audit, request investigation only from `vibe-next-plan` once. Pass the requested level, scope, recon/ADRs, remaining concurrent slots, and safety contract; request **two to four separate** grounded direction suggestions. Direction-only requests use next's **four to six** target. Neither case should pad weak evidence to fill a quota. Do not call audit back from next or cycle through the same category. If next is unavailable, report direction as unaudited rather than implementing anything instead.
+Read the selected categories and `Finding format` in [AUDIT-PLAYBOOK.md](AUDIT-PLAYBOOK.md). For a full audit, request the direction category once by asking the user to run `/vibe-next-plan`, which is user-invoked and cannot be loaded inline. Pass the requested level, scope, recon/ADRs, remaining concurrent slots, and safety contract; request **two to four separate** grounded direction suggestions. Direction-only requests use next's **four to six** target. Neither case should pad weak evidence to fill a quota. Do not call audit back from next or cycle through the same category. If next is unavailable, report direction as unaudited rather than implementing anything instead.
 
 Do not assume subagents inherit context. Include in every delegation:
 
