@@ -76,6 +76,21 @@ Before writing or editing, sample two or three recent artifacts from the same re
 
 Fix only the items where a defect is actually confirmed; do not sand down sound sentences. Repository-conventional templates, formal register in a formal venue, terse unadorned replies, and the author's own verified habits are not defects.
 
+### Per-model prose habits
+
+When the model that wrote the text under review or the model now writing is known, check that model's known habits in the table below first. Never infer a model from the prose alone. Treat a row as the default only when the release matches exactly; for another or unknown release in the same family, use the row only as a reference prior. When the model is unknown, do not apply this table. The rows come from each vendor's prompting documentation, not from measurement.
+
+| Model release | Vendor-stated default | What to check |
+| --- | --- | --- |
+| Claude Fable 5.1 / Mythos 5.1 | Mannered prose: metaphor and flourish where a literal phrase exists; longer sentences, fewer paragraph breaks | Replace metaphors that stand in for available literal phrases; split run-ons. Sparse formatting is not evidence of a human author. |
+| Claude Fable 5 / Mythos 5 | Elaborates past the task; arrow-chain shorthand such as `A → B → fails` | Trim option surveys and over-long root-cause explanations; expand shorthand into sentences. |
+| Claude Opus 5 | Longer responses and documents than prior models; filler sections and redundant summaries; announces intent before acting | Run the density check harder; cut announcements of intent and corrections that change nothing for the reader. |
+| Claude Opus 4.8 | Direct, opinionated style by default | Missing validation openers and emoji are not evidence of a human. Check density and specificity instead. |
+| GPT-5.6 | More concise by default; may drop required caveats | Run the density check in both directions; restore trimmed caveats and next steps. |
+| GPT-6 Astra | Heavy use of lists, tables, and Markdown; recurring canned phrases | Run the formatting check harder. Hunt `delve`, `foster`, `leverage`, `it's worth noting`, `importantly`, `genuinely`, `Bottom Line:`, `In short:`, the `Question? Answer.` frame, `X, not Y` contrasts, hyphenated compound descriptors, and unprompted statements about what will not be done. A refusal that answers the request stays. |
+| Gemini 3 / 3.1 | Less verbose by default; direct, efficient answers | Terse and unadorned prose is not evidence of a human. Look for required caveats dropped for efficiency. |
+| DeepSeek, Kimi | No vendor prose guidance published | Apply only the shared standards. |
+
 ## Complete Korean writing rules
 
 Whenever a situation requires Korean, follow the instructions in this document. Doing so improves the efficiency of communication. These instructions explain in detail how to produce Korean sentences with clear meaning, relatively good readability, and a stable structure. Do not apply them to quotations, code, or code comments.
