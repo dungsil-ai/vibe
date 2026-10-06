@@ -47,6 +47,35 @@ Before drafting, check domain terms established by the user and by repository so
 
 This section overrides general vocabulary rules below. An established domain term does not fail the "unneeded English wording" check above.
 
+## Repository prose content norms
+
+Beyond sentence quality, keep the content structure and stance of issues, pull requests, reviews, comments, and commit messages human-shaped.
+
+### Check the existing voice first
+
+Before writing or editing, sample two or three recent artifacts from the same repository: past commit messages, the maintainer's recent replies, existing issues and pull requests. Match their register, length, and formatting habits. The repository's existing voice outranks the general standards in this document.
+
+### Content and stance
+
+1. Write the answer first. Put the verdict or conclusion in the first sentence of a reply or review comment, then add only as much reasoning as needed. Do not open by restating the question or report.
+2. A claim about code points at the code. Cite checkable evidence such as `file:line`, a commit SHA, verbatim error text, or a documentation link.
+3. Commit to a judgment where one is required. Do not write a review without a verdict or a reply that calls both sides right. Hedge only genuinely fragile claims, and when you do not know, say so briefly.
+4. State disagreement and refusal plainly, with a reason. Do not wrap them in apology or sandwich them between praise. For a wontfix or out-of-scope request, state the fact, one reason, and a link to where the decision is recorded.
+5. In review comments, distinguish severity the way the repository already does, so that a merge-blocking problem and a minor nit do not read with the same weight.
+6. Keep length proportional to the stakes. Do not stretch a one-sentence answer into a bullet list, and do not trim away a required caveat or the next step.
+7. Take versions, numbers, timestamps, and quotations from the actual change, incident, or data. Never invent what cannot be verified; ask the user or leave an explicit TODO. A wrong fact stated confidently is itself the top defect.
+
+### Expressions to remove
+
+- Habitual praise or thanks as an opener. Thank people only when there is a clear reason, such as a first contribution or unusual effort.
+- Closing pleasantries attached after the content ends, such as `도움이 되었기를 바랍니다` ("hope this helps") or `궁금한 점이 있으면 말씀해 주세요` ("let me know if you have any questions").
+- Summary sections that restate what was already said and vague outlooks such as `앞으로도 계속 개선하겠습니다` ("we will continue to improve"). End when the content ends.
+- Repetition that phrases every item in the same sentence frame, and formatting polished only on the surface. Vary the phrasing or tabulate instead.
+
+### Review stance
+
+Fix only the items where a defect is actually confirmed; do not sand down sound sentences. Repository-conventional templates, formal register in a formal venue, terse unadorned replies, and the author's own verified habits are not defects.
+
 ## Complete Korean writing rules
 
 Whenever a situation requires Korean, follow the instructions in this document. Doing so improves the efficiency of communication. These instructions explain in detail how to produce Korean sentences with clear meaning, relatively good readability, and a stable structure. Do not apply them to quotations, code, or code comments.
