@@ -1,31 +1,31 @@
-# Test-Driven Development
+# 테스트 주도 개발
 
-TDD is a red → green loop. This reference helps ensure that loop produces tests worth maintaining: what makes a good test, where tests belong, anti-patterns, and loop rules. Every section applies to every cycle. Consult before and during the loop, not afterward.
+TDD는 red → green 루프다. 이 참고 문서는 그 루프가 유지할 만한 테스트를 만들도록 돕는다: 좋은 테스트가 무엇인지, 테스트가 어디에 들어가는지, 안티 패턴, 루프의 규칙. 모든 섹션이 매 사이클에 적용된다. 루프 이후가 아니라 루프 전과 도중에 참고하라.
 
-When exploring the codebase, read `CONTEXT.md` (if present) so test names and interface vocabularies align with the project's domain language, and respect ADRs for the area under modification.
+코드베이스를 탐색할 때는 `CONTEXT.md`(있으면)를 읽어 테스트 이름과 인터페이스 어휘가 프로젝트의 도메인 언어와 일치하게 하고, 작업 중인 영역의 ADR을 존중하라.
 
-## What is a Good Test
+## 좋은 테스트란 무엇인가
 
-Tests verify behavior through public interfaces, not implementation details. Code may change completely while tests remain untouched. Good tests read like specifications. "user can checkout with valid cart" tells you exactly what feature exists and endures refactoring because it ignores internal structure.
+테스트는 구현 세부사항이 아니라 공개 인터페이스를 통해 행동을 검증한다. 코드가 완전히 바뀔 수 있지만 테스트는 바뀌지 않아야 한다. 좋은 테스트는 명세처럼 읽힌다. "user can checkout with valid cart"는 어떤 기능이 존재하는지 정확히 알려주며, 내부 구조를 신경 쓰지 않으므로 리팩터링을 견딘다.
 
-See [tests.md](tests.md) for examples and [mocking.md](mocking.md) for mocking guidelines.
+예시는 [tests.md](tests.md)를, 모킹 지침은 [mocking.md](mocking.md)를 참고하라.
 
-## Where Tests Belong
+## 테스트가 들어가는 곳
 
-A **boundary** is the public interface at which you test — you observe behavior without going inside. Tests live at boundaries, not internals.
+**경계**는 테스트를 수행하는 공개 인터페이스다. 내부로 들어가지 않고 행동을 관찰한다. 테스트는 경계에 있으며, 내부를 대상으로 하지 않는다.
 
-**Test only at pre-agreed boundaries.** Before writing any tests, write down where you will test and confirm with the user. Do not write tests at unconfirmed boundaries. Not everything can be tested. Agreeing on boundaries in advance keeps testing on critical paths and complex logic rather than every edge case.
+**사전에 합의한 경계에서만 테스트한다.** 어떤 테스트를 쓰기 전에, 테스트할 경계를 적어두고 사용자와 확인하라. 확인되지 않은 경계에서는 테스트를 쓰지 않는다. 모든 것을 테스트할 수는 없다. 미리 경계를 합의하는 것이 테스트 노력이 모든 엣지 케이스가 아니라 중요 경로와 복잡한 로직에 집중하게 만드는 방법이다.
 
-Ask: "What is the public interface, and where should we test?"
+질문하라: "공개 인터페이스가 무엇이며, 어디를 테스트해야 하는가?"
 
-## Anti-Patterns
+## 안티 패턴
 
-- **Coupled to implementation** — Mocking internal collaborators, testing private methods, or verifying via side channels (querying databases instead of interfaces). Symptom: refactoring breaks tests even though behavior did not change.
-- **Tautology** — Assertions recomputing expected values the same way the code does (`expect(add(a, b)).toBe(a + b)`, manual snapshots generated the same way, asserting constants equal themselves). These pass structurally and can never disagree with code. Expected values must come from independent sources of truth: known correct literals, real examples, specifications.
-- **Horizontal slicing** — Writing all tests first, then all implementations. Bulk tests verify imagined behavior. They test surface appearances rather than user-visible behavior, become insensitive to actual changes, and freeze test structures before understanding implementations. Work in **vertical slices** instead: one test → one implementation → repeat. Each test is a **sighting shot** reacting to lessons from the prior cycle.
+- **구현에 결합됨** — 내부 협력자를 모킹하거나, private 메서드를 테스트하거나, 사이드 채널(인터페이스 대신 데이터베이스를 조회)로 검증한다. 징후: 행동이 바뀌지 않았는데 리팩터링하면 테스트가 깨진다.
+- **동어반복** — 단언이 코드와 같은 방식으로 기대값을 다시 계산한다(`expect(add(a, b)).toBe(a + b)`, 같은 방식으로 만든 수동 스냅샷, 자기 자신과 같다고 단언한 상수). 그래서 구조상 통과하며 코드와 결코 의견이 달라질 수 없다. 기대값은 독립된 진실의 원천에서 와야 한다. 알려진 올바른 리터럴, 실제 예제, 명세.
+- **수평 분할** — 모든 테스트를 먼저 쓰고, 그 다음 모든 구현을 쓰는 것. 대량의 테스트는 상상한 행동을 검증한다. 사용자에게 보이는 행동이 아니라 구조의 겉모양을 테스트하고, 테스트는 실제 변경에 둔감해지며, 구현을 이해하기 전에 테스트 구조를 확정한다. 대신 **수직 슬라이스**로 작업하라. 하나의 테스트 → 하나의 구현 → 반복. 각 테스트는 이전 사이클이 가르쳐 준 것에 반응하는 **예비 사격**이다.
 
-## Loop Rules
+## 루프의 규칙
 
-- **Red before green.** Write a failing test first, then write only enough code to pass it. Do not anticipate future tests or add speculative features.
-- **One slice at a time.** One boundary, one test, one minimal implementation per cycle.
-- **Refactoring is not part of this loop.** Refactoring belongs in the review phase (see `/vibe-review`), not the red → green implementation loop.
+- **green보다 먼저 red.** 먼저 실패하는 테스트를 쓰고, 통과할 만큼만 코드를 쓴다. 미래의 테스트를 예상하거나 추측성 기능을 추가하지 않는다.
+- **한 번에 한 슬라이스.** 사이클마다 하나의 경계, 하나의 테스트, 하나의 최소 구현.
+- **리팩터링은 루프의 일부가 아니다.** 리팩터링은 red → green 구현 루프가 아니라 검토 단계(`/vibe-review` 스킬 참고)에 속한다.

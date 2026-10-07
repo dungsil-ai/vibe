@@ -1,124 +1,124 @@
 ---
 name: vibe-review
-description: Reviews changes after a fixed point against Standards and Spec, adding Risk for risk-audit, thermos, or thermo nuclear requests and for security, auth, permissions, persistence, transaction, or external-integration changes. Runs enabled axes in parallel subagents and reports them separately. Use for branches, PRs, working changes, "review after X", and risk audits.
+description: 고정점 이후의 변경을 Standards와 Spec으로 검토하고, 위험 감사·thermos·thermo nuclear 요청 또는 보안·인증·권한·영속성·트랜잭션·외부 연동 변경에는 Risk를 더한다. 켠 축을 병렬 서브에이전트로 실행하고 분리 보고한다. 브랜치, PR, 작업 중 변경, "X 이후 리뷰", 위험 감사 요청에 사용한다.
 ---
 
-# Reviewing Changes
+# 변경 검토하기
 
-A separated review of the diff between `HEAD` and a user-provided fixed point:
+`HEAD`와 사용자가 제시한 고정점 사이의 diff에 대한 분리된 검토:
 
-- **Standards** — Does the code adhere to this repository's documented coding standards?
-- **Spec** — Does the code faithfully implement the source issue / PRD / spec?
-- **Risk** — Does added or modified code introduce bugs, security problems, developer-experience breakage, or feature-gate leaks?
+- **Standards** — 코드가 이 저장소의 문서화된 코딩 표준을 따르는가?
+- **Spec** — 코드가 출처가 된 이슈 / PRD / 명세를 충실히 구현하는가?
+- **Risk** — 추가·수정 코드가 버그, 보안 문제, 개발 환경 파괴, 또는 피처 게이트 누수를 만드는가?
 
-Standards and Spec are the default axes. Enable Risk only when the user requests a risk audit, thermos, or thermo nuclear review, or when the change touches security, authentication, permissions, persistence, transactions, or external integrations. Enabled axes run as **parallel subagents** so they do not pollute each other's context, with this skill aggregating the findings.
+Standards와 Spec은 기본 축이다. Risk는 사용자가 위험 감사·thermos·thermo nuclear를 요청했거나 변경이 보안, 인증, 권한, 영속성, 트랜잭션, 외부 연동을 건드릴 때만 켠다. 켠 축은 **병렬 서브에이전트**로 실행되어 서로의 맥락을 오염시키지 않고, 이 스킬이 발견 사항을 모은다.
 
-The Spec axis is a **fast review** — a single subagent reading the diff against the spec and reporting missing requirements, scope creep, and incorrect implementations within 400 words. When the user requests a formal requirements verdict — acceptance criteria with per-item status, separated evidence domains, independent reviewer passes, or an aggregate `PASS`/`FAIL`/`NEEDS_REVIEW` — run `/rq` separately on the same requirements. When `/rq` runs, it replaces Spec; do not run both and merge them. A direct `/vibe-review` never invokes `/rq` automatically merely because a change is high-risk.
+Spec은 **빠른 검토**다 — 서브에이전트 하나가 명세에 맞춰 diff를 읽고, 빠진 요구사항, 범위 확장, 잘못된 구현을 400단어 안에 보고한다. 사용자가 항목별 상태, 증거 영역 분리, 독립 검토자 통과, 집계된 `PASS`/`FAIL`/`NEEDS_REVIEW` 같은 정식 요구사항 판정을 요청하면 같은 요구사항에 `/rq`를 별도로 실행한다. `/rq`가 실행되면 Spec을 대체한다; 둘을 실행해 병합하지 않는다. 고위험이라는 이유만으로 직접 `/vibe-review`가 `/rq`를 자동 호출하지 않는다.
 
-Read [Configuration Documents and Defaults](../vibe-init/references/defaults.md). Without configuration, find and review specs and tickets using local Markdown without requiring initialization. Review remains read-only: applying defaults creates or modifies no configuration, spec, or ticket files. Report limitations under the spec-discovery rules below only when the needed spec is actually absent.
+[설정 문서와 기본값](../vibe-init/references/defaults.md)을 읽는다. 설정이 없으면 초기화를 요구하지 않고 로컬 Markdown으로 명세·티켓을 찾아 검토한다. 리뷰는 읽기 전용이므로 기본값을 적용해도 설정, 명세, 티켓 파일을 만들거나 수정하지 않는다. 필요한 명세가 실제로 없을 때만 아래 명세 탐색 규칙에 따라 한계를 보고한다.
 
-## Process
+## 과정
 
-### 1. Pin the Fixed Point
+### 1. 고정점 고정하기
 
-What the user specified as fixed point — commit SHA, branch name, tag, `main`, `HEAD~5`, etc. If another skill invoked this skill passing a fixed point (`/vibe-implement` passes its commit recorded prior to start), use it without asking. Ask only when neither user nor caller provided one.
+사용자가 고정점으로 말한 것 — 커밋 SHA, 브랜치 이름, 태그, `main`, `HEAD~5` 등. 다른 스킬이 이 스킬을 호출하며 고정점을 넘겼으면(`/vibe-implement`는 시작 전 기록한 커밋을 넘긴다) 그것을 쓰고 묻지 않는다. 사용자나 호출자 어느 쪽도 고정점을 제공하지 않았을 때만 묻는다.
 
-Capture diff command once: `git diff <fixed-point>...HEAD` (three dots for merge-base comparison). Record commit list via `git log <fixed-point>..HEAD --oneline`.
+diff 명령을 한 번 잡는다: `git diff <fixed-point>...HEAD`(점 세 개, 비교가 merge-base 기반이 되도록). 커밋 목록은 `git log <fixed-point>..HEAD --oneline`으로도 적어둔다.
 
-Verify fixed point resolves (`git rev-parse <fixed-point>`) and diff is non-empty before proceeding. Invalid refs or empty diffs must fail here — not inside parallel subagents.
+더 나아가기 전에 고정점이 해결되는지(`git rev-parse <fixed-point>`) 확인하고 diff가 비어 있지 않은지 확인한다. 잘못된 ref나 빈 diff는 여기서 실패해야 한다 — 병렬 서브에이전트 안에서가 아니다.
 
-### 2. Identify Spec Source
+### 2. 명세 출처 식별하기
 
-Locate source spec in this order:
+출처 명세를 다음 순서로 찾는다:
 
-1. Issue references in commit messages (`#123`, `Closes #45`, GitLab `!67`, etc.) — fetch via `docs/agents/issue-tracker.md` workflow.
-2. Paths passed by user as arguments.
-3. PRD/spec files under `docs/`, `specs/`, or `.agents/plans/` matching branch name or feature.
-4. If none found, ask user for spec location. If user states there is none, skip **Spec** subagent and report "No spec".
+1. 커밋 메시지의 이슈 참조(`#123`, `Closes #45`, GitLab `!67` 등) — `docs/agents/issue-tracker.md`의 워크플로로 가져온다.
+2. 사용자가 인수로 넘긴 경로.
+3. 브랜치 이름이나 기능과 일치하는 `docs/`, `specs/`, 또는 `.agents/plans/` 아래의 PRD/명세 파일.
+4. 아무것도 없으면, 사용자에게 명세 위치를 묻는다. 없다고 하면, **Spec** 서브에이전트는 건너뛰고 "명세 없음"을 보고한다.
 
-### 3. Decide Whether to Run Risk
+### 3. Risk 실행 여부 결정하기
 
-Before launching subagents, enable Risk when either condition holds:
+서브에이전트를 띄우기 전에 Risk를 켤지 결정한다. 다음 중 하나면 켠다:
 
-- The user requested a risk audit, thermos, or thermo nuclear review.
-- The diff touches security, authentication, permissions, persistence, transactions, or external integrations.
+- 사용자가 위험 감사, thermos, 또는 thermo nuclear를 요청했다.
+- diff가 보안, 인증, 권한, 영속성, 트랜잭션, 또는 외부 연동을 건드린다.
 
-Otherwise disable Risk. A missing spec does not affect this decision. High-risk signals enable Risk; they do not automatically invoke `/rq`.
+그 외에는 Risk를 끈다. 명세가 없어도 Risk 실행 조건에는 영향이 없다. 고위험 신호는 Risk를 켜는 조건이지 `/rq`를 자동 호출하는 조건이 아니다.
 
-### 4. Identify Standards Source
+### 4. 표준 출처 식별하기
 
-Anything documenting how code should be written in this repository, such as `CODING_STANDARDS.md` or `CONTRIBUTING.md`.
+코드를 어떻게 써야 하는지 문서화한 저장소의 모든 것, 예를 들어 `CODING_STANDARDS.md`나 `CONTRIBUTING.md`.
 
-When evaluating relevant violations, inspect the repository's actual check commands, linter configuration, hooks, and CI wiring. A configuration file alone does not establish enforcement. Do not duplicate rules that are already effectively enforced.
+관련 위반을 평가할 때 저장소의 실제 검사 명령, 린터 설정, 훅과 CI 연결을 확인한다. 설정 파일이 있다는 이유만으로 검사된다고 간주하지 않는다. 이미 유효하게 강제되는 규칙은 중복 보고하지 않는다.
 
-Classify findings as **mechanically checkable** or **judgment-dependent**. For repeatable violations such as banned APIs, import shapes, or file locations, propose a deterministic check using existing repository tooling. If a check exists but is unwired or broken, report that problem rather than inventing another check. Use documented standards for context-dependent design or consistency judgments. Check proposals are follow-up recommendations distinct from the code violation itself; a proposal alone is not an unresolved violation or merge blocker. Do not turn missing checks alone into an unrelated repository-wide improvement request, and never edit linter, hook, CI, or standards files during review. When a session-level environment retrospective is needed, do not perform it in this skill; ask the user to run `/vibe-hoego`.
+발견한 위반은 **기계적 검사 가능**과 **판단 필요**로 구분한다. 금지 API, import 형태, 파일 위치처럼 반복 판정할 수 있는 위반은 기존 검사 도구를 이용한 자동 검사 후보로 제안한다. 검사가 있지만 연결이 빠졌거나 작동하지 않으면 새 검사 대신 그 문제를 지적한다. 문맥에 따른 설계·일관성 판단에는 문서화된 표준을 사용한다. 자동 검사 제안은 코드 위반 자체와 구분한 후속 권고이며, 제안만으로 미해결 위반이나 머지 차단으로 판정하지 않는다. 검사 부재만으로 변경과 무관한 저장소 전체 개선을 요구하지 않으며, 리뷰 중 린터·훅·CI·표준 파일을 수정하지 않는다. 세션 단위의 환경 회고가 필요하면 이 스킬 안에서 수행하지 않고 사용자에게 `/vibe-hoego` 실행을 안내한다.
 
-On top of repository documentation, the Standards axis always includes the **Smell Baseline** below — a fixed set of Fowler code smells (*Refactoring*, ch.3) applying even when repos document nothing. Two rules bind this:
+저장소에 문서화된 것 위에, Standards 축은 항상 아래의 **스멜 기준선**을 담는다 — 저장소가 아무것도 문서화하지 않았을 때도 적용되는 Fowler 코드 스멜 고정 집합(_Refactoring_, ch.3). 두 규칙이 이를 묶는다:
 
-- **Repository takes precedence.** Documented repo standards always win; if repo endorses what the baseline flags, suppress the smell.
-- **Always judgment calls.** Each smell is a labeled heuristic ("possible Feature Envy"), never a hard violation — and, like all standards here, skip what tooling already enforces.
+- **저장소가 우선한다.** 문서화된 저장소 표준이 항상 이긴다; 기준선이 표시할 것을 저장소가 지지하면, 스멜을 억제한다.
+- **항상 판단 영역.** 각 스멜은 라벨이 붙은 휴리스틱("가능한 Feature Envy")이지, 절대 경질 위반이 아니다 — 그리고, 여기의 모든 표준처럼, 도구가 이미 강제하는 것은 건너뛴다.
 
-Read each smell as *What it is* → *How to fix*; tailored to diffs:
+각 스멜은 *무엇인가* → *어떻게 고치는가*로 읽는다; diff에 맞춘다:
 
-- **Mysterious Name** — Function, variable, or type names failing to reveal what they do or hold. → Rename; if no honest name comes to mind, design is unclear.
-- **Duplicated Code** — Same logical shape appears across multiple hunks or files in the change. → Extract shared shape and call from both sides.
-- **Feature Envy** — Reaching into another object's data more than its own. → Move method to the data it envies.
-- **Data Clumps** — Same few fields or parameters traveling together repeatedly (types waiting to be born). → Bundle into a single type and pass that.
-- **Primitive Obsession** — Primitives or strings substituting for domain concepts deserving own types. → Give the concept a small type of its own.
-- **Repeated Switches** — Same `switch`/`if` ladder over same types repeating across the change. → Replace with polymorphism or a shared map.
-- **Shotgun Surgery** — Single logical change forcing edits scattered across multiple files in the diff. → Consolidate co-changing code into one module.
-- **Divergent Change** — Single file or module edited for multiple unrelated reasons. → Split so each module changes for one reason.
-- **Speculative Generality** — Abstractions, parameters, or hooks for needs absent from the spec. → Delete; revert inline until real need appears.
-- **Message Chains** — Long `a.b().c().d()` navigations callers should not depend on. → Hide path behind a single method on first object.
-- **Middle Man** — Classes or functions mostly delegating. → Cut them and call the real target directly.
-- **Refused Bequest** — Subclasses or implementations ignoring or overriding most inherited behavior. → Abandon inheritance and use composition.
+- **수상한 이름 (Mysterious Name)** — 무엇을 하는지나 담는지 드러내지 않는 함수, 변수, 또는 타입 이름. → 이름을 바꾼다; 정직한 이름이 안 떠오르면, 설계가 흐리다.
+- **중복 코드 (Duplicated Code)** — 변경의 둘 이상 hunk나 파일에 같은 논리 형태가 나타난다. → 공유 형태를 추출하고, 양쪽에서 부른다.
+- **기능 질투 (Feature Envy)** — 자기 것보다 다른 객체의 데이터에 더 많이 손을 댄다. → 그 메서드를 질투하는 데이터로 옮긴다.
+- **데이터 뭉치 (Data Clumps)** — 같은 몇 필드나 매개변수가 계속 함께 다닌다(탄생을 기다리는 타입). → 하나의 타입으로 묶고, 그것을 넘긴다.
+- **원시 타입 집착 (Primitive Obsession)** — 자기 타입을 가질 자격이 있는 도메인 개념을 원시값이나 문자열이 대신한다. → 그 개념에 작은 자기 타입을 준다.
+- **반복 스위치 (Repeated Switches)** — 같은 타입에 대한 같은 `switch`/`if` 사다리가 변경 전체에 반복된다. → 다형성으로 바꾸거나, 양쪽이 공유하는 하나의 map으로.
+- **산탄총 수술 (Shotgun Surgery)** — 하나의 논리적 변경이 diff의 여러 파일에 흩어진 편집을 강제한다. → 함께 바뀌는 것을 하나의 모듈로 모은다.
+- **발산적 변경 (Divergent Change)** — 하나의 파일이나 모듈이 여러 무관한 이유로 편집된다. → 각 모듈이 하나의 이유로 바뀌도록 나눈다.
+- **추측성 일반화 (Speculative Generality)** — 명세에 없는 필요를 위한 추상화, 매개변수, 또는 훅. → 지운다; 진짜 필요가 보일 때까지 인라인으로 되돌린다.
+- **메시지 연쇄 (Message Chains)** — 호출자가 의존하면 안 되는 긴 `a.b().c().d()` 탐색. → 첫 객체의 하나의 메서드 뒤로 그 경로를 숨긴다.
+- **중간자 (Middle Man)** — 대부분 그저 위임만 하는 클래스나 함수. → 자르고, 진짜 대상을 직접 부른다.
+- **거절된 유산 (Refused Bequest)** — 상속받은 것의 대부분을 무시하거나 재정의하는 서브클래스나 구현체. → 상속을 버리고, 합성을 쓴다.
 
-### 5. Run Enabled Axes in Parallel
+### 5. 켠 축을 병렬로 실행하기
 
-Dispatch one `Agent` tool call per enabled axis in a single message, all using `general-purpose` subagents. Do not launch Spec when no spec exists or Risk when Step 3 disabled it.
+켠 축의 `Agent` 도구 호출을 단일 메시지로 보낸다. 모두 `general-purpose` 서브에이전트를 쓴다. Spec이 없으면 Spec을, 3단계에서 Risk를 끄기로 했으면 Risk를 띄우지 않는다.
 
-**Standards Subagent Prompt** — Include:
+**Standards 서브에이전트 프롬프트** — 포함:
 
-- Full diff command and commit list.
-- List of standards source files found in Step 4, **plus the full Smell Baseline from Step 4** pasted in — subagents have no other access.
-- Relevant check commands, configuration, hook and CI paths, and verified wiring status. Classify each finding as mechanically checkable or judgment-dependent; for repeatable violations, include a follow-up deterministic-check recommendation within that finding, preferring existing tooling. Proposals alone do not block merge. Do not create checks or change configuration.
-- Instructions: "Report — per relevant file/hunk — (a) where diff violates documented standards: cite standard (file + rule); and (b) noticeable baseline smells: name smell and cite hunk. Distinguish hard violations from judgment calls — documented standard violations may be hard, baseline smells are always judgment calls, and documented repo standards override baseline. Skip what tooling enforces. Under 400 words."
+- 전체 diff 명령과 커밋 목록.
+- 4단계에서 찾은 표준 출처 파일 목록, **더해 4단계의 스멜 기준선 전체** 붙여 넣기 — 서브에이전트는 다른 접근 수단이 없다.
+- 관련 검사 명령·설정·훅·CI 경로와 확인된 연결 상태. 각 발견을 기계적 검사 가능 또는 판단 필요로 구분하고, 반복 가능한 위반에는 기존 도구를 우선한 자동 검사 후보를 같은 발견 안의 후속 권고로 제안한다. 제안만으로 머지를 차단하지 않으며, 검사를 새로 만들거나 설정을 수정하지 않는다.
+- 지시문: "보고 — 관련 파일/hunk마다 — (a) diff가 문서화된 표준을 위반하는 모든 곳: 표준을 인용(파일 + 규칙); 그리고 (b) 눈에 띄는 기준선 스멜: 이름을 대고 hunk를 인용. 경질 위반과 판단 영역을 구분 — 문서화된 표준 위반은 경질일 수 있지만, 기준선 스멜은 항상 판단 영역이며, 문서화된 저장소 표준이 기준선보다 우선한다. 도구가 강제하는 것은 건너뛴다. 400단어 안."
 
-**Spec Subagent Prompt** — Include:
+**Spec 서브에이전트 프롬프트** — 포함:
 
-- Diff command and commit list.
-- Spec path or fetched contents.
-- Instructions: "Report: (a) requirements required by spec but missing or partial; (b) unrequested behavior in diff (scope creep); (c) requirements appearing implemented but implemented incorrectly. Cite spec lines for each finding. Under 400 words."
+- diff 명령과 커밋 목록.
+- 명세의 경로나 가져온 내용.
+- 지시문: "보고: (a) 명세가 요구했지만 빠지거나 부분적인 요구사항; (b) diff에서 요구되지 않은 동작(범위 확장); (c) 구현된 것처럼 보이지만 구현이 잘못된 요구사항. 각 발견마다 명세 줄을 인용. 400단어 안."
 
-If spec is absent, skip Spec subagent and note this in final report.
+명세가 없으면, Spec 서브에이전트를 건너뛰고 최종 보고서에 이를 적는다.
 
-**Risk Subagent Prompt** — Include when Step 3 enabled Risk:
+**Risk 서브에이전트 프롬프트** — 3단계에서 Risk를 켠 경우 포함:
 
-- Full diff command, commit list, and changed-file content needed to evaluate risk.
-- Instructions: "Audit added and modified code only. Report (a) bugs and existing-functionality breakage, (b) security problems, (c) developer-experience breakage from secrets, environment-variable or port changes, or new mandatory manual installation, and (d) feature-gate leaks. Adding a dependency through the package manager is not itself developer-experience breakage. Skip feature-gate checks when the repository has no feature gates. Do not report intentional breakage when the branch clearly intends it and its impact is tightly contained. Do not inflate priority. Trace available code to completion and never report an unverified hypothesis. Only after completing your own audit, read PR/MR discussion if present and incorporate valid existing review findings without depending on any named bot. Cite files/hunks and evidence. Under 400 words."
+- 전체 diff 명령과 커밋 목록, 위험 판단에 필요한 변경 파일 내용.
+- 지시문: "추가·수정 코드만 감사한다. (a) 버그와 기존 기능 파괴, (b) 보안 문제, (c) 비밀·환경변수·포트 변경이나 새 필수 수동 설치로 인한 개발 환경 파괴, (d) 피처 게이트 누수를 보고한다. 패키지 매니저를 통한 의존성 추가는 그 자체로 개발 환경 파괴가 아니다. 저장소에 피처 게이트가 없으면 그 항목은 건너뛴다. 분기의 의도가 기능을 깨는 것이고 영향 범위가 잘 막혀 있으면 보고하지 않는다. 우선순위를 과장하지 않고, 확인할 수 있는 코드를 끝까지 추적해 미확인 가설을 발견사항으로 내지 않는다. 자체 감사를 마친 뒤에만 PR/MR 토론이 있으면 읽고, 타당한 기존 리뷰 발견만 반영하되 특정 봇 이름을 조건으로 삼지 않는다. 파일/hunk와 근거를 인용. 400단어 안."
 
-### 6. Aggregate
+### 6. 집계하기
 
-Present reports under `## Standards`, `## Spec` when available, and `## Risk` when enabled, as-is or lightly trimmed. Do **not** merge or re-rank findings across axes or weight overlaps.
+보고서를 `## Standards`, 있으면 `## Spec`, 켰으면 `## Risk` 제목 아래에 있는 그대로 또는 가볍게 다듬어 제시한다. 발견 사항을 축 사이에서 병합하거나 재순위하거나, 겹침에 가중치를 주지 **않는다**.
 
-Conclude with a one-line summary: total findings per enabled axis, and worst issue *within each axis* (if any). Do not pick a single winner between axes.
+한 줄 요약으로 끝낸다: 실행한 축별 총 발견 사항, 그리고 _각 축 내_ 최악의 문제(있으면). 축 사이에서 단일 우승자를 고르지 않는다.
 
-### 7. Read-Only Review Contract
+### 7. 읽기 전용 검토 계약
 
-Direct reviews and reviews invoked by other workflows are **read-only**. The sole output is the separated axis report in Step 6:
+직접 검토와 다른 워크플로가 호출한 검토는 **읽기 전용**이다. 유일한 결과물은 6단계의 분리된 축 보고서다:
 
-- On clean passes, report 0 findings; passes are not authority to land, update, or close work.
-- If findings exist, report findings; if spec was absent, report that limitation.
-- Never edit issue/PR bodies or acceptance boxes, post comments, alter labels/statuses, close/reopen work, or create other tracker, repository, or external side effects.
+- 깨끗한 통과면, 발견 사항 0건을 보고; 통과는 작업을 반영, 갱신, 또는 닫을 권한이 아니다.
+- 발견 사항이 있으면, 발견 사항을 보고; 명세가 없으면, 그 한계를 보고.
+- 절대 이슈나 PR 본문이나 인수 박스를 편집, 댓글 게시, 라벨이나 상태 변경, 작업을 닫거나 다시 열거나, 다른 트래커, 저장소, 또는 외부 부작용을 만들지 않는다.
 
-Acceptance checklists belong to `/vibe-implement`, which ticks them after a clean review and before the human merges. Review does not defer those writes until after merge. Closing issues is separate from checklists and is out of this skill's scope.
+인수 체크리스트는 이 스킬이 아니라 `/vibe-implement`가, 깨끗한 검토 뒤에 사람이 머지하기 전에 켠다. 검토가 그 쓰기를 머지 후로 미루지 않는다. 이슈 닫기는 체크리스트와 별개이며 이 스킬의 범위가 아니다.
 
-## Why Separate Axes
+## 왜 축을 분리하는가
 
-Changes can pass one axis and fail the other:
+변경은 한 축을 통과하고 다른 축을 실패할 수 있다:
 
-- Code following all standards but implementing the wrong feature → **Standards Pass, Spec Fail.**
-- Code doing exactly what the issue requested but violating project conventions → **Spec Pass, Standards Fail.**
-- Code satisfying standards and spec but introducing an authentication bypass → **Standards and Spec Pass, Risk Fail.**
+- 모든 표준을 따르지만 잘못된 것을 구현한 코드 → **Standards 통과, Spec 실패.**
+- 이슈가 요구한 것을 정확히 하지만 프로젝트 관례를 깨는 코드 → **Spec 통과, Standards 실패.**
+- 표준과 명세를 만족하지만 인증 우회를 만드는 코드 → **Standards와 Spec 통과, Risk 실패.**
 
-Reporting separately prevents one axis from obscuring the other.
+분리해 보고하면 한 축이 다른 축을 가리는 것을 막는다.

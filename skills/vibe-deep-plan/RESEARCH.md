@@ -1,57 +1,57 @@
-# Research Tickets
+# 조사 티켓
 
-Research tickets involve two actors: **AFK Research**, which returns findings citing sources, and the **calling session**, which owns all writes, saved records, pointers, and resolutions.
+조사 티켓에는 두 주체가 있다. 출처를 인용한 결과만 돌려주는 **AFK 조사**와, 모든 쓰기·저장 기록·포인터·해결을 소유하는 호출 세션이다.
 
-## AFK Research
+## AFK 조사
 
-- Investigates ticket questions using primary sources where available — official docs, source code, specifications, public read-only APIs — citing sources for every meaningful conclusion.
-- May inspect local read-only resources and return findings, constraints, unknowns, and safe human-executable checklists for external work.
-- Must not write files, branches, commits, artifacts, maps, tickets, or comments; must not use credentials, push, publish, or cause any external side effects. Does not resolve tickets or speak on behalf of humans.
+- 가능한 곳에서 1차 출처 — 공식 문서, 소스, 명세, 공개 읽기 전용 API — 를 사용해 티켓 질문을 조사하고, 의미 있는 결론마다 출처를 인용한다.
+- 로컬 읽기 전용 자원을 검사하고 결론, 제약, 미확인 사항, 외부 작업에 필요한 안전한 사람용 체크리스트를 돌려줄 수 있다.
+- 파일, 브랜치, 커밋, 아티팩트, 지도, 티켓, 댓글을 쓰거나, 자격증명을 사용하거나, 푸시하거나 게시하거나, 어떤 외부 부작용도 일으켜서는 안 된다. 티켓을 해결하거나 사람을 대신해 발언하지 않는다.
 
-## Calling Session Persistence
+## 호출 세션 저장
 
-The calling session preserves all returned findings before charting or work sessions end. Storage varies by tracker.
+호출 세션은 차팅이나 작업 세션이 끝나기 전에 돌려받은 전체 결과를 보존한다. 저장은 트래커에 따라 다르다.
 
-### Local Markdown
+### 로컬 Markdown
 
-The research ticket and canonical findings record reside in a single file:
+조사 티켓과 정식 결과 기록은 한 파일이다:
 
 ```
 .agents/plans/<effort>/research/<ticket-stem>.md
 ```
 
-The file contains `Type: 조사`, `Status`, question, and source-aware full findings under `## Research`. The final decision is added under `## Answer`. Human-driven interview records use a separate `.agents/plans/<effort>/interviews/<ticket-stem>.md` directory.
+파일에는 티켓의 `Type: 조사`, `Status`, 질문, 그리고 `## Research` 아래 출처 인식 전체 결과가 담긴다. 최종 결정은 `## Answer` 아래 추가한다. 사람 주도 인터뷰 기록은 별도의 `.agents/plans/<effort>/interviews/<ticket-stem>.md` 디렉터리를 사용한다.
 
-In local Markdown, do not create separate `.agents/research/` notes or pointer comments. Keep repository ignore policies intact. Do not create, checkout, commit, or push research-only branches. These records are local handoff artifacts, not shippable changes.
+로컬 Markdown에서는 별도의 `.agents/research/` 노트나 포인터 댓글을 만들지 않는다. 저장소의 무시 정책은 그대로 둔다. 조사 전용 브랜치를 만들거나, 체크아웃하거나, 커밋하거나, 푸시하지 않는다. 이 기록은 로컬 인계 아티팩트이지 전달 변경이 아니다.
 
-### Hosted or Other External Issue Trackers
+### 호스트형 또는 그 외 외부 이슈 트래커
 
-The calling session saves full findings on the same research ticket. The default is a single dedicated issue comment or note, prefixed with a stable marker so future sessions can find it even if titles change:
+호출 세션은 전체 결과를 같은 조사 티켓에 저장한다. 기본값은 전용 이슈 댓글 또는 노트 하나다. 나중에 세션이 제목이 바뀌어도 찾을 수 있도록 안정적인 마커로 시작한다:
 
 ```
 <!-- vibe-deep-plan research: <map-identity>/<ticket-identity> -->
 ```
 
-If provider comment limits are too small, preserve full findings across ordered comments (`Research record 1/N`, `2/N`...). If unable to fit in comments, use a persistent artifact owned by the tracker or repository (snippets, wiki pages, attachments, or equivalents) and link its URL in a ticket comment. Never truncate findings or leave them only in unpushed local files. Record the persistent location as follows:
+제공자의 댓글 한계가 너무 작으면 전체 결과를 순서 있는 댓글(`Research record 1/N`, `2/N` …)로 보존한다. 댓글에 담을 수 없으면 트래커 자체 또는 저장소 소유의 스니펫, 위키 페이지, 첨부 파일, 또는 그에 준하는 영구 아티팩트를 사용하고 그 URL을 티켓 댓글에 남긴다. 결과를 줄이거나 로컬 미푸시 파일에만 두지 않는다. 영구 위치를 다음과 같이 기록한다:
 
 ```
 Research record: <comment, note, or artifact URL>
 ```
 
-Hosted persistence has no `Branch`, `Commit`, or `Path` pointers, and never creates `research/...` branches. If no persistent external surface exists, leave the ticket claimed and report save failure without discarding findings.
+호스트형 저장에는 `Branch`, `Commit`, `Path` 포인터가 없고, `research/...` 브랜치를 만들지도 않는다. 영구 외부 표면이 없으면 티켓을 점유 상태로 두고 결과를 버리지 않고 저장 실패를 보고한다.
 
-## Charting and Reuse
+## 차팅과 재사용
 
-When charting initiates AFK research, use the configured tracker's claim operation. In local Markdown, change the record to `Status: claimed` before dispatch, await findings, and save using the local rules above. Revert to `Status: open` after writing the record. In hosted trackers, assign or claim the issue before dispatch, await findings, save using the hosted rules above, and unassign/release only this session's claim after record and pointer are in place. If saving fails or a session passes an incomplete handoff, leave local Markdown records in `Status: claimed` and hosted issues assigned/open, reporting save failure.
+차팅이 AFK 조사를 시작할 때, 설정된 트래커의 점유 연산을 사용한다. 로컬 Markdown이면 디스패치 전 기록을 `Status: claimed`로 바꾸고, 결과를 기다린 뒤 위 로컬 규칙으로 저장한다. 기록을 쓴 뒤 `Status: open`으로 되돌린다. 호스트형 트래커면 디스패치 전 이슈를 할당하거나 점유하고, 결과를 기다린 뒤 위 호스트 규칙으로 저장하며, 기록과 포인터가 갖춰진 뒤에야 이 세션의 할당이나 점유만 해제한다. 저장이 실패하거나 세션이 미완료 인계를 넘기면 로컬 Markdown 기록은 `Status: claimed`로, 호스트형 이슈는 할당·열림 상태로 두고 저장 실패를 보고한다.
 
-Charting leaves tickets open. In local Markdown, successfully saved research records have `Status: open`; in hosted trackers, issues remain open after claim release. Charting never adds map gists. If saving fails, leave local Markdown records `Status: claimed` and hosted issues assigned/open so findings are not lost.
+차팅은 티켓을 열어 둔다. 로컬 Markdown이면 성공적으로 저장된 조사 기록은 `Status: open`이고, 호스트형 트래커면 점유가 해제된 뒤에도 이슈가 열려 있다. 차팅은 지도 gist를 추가하지 않는다. 저장이 실패하면 로컬 Markdown 기록은 `Status: claimed`로, 호스트형 이슈는 할당·열림 상태로 두어 결과를 잃지 않는다.
 
-Subsequent sessions inspect canonical local research records or hosted comments/artifacts before researching anew. Reuse if belonging to this ticket; recover hosted pointers where possible. Re-run read-only research only when canonical records are missing, unusable, or belong to a different ticket.
+다음 세션에서는 다시 조사하기 전에 정식 로컬 조사 기록 또는 호스트형 댓글/아티팩트를 먼저 검사한다. 이 티켓에 속하면 재사용하고, 호스트형 포인터가 없으면 가능할 때 복구한다. 정식 기록이 없거나 사용할 수 없거나 다른 티켓에 속할 때만 읽기 전용 조사를 다시 실행한다.
 
-## Resolution and Authority
+## 해결과 권한
 
-Once a decision is reached, record `Decision: <decision>` and complete tracker-specific resolution. In local Markdown, append the canonical research record path to the final `## Answer` and set `Status: resolved`. In hosted trackers, append the hosted research record URL to the resolution comment or note, and close the issue if the tracker supports close operations. Finally, add only a one-line gist to the map. Research records or pointers alone are not resolutions.
+결정이 내려지면 `Decision: <decision>`을 기록하고 트래커별 해결을 마친다. 로컬 Markdown이면 최종 `## Answer`에 정식 조사 기록 경로를 추가한 뒤 기록을 `Status: resolved`로 설정한다. 호스트형 트래커면 해결 댓글 또는 노트에 호스트형 조사 기록 URL을 추가한 뒤, 트래커에 닫기 연산이 있으면 이슈를 닫는다. 마지막으로 지도에 한 줄 gist만 추가한다. 조사 기록이나 포인터 자체는 해결이 아니다.
 
-There are no research branches to push or publish. External comments or persistent artifacts must adhere to configured tracker workflows and approval rules.
+푸시하거나 게시할 조사 브랜치는 없다. 외부 댓글이나 영구 아티팩트는 설정된 트래커 워크플로와 승인 규칙을 따라야 한다.
 
-Never store raw credential values in findings, branches, tickets, maps, comments, commands, or logs. Record only credential types and secure vault references.
+결과, 브랜치, 티켓, 지도, 댓글, 명령, 로그에 자격증명 값을 저장하지 않는다. 자격증명 종류와 안전한 보관소 참조만 기록한다.

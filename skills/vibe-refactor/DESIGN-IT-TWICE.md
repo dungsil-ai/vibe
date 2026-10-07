@@ -1,44 +1,44 @@
-# Design It Twice
+# 두 번 설계하기
 
-Use this parallel sub-agent pattern when exploring other interfaces for a chosen deepening candidate. Based on "Design It Twice" (Ousterhout) — the first idea is rarely the best.
+사용자가 고른 심화 후보의 다른 인터페이스를 볼 때 이 병렬 sub-agent 패턴을 써라. "Design It Twice"(Ousterhout)에 기반한다 — 첫 아이디어가 최고일 가능성은 낮다.
 
-Use [VOCABULARY.md](VOCABULARY.md) — **모듈**, **인터페이스**, **경계**, **어댑터**. Compare in easy Korean.
+[VOCABULARY.md](VOCABULARY.md)의 말 — **모듈**, **인터페이스**, **경계**, **어댑터** — 를 쓴다. 비교문은 쉬운 한국어로 써라.
 
-## Process
+## 과정
 
-### 1. Define the problem space
+### 1. 문제 공간을 정의하라
 
-Before spawning sub-agents, explain the problem space to the user:
+sub-agent를 만들기 전에, 고른 후보의 문제 공간을 사용자에게 설명하라:
 
-- Constraints the new interface must meet
-- Dependencies and their classification (see [DEEPENING.md](DEEPENING.md))
-- Rough code sketches that make the constraints concrete — not proposals
+- 새 인터페이스가 지켜야 할 제약
+- 의존성과 그 분류([DEEPENING.md](DEEPENING.md) 참조)
+- 제약을 구체적으로 만드는 대략적인 예시 코드 — 제안이 아니라 제약을 분명히 하는 수단
 
-Show this to the user and go straight to step 2. The user reads while the sub-agents work.
+이것을 사용자에게 보여주고, 곧바로 2단계로 가라. 사용자는 sub-agent가 병렬로 일하는 동안 읽는다.
 
-### 2. Spawn sub-agents
+### 2. sub-agent 생성
 
-Spawn 3 or more sub-agents in parallel. Each must produce a **very different** interface for the deepened module.
+Agent 도구로 3개 이상의 sub-agent를 병렬로 만들어라. 각각은 깊어진 모듈에 대해 **많이 다른** 인터페이스를 만들어야 한다.
 
-Give each a separate technical brief (file paths, coupling, [DEEPENING.md](DEEPENING.md) classification, what sits behind the boundary). The brief is independent of the user-facing write-up in step 1. Give each agent a different constraint:
+각 sub-agent에 별도 기술 브리프(파일 경로, 결합, [DEEPENING.md](DEEPENING.md)의 의존성 분류, 경계 뒤에 있는 것)를 준다. 브리프는 1단계의 사용자용 설명과 따로다. 각 agent에 다른 제약을 준다:
 
-- Agent 1: "Minimize the interface — at most 1–3 entry points. Make each entry point do more for callers."
-- Agent 2: "Maximize flexibility — support many uses and extensions."
-- Agent 3: "Optimize for the most common callers — make the default case obvious."
-- Agent 4 (when relevant): "Design ports and adapters for dependencies across the boundary."
+- Agent 1: "인터페이스를 최소화하라 — 진입점 최대 1–3개. 진입점당 처리하는 일을 늘려라."
+- Agent 2: "유연성을 최대로 — 여러 사용과 확장을 지원하라."
+- Agent 3: "가장 흔한 호출자에 맞춰라 — 기본 사례를 자명하게 만들어라."
+- Agent 4 (해당 시): "경계 너머 의존성은 포트와 어댑터로 설계하라."
 
-Include [VOCABULARY.md](VOCABULARY.md) and `CONTEXT.md` terms in the briefs.
+각 sub-agent가 이름을 맞게 붙이도록, 브리프에 [VOCABULARY.md](VOCABULARY.md)와 CONTEXT.md 어휘를 넣어라.
 
-Each sub-agent returns:
+각 sub-agent의 출력:
 
-1. Interface (types, methods, parameters — plus invariants, order, errors)
-2. A usage example
-3. What the implementation hides behind the boundary
-4. Dependency strategy and adapters (see [DEEPENING.md](DEEPENING.md))
-5. Trade-offs — where one interface covers many callers, where it stays thin
+1. 인터페이스(타입, 메서드, 매개변수 — 더해 불변 조건, 순서, 오류)
+2. 호출자가 어떻게 쓰는지 보여주는 예
+3. 경계 뒤에 구현이 숨기는 것
+4. 의존성 전략과 어댑터([DEEPENING.md](DEEPENING.md) 참조)
+5. 트레이드오프 — 인터페이스 하나로 여러 호출을 처리하는 곳, 얇은 곳
 
-### 3. Present and compare
+### 3. 제시와 비교
 
-Show each design one at a time, then compare in easy Korean prose. Contrast how deep it is, whether fixes stay in one place, and where the boundary sits. Do not label the comparison with `depth`, `locality`, or `seam`.
+각 설계를 하나씩 보여 준 뒤 산문으로 비교하라. 얼마나 깊은지, 고칠 곳이 한곳인지, 경계를 어디에 두는지로 대비하라. `depth`, `locality`, `seam`을 쓰지 마라.
 
-Then recommend in Korean: which design is stronger, and why. Propose a hybrid if pieces fit. Speak with conviction.
+비교 후 권고를 내라: 어느 설계가 더 강한지, 왜. 잘 섞이면 하이브리드를 제안하라. 주관적으로 말하라 — 사용자는 메뉴가 아니라 판단을 원한다.

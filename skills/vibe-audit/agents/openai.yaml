@@ -1,4 +1,4 @@
 interface:
-  display_name: "Vibe Audit"
-  short_description: "Find technical improvements through read-only codebase audits"
-  default_prompt: "Use $vibe-audit to audit the codebase read-only and prioritize technical improvements with supporting evidence."
+  display_name: "바이브 감사"
+  short_description: "코드베이스의 기술 개선 기회를 읽기 전용으로 조사한다"
+  default_prompt: "$vibe-audit를 사용해 코드베이스를 읽기 전용으로 감사하고 근거와 함께 기술 개선 우선순위를 제시해 주세요."

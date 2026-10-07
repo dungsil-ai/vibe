@@ -1,175 +1,175 @@
 ---
 name: vibe-debug
-description: Diagnostic loop for difficult bugs and performance regressions. Use when the user says "diagnose"/"debug" or reports that something is broken.
+description: 어려운 버그와 성능 회귀를 위한 진단 루프. 사용자가 "진단"/"디버그"라고 말하거나, 무언가 망가졌다고 보고할 때 사용한다.
 ---
 
-# Vibe Debug
+# 바이브 디버그
 
-Rules for difficult bugs. Steps are skipped only with explicit justification.
+어려운 버그를 위한 규칙. 단계는 명시적으로 정당한 사유가 있을 때만 건너뛴다.
 
-When exploring the codebase, read `CONTEXT.md` (if present) to build a clear model of relevant modules, and check ADRs for the area you intend to modify.
+코드베이스를 탐색할 때는 `CONTEXT.md`(존재하는 경우)를 읽어 관련 모듈의 명확한 모델을 만들고, 수정하려는 영역의 ADR을 확인한다.
 
-## Protect Secrets in Diagnostic Material
+## 진단 자료의 비밀값 보호
 
-Before sharing or saving commands, output, logs, HAR files, or other diagnostic material, replace tokens, passwords, authentication headers, cookies, and personally identifiable information with `<REDACTED>`. Reference credentials through environment variables in reproduction commands; never print expanded values or dump the environment. Quote only the excerpts needed to evaluate the symptom, not entire artifacts.
+명령, 출력, 로그, HAR 등 진단 자료를 공유하거나 저장하기 전에 토큰, 비밀번호, 인증 헤더, 쿠키와 개인 식별 정보를 `<REDACTED>`로 가린다. 재현 명령은 자격증명을 환경변수로 참조하고, 확장된 값이나 환경변수 전체를 출력하지 않는다. 자료 전체 대신 증상을 판단하는 데 필요한 구간만 인용한다.
 
-The HITL script's `capture` echoes its input into output the agent reads. Collect only redacted observations and leave signing in to a user-operated `step`. If redacted material is insufficient, explain what information is missing and request additional observations without secrets. Never request or reprint raw credentials.
+HITL 스크립트의 `capture`는 입력을 에이전트가 읽는 출력으로 되돌려 보낸다. 비밀값을 제거한 관찰 결과만 수집하고, 로그인은 사용자가 직접 수행하는 `step`으로 둔다. 가린 자료만으로 진단할 수 없으면 부족한 정보를 설명하고 비밀값이 없는 추가 관찰을 요청한다. 원본 자격증명을 요청하거나 다시 출력하지 않는다.
 
-## Intent and Authority Boundary
+## 의도와 권한 경계
 
-Classify the requested action before starting the loop:
+루프를 시작하기 전에 요청된 행동을 분류한다:
 
-- **Remediation mode** applies only when the user explicitly requests fixing, repairing, modifying, or restoring (including unambiguous equivalents). Allows permanent product changes and regression test modifications. Follow all steps below.
-- **Diagnostic-only mode** applies to requests solely for diagnosing, debugging, investigating, or determining root causes, and is the default for ambiguous requests. Never infer a fix from bug reports, urgency, or requests to continue.
+- **수정 모드**는 사용자가 고치기, 수리, 변경, 복원(모호하지 않은 동등 표현 포함)을 명시적으로 요청할 때만 적용된다. 영구적인 제품 변경과 회귀 테스트 변경을 허용한다. 아래 모든 단계를 따른다.
+- **진단 전용 모드**는 진단, 디버그, 조사, 원인 파악 전용 요청에 적용되며, 모호한 요청의 기본값이다. 버그 보고, 긴급성, 계속 진행 요청에서 수정을 추론하지 않는다.
 
-Diagnostic-only mode stays within the **authority boundary**: read-only inspection of source code, configuration, history, and read-only runtime observations are permitted, but permanent modifications to products, tests, configurations, or artifacts are not.
+진단 전용 모드는 **권한 경계** 안에 머문다: 읽기 전용 소스, 설정, 이력 검사와 읽기 전용 런타임 관찰을 허용하지만, 영구적인 제품, 테스트, 설정, 산출물 변경은 허용하지 않는다.
 
-If a diagnostic-only task requires temporary instrumentation, a one-off reproduction, a prototype/harness, or a failing test:
+진단 전용 작업에 임시 계측, 일회성 재현, 프로토타입이나 하네스, 또는 실패 테스트가 필요한 경우:
 
-1. Before writing anything, preview the exact changes to be made in an isolated workspace: paths, diffs or full contents, purpose, and a cleanup plan specifying all artifacts to be removed.
-2. Request and await explicit approval. General diagnosis requests, silence, or rejections are not approvals.
-3. Only after approval, perform the temporary writes in an **isolated workspace**, never in the user's working checkout. One-off reproductions, prototypes, harnesses, and all their local source files, dependency manifests/lockfiles, fixtures, scratch data, route configs, execution metadata, and run instructions must reside under `.agents/prototype/<name>/` inside the approved isolated workspace. You may inspect production source in read-only mode, but must not import or modify production source, nor edit project root manifests, task runners, routes, configs, or shared components. This location rule applies only to prototype-like artifacts; standard permanent regression tests and debug scripts retain their normal locations. Remove all approved artifacts before reporting; do not retain them as product or test changes.
+1. 작성 전에, 격리된 작업공간에서 만들 정확한 변경을 미리 본다: 경로와 diff 또는 전체 내용, 목적, 제거할 모든 산출물을 명시한 정리 계획.
+2. 명시적 승인을 요청하고 기다린다. 일반적인 진단 요청, 침묵, 거부는 승인이 아니다.
+3. 승인 후에만 해당 임시 쓰기를 **격리된 작업공간**에서 수행한다, 사용자의 체크아웃이 아니다. 일회성 재현, 프로토타입, 하네스와 그 모든 로컬 소스, 의존성 매니페스트/락파일, 픽스처, 스크래치 데이터, 라우트 설정, 실행 메타데이터, 실행 지침은 승인된 격리 작업공간 안의 `.agents/prototype/<name>/` 아래에 있어야 한다. 프로덕션 소스를 읽기 전용으로 검사할 수는 있지만, 프로덕션 소스를 가져오거나 수정하거나, 프로젝트 루트 매니페스트, 작업 실행기, 라우트, 설정, 공유 컴포넌트를 편집해서는 안 된다. 이 위치 규칙은 프로토타입류 산출물에만 적용된다; 일반 영구 회귀 테스트와 일반 디버그 스크립트는 기존 위치를 유지한다. 보고 전에 승인된 모든 산출물을 제거한다; 제품이나 테스트 변경으로 유지하지 않는다.
 
-## Phase 1 — Build the Feedback Loop
+## Phase 1 — 피드백 루프 만들기
 
-**This is the core.** Everything else is mechanical. If you have a tight pass/fail signal on the bug — a signal that turns red on *this* bug — you can find the root cause; bisection, hypothesis testing, and instrumentation merely consume it. Without a signal, staring at the code will not solve the issue.
+**이것이 핵심이다.** 나머지는 기계적이다. 버그에 **밀착된** 통과/실패 신호가 있다면 — _이_ 버그에서 red가 되는 신호 — 원인을 찾을 수 있다; 이등분, 가설 검증, 계측은 모두 그것을 소비할 뿐이다. 신호가 없다면, 코드를 응시하는 것만으로는 해결되지 않는다.
 
-Invest extraordinary effort here. **Be aggressive. Be creative. Do not give up.**
+여기에 비정상적인 노력을 들여라. **적극적으로. 창의적으로. 포기하지 마라.**
 
-### How to Build a Loop — Try in Roughly This Order
+### 루프 만드는 방법 — 대략 이 순서로 시도
 
-1. **Failing test** at whatever boundary reaches the bug — unit, integration, or e2e.
-2. **Curl / HTTP script** against a running development server.
-3. **CLI invocation** with fixture input, diffing stdout against a known good snapshot.
-4. **Headless browser script** (Playwright / Puppeteer) — drive the UI, verify DOM/console/network.
-5. **Replay captured trace.** Save actual network requests / payloads / event logs to disk; replay against an isolated code path.
-6. **One-off harness.** In diagnostic-only mode, treat this as a one-off prototype: after obtaining required approval, place it and all local source, dependency manifests/lockfiles, fixtures, scratch data, route configs, execution metadata, and run instructions under `.agents/prototype/<name>/` in the approved isolated workspace; production source may be inspected in read-only mode, but do not import or modify it, nor edit project root manifests, task runners, routes, configs, or shared components. Spin up a minimal subset of the system (a single service, mocked dependencies) to execute the buggy code path via a single function call.
-7. **Property / fuzz loop.** If the bug is "intermittently incorrect output", run 1000 random inputs and search for failure modes.
-8. **Bisection harness.** If the bug appeared between two known states (commits, datasets, versions), automate "boot state X, check, repeat" to enable `git bisect run`.
-9. **Differential loop.** Run the same input against the old and new version (or two configurations) and diff the outputs.
-10. **HITL bash script.** Last resort. If a human must click, drive *them* using `scripts/hitl-loop.template.sh` so the loop remains structured. Captured output feeds back to you.
+1. 버그에 닿는 모든 경계에서 **실패 테스트** — 단위, 통합, e2e.
+2. 실행 중인 개발 서버에 대한 **Curl / HTTP 스크립트**.
+3. 픽스처 입력을 사용한 **CLI 호출**, stdout을 알려진 좋은 스냅샷과 diff.
+4. **헤드리스 브라우저 스크립트** (Playwright / Puppeteer) — UI를 구동하고, DOM/콘솔/네트워크를 검증.
+5. **캡처한 트레이스 재생.** 실제 네트워크 요청 / 페이로드 / 이벤트 로그를 디스크에 저장; 코드 경로를 격리하여 재생.
+6. **일회성 하네스.** 진단 전용 모드에서는 이것을 일회성 프로토타입으로 취급한다: 필요한 승인 후, 승인된 격리 작업공간 안의 `.agents/prototype/<name>/` 아래에 그것과 모든 로컬 소스, 의존성 매니페스트/락파일, 픽스처, 스크래치 데이터, 라우트 설정, 실행 메타데이터, 실행 지침을 둔다; 프로덕션 소스를 읽기 전용으로 검사할 수는 있지만 가져오거나 수정하거나 프로젝트 루트 매니페스트, 작업 실행기, 라우트, 설정, 공유 컴포넌트를 편집해서는 안 된다. 시스템의 최소 하위 집합(한 서비스, 모의 의존성)을 띄워 버그 코드 경로를 단일 함수 호출로 실행.
+7. **속성 / 퍼즈 루프.** 버그가 "가끔 잘못된 출력"이라면, 1000개의 무작위 입력을 실행하고 실패 모드를 찾는다.
+8. **이등분 하네스.** 버그가 두 알려진 상태(커밋, 데이터셋, 버전) 사이에 나타났다면, "상태 X에서 부팅, 검사, 반복"을 자동화하여 `git bisect run`할 수 있게 한다.
+9. **차등 루프.** 같은 입력을 이전 버전과 새 버전(또는 두 설정)으로 실행하고 출력을 diff.
+10. **HITL bash 스크립트.** 최후의 수단. 사람이 클릭해야 한다면, `scripts/hitl-loop.template.sh`로 _그들을_ 구동하여 루프가 구조화되도록 한다. 캡처한 출력이 당신에게 피드백된다.
+진단 전용 모드에서는 기존 테스트, 스크립트, 명령, 읽기 전용 관찰로 루프를 만든다. 위의 임시 쓰기 승인을 받지 않은 한 테스트, 하네스, 트레이스, 스크립트, 계측, 설정, 제품 코드를 만들거나 수정하지 않는다. 모든 명령은 영구적인 제품 상태 변경을 피해야 한다.
 
-In diagnostic-only mode, construct the loop using existing tests, scripts, commands, and read-only observations. Do not create or modify tests, harnesses, traces, scripts, instrumentation, configuration, or product code unless explicit temporary write approval has been granted. All commands must avoid permanent product state changes.
 
-Building the right feedback loop solves 90% of the bug.
+올바른 피드백 루프를 만들면, 버그는 90% 해결된다.
 
-### Polish the Loop
+### 루프 다듬기
 
-Treat the loop like a product. Once you have *a* loop, **polish it**:
+루프를 제품처럼 다룬다. _하나의_ 루프가 있으면, **다듬는다**:
 
-- Can it run faster? (Cache configuration, skip irrelevant initialization, narrow test scope.)
-- Can the signal be sharpened? (Verify the specific symptom, not just "didn't crash".)
-- Can it be made more deterministic? (Freeze time, seed RNG, isolate filesystem, freeze network.)
+- 더 빠르게 만들 수 있는가? (설정 캐시, 무관한 초기화 건너뛰기, 테스트 범위 좁히기.)
+- 신호를 더 날카롭게 만들 수 있는가? (특정 증상을 검증, "크래시 안 남"이 아닌.)
+- 더 결정적으로 만들 수 있는가? (시간 고정, RNG 시드, 파일시스템 격리, 네트워크 동결.)
 
-A flaky loop taking 30 seconds is barely better than no loop; a 2-second deterministic loop is tight — a debugging superpower.
+30초 걸리는 불안정한 루프는 루프가 없는 것보다 나을 게 없다; 2초 결정적 루프는 밀착되어 있다 — 디버깅 초능력.
 
-### Non-Deterministic Bugs
+### 비결정적 버그
 
-The goal is not a clean reproduction, but a **higher reproduction rate**. Repeat triggers 100×, parallelize, add stress, narrow timing windows, inject sleep. A bug with a 50% occurrence rate is debuggable; a 1% rate is not — keep raising the reproduction rate until it becomes debuggable.
+목표는 깨끗한 재현이 아니라 **더 높은 재현율**이다. 트리거를 100× 반복, 병렬화, 스트레스 추가, 타이밍 창 좁히기, sleep 주입. 50% 확률 버그는 디버그 가능하다; 1%는 아니다 — 디버그 가능해질 때까지 재현율을 계속 올린다.
 
-### When a Loop Really Cannot Be Built
+### 정말로 루프를 만들 수 없을 때
 
-Stop explicitly and state so. List what was attempted. Ask the user for (a) access to a reproducing environment, (b) redacted captured artifacts (HAR files, log dumps, core dumps, timestamped screen recordings), or (c) explicit approval after previewing exact isolated workspace temporary diagnostic changes and cleanup. Do **not** proceed to hypothesis generation without a loop.
+명시적으로 멈추고 그렇게 말한다. 시도한 것을 나열한다. 사용자에게 (a) 재현하는 환경 접근, (b) 비밀값을 가린 캡처 산출물(HAR 파일, 로그 덤프, 코어 덤프, 타임스탬프가 있는 화면 녹화), 또는 (c) 정확한 격리 작업공간 임시 진단 변경과 정리를 미리 본 후 명시적 승인을 요청한다. 루프 없이 가설화로 진행하지 **않는다**.
 
-### Completion Criteria — A Tight Red-Capable Loop
+### 완료 기준 — red가 되는 밀착된 루프
 
-Phase 1 is complete when the loop is **tight** and **red-capable**: you can state **a single command** — script path, test invocation, curl — that has **already been run at least once** (paste redacted invocation and output), and that is:
+Phase 1은 루프가 **밀착**되고 **red-capable**할 때 완료된다: **이미 최소 한 번 실행한** **하나의 명령** — 스크립트 경로, 테스트 호출, curl — 을 말할 수 있고 (비밀값을 가린 호출과 출력을 붙여넣는다), 그것은:
 
-- [ ] **Red-capable** — Drives the actual bug code path and verifies the **user's exact symptom**, so it turns red on this bug and green when fixed. Not "runs without error" — it must be able to *catch this specific bug*.
-- [ ] **Deterministic** — Yields the same verdict on every run (for flaky bugs: a consistently high reproduction rate as described above).
-- [ ] **Fast** — Seconds, not minutes.
-- [ ] **Agent-executable** — Can run unattended; humans remain in the loop only via `scripts/hitl-loop.template.sh`.
+- [ ] **Red-capable** — 실제 버그 코드 경로를 구동하고 **사용자의 정확한 증상**을 검증하므로, 이 버그에서 red가 될 수 있고 고쳐지면 green이 될 수 있다. "에러 없이 실행"이 아니다 — _이 특정 버그를 잡을_ 수 있어야 한다.
+- [ ] **결정적** — 매 실행마다 같은 판정 (불안정한 버그: 위의 고정된 높은 재현율).
+- [ ] **빠름** — 분이 아닌 초.
+- [ ] **에이전트 실행 가능** — 무인으로 실행할 수 있다; 사람은 `scripts/hitl-loop.template.sh`를 통해서만 루프 안에 있다.
 
-If you are reading code and forming theories before this command exists, **stop — jumping straight to hypotheses is the exact failure mode this skill is designed to prevent.** Without a red-capable command, Phase 2 does not exist.
+이 명령이 존재하기 전에 코드를 읽으며 이론을 세우고 있다면, **멈춰라 — 바로 가설로 넘어가는 것이 이 스킬이 막으려는 바로 그 실패다.** red-capable 명령이 없으면, Phase 2도 없다.
 
-## Phase 2 — Reproduce + Minimize
+## Phase 2 — 재현 + 최소화
 
-Run the loop. Watch it turn red — the bug appears.
+루프를 실행한다. red가 되는지 지켜본다 — 버그가 나타난다.
 
-Verify:
+확인:
 
-- [ ] The loop produces the failure mode described by the **user** — not a different failure nearby. Wrong bug = wrong fix.
-- [ ] Reproducible across multiple runs (or, for non-deterministic bugs, a high enough reproduction rate to debug).
-- [ ] Captured the exact symptom (error message, wrong output, slow timing) so later phases can verify the fix actually resolves it.
+- [ ] 루프가 **사용자**가 설명한 실패 모드를 만든다 — 근처에서 일어나는 다른 실패가 아니다. 잘못된 버그 = 잘못된 수정.
+- [ ] 여러 실행에 걸쳐 재현 가능하다 (또는, 비결정적 버그의 경우, 디버그할 수 있을 만큼 충분히 높은 재현율).
+- [ ] 정확한 증상(에러 메시지, 잘못된 출력, 느린 타이밍)을 캡처했다, 나중 단계가 수정이 실제로 해결하는지 검증할 수 있게.
 
-### Minimize
+### 최소화
 
-Once red, reduce the reproduction to the **smallest scenario that remains red**. Strip inputs, callers, configs, data, and steps **one at a time**, re-running the loop after each cut — retain only what is essential for the failure.
+red가 되면, 재현을 **여전히 red가 되는 가장 작은 시나리오**로 줄인다. 입력, 호출자, 설정, 데이터, 단계를 **한 번에 하나씩** 자르고, 매번 자른 후 루프를 다시 실행한다 — 실패에 필수적인 것만 남긴다.
 
-Why bother: Minimal reproduction shrinks the hypothesis space in Phase 3 (fewer suspect components remain) and becomes a clean regression test in Phase 5.
+왜 귀찮게: 최소 재현은 Phase 3의 가설 공간을 줄이고(남은 의심할 만한 부품이 줄어든다) Phase 5의 깨끗한 회귀 테스트가 된다.
 
-Complete when **every remaining element is essential** — removing any one of them turns the loop green.
+**모든 남은 요소가 필수적**일 때 완료 — 그중 하나를 제거하면 루프가 green이 된다.
 
-Do not proceed until you have reproduced **and** minimized.
+재현 **하고** 최소화하기 전에는 진행하지 않는다.
 
-## Phase 3 — Hypothesize
+## Phase 3 — 가설화
 
-Form **3–5 ranked hypotheses** before testing any of them. Generating a single hypothesis anchors you to the first plausible thought.
+어느 것을 테스트하기 전에 **3–5개의 순위 가설**을 만든다. 단일 가설 생성은 첫 번째 그럴듯한 생각에 고정된다.
 
-Each hypothesis must be **falsifiable**: state the prediction it makes.
+각 가설은 **반증 가능**해야 한다: 그것이 내는 예측을 말한다.
 
-> Format: "If <X> is the cause, then <changing Y> will make the bug disappear / <changing Z> will make the bug worse."
+> 형식: "<X>가 원인이라면, <Y를 바꾸면> 버그가 사라진다 / <Z를 바꾸면> 버그가 악화된다."
 
-If you cannot state a prediction, the hypothesis is mere intuition — discard or sharpen it.
+예측을 말할 수 없다면, 그 가설은 vibe다 — 버리거나 날카롭게 한다.
 
-**Show the ranked list to the user before testing.** They often possess domain knowledge that immediately reshuffles rankings ("we just deployed a change to #3") or already rules out hypotheses. A cheap checkpoint, a huge time saver. Do not get blocked here — if the user is away, proceed with your own rankings.
+**테스트 전에 순위 목록을 사용자에게 보여준다.** 그들은 즉시 순위를 바꾸는 도메인 지식을 가지고 있는 경우가 많다 ("#3에 방금 변경을 배포했다"), 또는 이미 배제한 가설을 안다. 저렴한 체크포인트, 큰 시간 절약. 거기서 막히지 않는다 — 사용자가 자리 비움이면 자신의 순위로 진행한다.
 
-## Phase 4 — Instrument
+## Phase 4 — 계측
 
-Each probe must map to a specific prediction from Phase 3. **Vary only one variable at a time.**
+각 프로브는 Phase 3의 특정 예측에 매핑되어야 한다. **한 번에 하나의 변수만 바꾼다.**
 
-Tool preferences:
+도구 선호:
 
-1. **Debugger / REPL read-only inspection** if supported by the environment. One breakpoint is worth ten logs.
-2. **Targeted logs** at boundaries that differentiate hypotheses.
-3. Do not "log everything and grep".
+1. 환경이 지원하면 **디버거 / REPL 읽기 전용 검사**. 하나의 중단점이 열 개의 로그보다 낫다.
+2. 가설을 구분하는 경계에서 **표적 로그**.
+3. "모든 것을 로깅하고 grep"하지 않는다.
 
-In diagnostic-only mode, begin with debugger/REPL inspection and existing observational data. Targeted logs or other temporary writes are permitted only after prior preview and approval, and must be removed from the isolated workspace before reporting.
+진단 전용 모드에서는 디버거/REPL 검사와 기존 관찰 데이터로 시작한다. 표적 로그나 다른 임시 쓰기는 사전 미리보기와 승인 후에만 허용되며, 보고 전에 격리 작업공간에서 제거해야 한다.
 
-Tag **every debug log** with a unique prefix, e.g., `[DEBUG-a4f2]`. Final cleanup becomes a single grep. Untagged logs linger; tagged logs get removed cleanly.
+**모든 디버그 로그에** 고유 접두사로 태그를 단다, 예: `[DEBUG-a4f2]`. 마지막 정리는 단일 grep이 된다. 태그 없는 로그는 남는다; 태그 있는 로그는 죽는다.
 
-**Performance branch.** For performance regressions, logs are usually misleading. Instead: establish baseline measurements (timing harness, `performance.now()`, profiler, query plans), then bisect. Measure first, fix second.
+**성능 분기.** 성능 회귀의 경우, 로그는 보통 틀리다. 대신: 기준 측정(타이밍 하네스, `performance.now()`, 프로파일러, 쿼리 계획)을 세우고, 이등분. 먼저 측정, 다음 수정.
 
-## Diagnostic-Only Conclusion
+## 진단 전용 종료
 
-Once the root cause is confirmed, stop here in diagnostic-only mode; do not enter the remediation phase. Report:
+원인이 확인된 후, 진단 전용 모드에서는 여기서 멈춘다; 수정 단계로 들어가지 않는다. 보고:
 
-- Confirmed root cause, and why the evidence establishes it rather than merely suggesting a theory.
-- Minimal reproduction command and observed results, or exact reproduction limits, attempted steps, and missing access/artifacts.
-- Collected evidence: red-loop output, read-only debugger values, existing logs, source facts, or measurements.
-- Smallest proposed fix and why it addresses the root cause. Propose; do not implement.
-- When approved temporary writes were used, confirm that all artifacts have been removed prior to this report.
+- 확인된 원인, 그리고 증거가 단순히 이론을 시사하는 것이 아니라 왜 그것을 확립하는지.
+- 최소 재현 명령과 관찰 결과, 또는 정확한 재현 한계, 시도한 것, 빠진 접근이나 산출물.
+- 수집한 증거: red-루프 출력, 읽기 전용 디버거 값, 기존 로그, 소스 사실, 또는 측정.
+- 가장 작은 수정 제안과 그것이 원인을 다루는 이유. 제안한다; 구현하지 않는다.
+- 승인된 임시 쓰기가 사용되었을 때, 이 보고 전에 모든 산출물이 제거되었음을 확인.
 
-If evidence does not confirm the root cause or a red-capable command cannot be constructed, report a bounded diagnosis instead of elevating a theory to a confirmed cause or applying a fix.
+증거가 원인을 확인하거나 red-capable 명령을 만들 수 없다면, 이론을 확인된 원인으로 승격하거나 수정을 적용하는 대신 제한된 진단을 보고한다.
 
-## Phase 5 — Remediation: Fix + Regression Test
+## Phase 5 — 수정: 고치기 + 회귀 테스트
 
-Execute this phase only in remediation mode. Diagnostic-only reporting ends above.
+이 단계는 수정 모드에서만 실행한다. 진단 전용 보고는 위에서 끝난다.
 
-Write a regression test **before** fixing — only when the **correct test boundary** exists for it.
+고치기 **전에** 회귀 테스트를 작성한다 — 단지 그것을 위한 **올바른 테스트 경계**가 있을 때만.
 
-The correct boundary means the test exercises the **actual bug pattern** occurring at the call site. If the available boundary is too shallow (a single-caller test when the bug requires multiple callers, a unit test that cannot reproduce the chain causing the bug), a regression test there provides false confidence.
+올바른 경계는 테스트가 호출 지점에서 일어나는 **실제 버그 패턴**을 실행하는 것이다. 사용 가능한 경계가 너무 얕다면 (버그에 여러 호출자가 필요한데 단일 호출자 테스트, 버그를 일으킨 체인을 재현할 수 없는 단위 테스트), 그곳의 회귀 테스트는 거짓 자신감을 준다.
 
-**If there is no proper boundary, that is a finding in itself.** Note it down. The codebase structure prevents locking down the bug. Flag this for subsequent steps.
+**올바른 경계가 없다면, 그것 자체가 발견이다.** 적어둔다. 코드베이스 구조가 버그를 잠글 수 없게 한다. 다음 단계를 위해 이것을 표시한다.
 
-If a proper boundary exists:
+올바른 경계가 있으면:
 
-1. Turn the minimized reproduction into a failing test at that boundary.
-2. Observe the failure.
-3. Apply the smallest fix that addresses the confirmed cause; do not refactor adjacent code.
-4. Observe the pass.
-5. Re-run the Phase 1 feedback loop on the original (non-minimized) scenario.
+1. 최소화한 재현을 그 경계에서 실패 테스트로 만든다.
+2. 실패를 지켜본다.
+3. 확인된 원인을 설명하는 가장 작은 수정을 적용한다; 인접 코드를 리팩터하지 않는다.
+4. 통과를 지켜본다.
+5. Phase 1 피드백 루프를 원래(최소화하지 않은) 시나리오로 다시 실행한다.
 
-## Phase 6 — Fix Cleanup + Post-Mortem
+## Phase 6 — 수정 정리 + 포스트모템
 
-Execute this phase only in remediation mode. In diagnostic-only mode, the sole cleanup is removing all approved temporary diagnostic artifacts, including prototypes under `.agents/prototype/<name>/`, prior to reporting.
+이 단계는 수정 모드에서만 실행한다. 진단 전용 모드에서 유일한 정리는 보고 전에 `.agents/prototype/<name>/` 아래의 프로토타입을 포함한 승인된 모든 임시 진단 산출물을 제거하는 것이다.
 
-Mandatory before declaring completion:
+완료 선언 전 필수:
 
-- [ ] Original reproduction no longer reproduces (re-run Phase 1 loop)
-- [ ] Regression test passes (or lack of a test boundary is documented)
-- [ ] All `[DEBUG-...]` instrumentation removed (`grep` for prefix)
-- [ ] One-off prototypes deleted, or preserved only under `.agents/prototype/<name>/`
-- [ ] Confirmed hypothesis stated in commit / PR message — so the next debugger can learn
+- [ ] 원래 재현이 더 이상 재현되지 않는다 (Phase 1 루프 다시 실행)
+- [ ] 회귀 테스트가 통과한다 (또는 테스트 경계가 없음이 문서화됨)
+- [ ] 모든 `[DEBUG-...]` 계측이 제거됨 (접두사를 `grep`)
+- [ ] 일회성 프로토타입이 삭제됨, 또는 `.agents/prototype/<name>/` 아래에만 보존됨
+- [ ] 맞았던 가설이 커밋 / PR 메시지에 명시됨 — 다음 디버거가 배우도록
 
-**And ask: What could have prevented this bug?** If the answer involves structural changes (lack of a good test boundary, tangled callers, hidden coupling), hand off with specific details and tell the user to run `/vibe-refactor`. Make recommendations **after** the fix lands, not beforehand — you possess far more information now than when you started.
+**그리고 묻는다: 이 버그를 무엇이 막았을까?** 답이 구조 변경(좋은 테스트 경계 없음, 얽힌 호출자, 숨겨진 결합)을 포함하면, 구체적인 내용과 함께 사용자에게 `/vibe-refactor` 실행을 안내한다. 추천은 수정이 들어간 **후에** 한다, 미리가 아니다 — 시작할 때보다 지금 더 많은 정보를 가지고 있다.

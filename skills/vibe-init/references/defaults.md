@@ -1,20 +1,20 @@
-# Configuration Documents and Defaults
+# 설정 문서와 기본값
 
-Initialization is not a prerequisite when the skill configuration block in `AGENTS.md` or configuration documents under `docs/agents/` are absent. Proceed directly with **local Markdown** unless existing configuration or the user specifies another tracker. A GitHub or GitLab remote alone does not select a hosted tracker.
+`AGENTS.md`의 스킬 설정 블록이나 `docs/agents/` 설정 문서가 없어도 초기화는 선행 조건이 아니다. 기존 설정이나 사용자가 트래커를 따로 지정하지 않았다면 **로컬 Markdown**으로 바로 진행한다. GitHub·GitLab remote가 있다는 이유만으로 원격 트래커를 선택하지 않는다.
 
-## Resolve Configuration
+## 설정 해석
 
-- Prioritize user instructions and already-recorded tracker, path, label, and domain-document settings. When only some files are missing, preserve existing settings and use the defaults below only for missing items.
-- If `docs/agents/issue-tracker.md` is absent and there is no other explicit choice, read the [local tracker rules](issue-tracker-local.md). Store specs at `.agents/plans/<feature>/spec.md` and implementation tickets under `issues/<NN>-<slug>.md` in the same directory. Follow that reference's paths and status rules for decision maps and typed records as well.
-- If `docs/agents/triage-labels.md` is absent, read the [default role mapping](triage-labels.md). Represent roles in the relevant Markdown records for local work; do not create remote labels. Preserve existing Korean strings and the `Type:`/`Status:` contracts.
-- If `docs/agents/domain.md` is absent, read the [default domain-document rules](domain.md). Use existing `CONTEXT.md`, `CONTEXT-MAP.md`, and relevant ADRs; if those are also absent, do not require creating them in advance.
+- 사용자 지시와 이미 기록된 트래커·경로·라벨·도메인 문서 설정을 우선한다. 일부 파일만 없으면 있는 설정은 유지하고 빠진 항목에만 아래 기본값을 쓴다.
+- `docs/agents/issue-tracker.md`가 없고 다른 명시적 선택도 없으면 [로컬 트래커 규칙](issue-tracker-local.md)을 읽는다. 명세는 `.agents/plans/<feature>/spec.md`, 구현 티켓은 같은 디렉터리의 `issues/<NN>-<slug>.md`에 둔다. 결정 지도와 유형별 기록도 이 문서의 경로와 상태 규칙을 따른다.
+- `docs/agents/triage-labels.md`가 없으면 [기본 역할 매핑](triage-labels.md)을 읽는다. 로컬 작업에서는 역할을 해당 Markdown 기록에 표현하며 원격 라벨을 생성하지 않는다. 기존 한국어 문자열과 `Type:`·`Status:` 계약을 그대로 유지한다.
+- `docs/agents/domain.md`가 없으면 [기본 도메인 문서 규칙](domain.md)을 읽는다. 기존 `CONTEXT.md`, `CONTEXT-MAP.md`, 관련 ADR을 사용하고, 그 파일들도 없으면 미리 만들라고 요구하지 않는다.
 
-Use the same substitute documents when later skill instructions refer to these configuration paths. Read bundled references in place; do not copy them into the project. If a hosted tracker is explicitly selected, do not switch to local: use the [GitHub](issue-tracker-github.md) or [GitLab](issue-tracker-gitlab.md) reference and the provided repository information. For another tracker, ask only for missing information needed by that workflow, not for full initialization.
+이후 스킬이 위 설정 경로를 읽으라고 할 때도 같은 대체 문서를 사용한다. 내장 참고 문서는 읽기만 하며 프로젝트로 복사하지 않는다. 원격 트래커가 명시되어 있다면 로컬로 바꾸지 않고 [GitHub](issue-tracker-github.md) 또는 [GitLab](issue-tracker-gitlab.md) 참고 문서와 주어진 저장소 정보를 사용한다. 다른 트래커의 필요한 정보가 빠졌다면 해당 정보만 확인하고 초기화 전체를 요구하지 않는다.
 
-## Authority and Artifacts
+## 권한과 산출물
 
-Explicit `plan`, `review-plan`, or `reconcile` requests and execution-plan handoffs for selected audit or direction findings follow `/vibe-plan`'s [execution-plan contract](../../vibe-plan/EXECUTION-PLAN.md). That path keeps the local plan authoritative and handles GitHub publication under its contract only with `--issues`. It does not change existing tracker settings for ordinary specs and tickets. Resolve any conflict between existing configuration and the publication target first.
+명시적인 `plan`·`review-plan`·`reconcile`이나 감사·방향 조사에서 선택한 항목의 실행 계획 인계에는 `/vibe-plan`의 [실행 계획 계약](../../vibe-plan/EXECUTION-PLAN.md)이 적용된다. 이 경로는 로컬 계획을 원본으로 유지하며, `--issues`가 있을 때만 그 계약에 따라 GitHub 게시를 처리한다. 일반 명세·티켓의 기존 트래커 설정을 바꾸지 않는다. 기존 설정과 게시 대상이 충돌하면 먼저 확인한다.
 
-Never invoke or require `/vibe-init` merely because configuration is absent. Applying defaults does not create `AGENTS.md`, configuration files under `docs/agents/`, or initialization-only commits or pushes. Run `/vibe-init` only when the user requests creating or changing configuration.
+설정 부재만으로 `/vibe-init`을 호출하거나 실행을 요구하지 않는다. 기본값을 적용하기 위해 `AGENTS.md`, `docs/agents/` 설정 파일을 만들거나 초기화 전용 커밋·push를 하지 않는다. `/vibe-init`은 사용자가 설정의 생성·변경을 요청했을 때만 실행한다.
 
-Local defaults grant no additional write authority. Planning skills create planning files within the requested scope; implementation skills update tickets under their existing completion contract. Review only reads existing local specs and tickets. Missing configuration does not authorize moving existing artifacts or creating remote issues or PR/MRs.
+로컬 기본값은 쓰기 권한을 추가하지 않는다. 계획 스킬은 요청 범위의 계획 파일을 만들고, 구현 스킬은 기존 완료 계약에 따라 티켓을 갱신한다. 리뷰는 기존 로컬 명세·티켓을 읽기만 한다. 설정이 없다는 이유로 기존 산출물을 이동하거나 원격 이슈·PR/MR을 만들지 않는다.

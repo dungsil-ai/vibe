@@ -1,20 +1,20 @@
 ---
 name: vibe-grilling
-description: Interrogates plans, decisions, or ideas by asking one decision question at a time until reaching shared agreement with the user. Use when the user wants to thoroughly vet a plan, says "grill me", or when other skills require decisions before acting.
+description: 계획, 의사결정, 또는 아이디어에 대해 한 번에 하나의 의사결정 질문을 던져 사용자와 합의할 때까지 검토한다. 사용자가 계획을 꼼꼼히 확인하려 하거나 "그릴해줘"라고 말하거나 다른 스킬이 행동 전에 의사결정이 필요할 때 쓴다.
 ---
 
-# Grilling Plans
+# 계획 검토하기
 
-Ask questions for all decisions necessary to understand the subject. Resolve dependent decisions one at a time. Provide a recommended answer with every question.
+주제를 이해하는 데 필요한 모든 의사결정에 대해 질문한다. 의존하는 의사결정은 한 번에 하나씩 해결한다. 모든 질문에 권장 답안을 함께 제시한다.
 
-Ask exactly one question at a time, and await the user's response. Never list multiple questions at once.
+정확히 하나의 질문만 던지고, 사용자의 답변을 기다린다. 여러 질문을 목록으로 묻지 않는다.
 
-Find facts using available tools before asking questions. Ask the user only for decisions.
+질문하기 전에 사용 가능한 도구로 사실을 찾는다. 사용자에게는 의사결정만 묻는다.
 
-Internally track unresolved decisions, their prerequisites, and facts under investigation; update them when answers or research results arrive. Choose only one decision whose prerequisites are settled as the next question. While fact-finding is in progress, defer only questions depending on that fact and ask one independent decision if available. If none is independent, wait for the research result. Never declare agreement complete while decisions or research remain unresolved.
+미해결 결정, 각 결정의 선행 조건, 조사 중인 사실을 내부적으로 추적하고 답변이나 조사 결과가 도착할 때 갱신한다. 선행 조건이 해결된 결정 중 하나만 다음 질문으로 고른다. 사실 조사가 진행 중이면 그 사실에 의존하는 질문만 보류하고, 독립된 결정이 있으면 하나를 묻는다. 독립된 결정이 없으면 조사 결과를 기다린다. 답하지 않은 결정이나 조사 대기를 남긴 채 합의가 끝났다고 하지 않는다.
 
-Write questions, recommendations, and shared understanding summaries directly and literally. Use CEFR B1-or-lower vocabulary in Korean wording. Do not apply the CEFR A1–A2 standard to Korean. Avoid idioms, metaphors, or culturally dependent expressions.
+질문, 권장안, 공유 이해 요약은 직접적이고 글자 그대로 쓴다. 한국어 표현에는 CEFR B1 이하 어휘를 쓴다. CEFR A1–A2 기준을 한국어에 적용하지 않는다. 관용구, 비유, 문화에 따라 뜻이 달라지는 표현은 쓰지 않는다.
 
-When defining or proposing CONTEXT terms, use the `Korean (English)` format. Write definitions in Korean. Use CEFR B1-or-lower vocabulary in Korean CONTEXT terms and definitions. Do not apply the CEFR A1–A2 standard to Korean. All general English CONTEXT names must use everyday CEFR A1–A2 English words. The only exception is an English technical term clearly used in Korea as the name of that domain.
+CONTEXT 용어를 정하거나 제안할 때는 `한국어 (English)` 형식으로 쓴다. 그 정의는 한국어로 쓴다. 한국어 CONTEXT 용어와 정의에는 CEFR B1 이하 어휘를 쓴다. CEFR A1–A2 기준을 한국어에 적용하지 않는다. 모든 영어 CONTEXT 일반 이름은 반드시 CEFR A1–A2 일상 영어 단어를 써야 한다. 유일한 예외는 한국에서 해당 도메인 이름으로 명확히 통용되는 영어 전문 용어뿐이다.
 
-Once all unresolved decisions and research have been settled, summarize the shared understanding and await the user's confirmation. Do not act before the user confirms shared understanding.
+모든 미해결 결정과 조사 대기가 해소되면 공유 이해를 요약하고 사용자의 확인을 기다린다. 사용자가 공유 이해를 확인하기 전에는 행동하지 않는다.

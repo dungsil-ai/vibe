@@ -1,19 +1,19 @@
 ---
 name: vibe-handoff
-description: Compresses the current conversation into a handoff document that another agent can pick up. Use when the context window is nearly full, or when the user requests a handoff, pause, or continuing work in a new session.
+description: 현재 대화를 다른 에이전트가 이어 받을 수 있는 핸드오프 문서로 압축한다. 컨텍스트 창이 거의 찼을 때, 또는 사용자가 핸드오프·일시정지·새 세션에서 작업을 이어하라고 요청할 때 사용한다.
 disable-model-invocation: true
 metadata:
-  argument-hint: "What will the next session be used for?"
+  argument-hint: "다음 세션은 무엇에 사용하나요?"
 ---
 
-# Vibe Handoff
+# 바이브 핸드오프
 
-Write a handoff document summarizing the current conversation so a fresh agent can continue the work. Save it to the user's OS temporary directory, not in the current workspace.
+현재 대화를 요약한 핸드오프 문서를 작성해서 새 에이전트가 작업을 이어갈 수 있게 한다. 현재 작업 공간이 아닌 사용자 OS의 임시 디렉터리에 저장한다.
 
-Include a "제안 스킬" section in the document, recommending skills the incoming agent should invoke. Preserve this Korean heading literally.
+문서에 "제안 스킬" 섹션을 포함하고, 에이전트가 호출해야 할 스킬을 추천한다.
 
-Do not duplicate content already captured in other artifacts (specs, plans, ADRs, issues, commits, diffs). Reference them by path or URL instead.
+다른 산출물(명세, 계획, ADR, 이슈, 커밋, diff)에 이미 담긴 내용은 복제하지 않는다. 대신 경로나 URL로 참조한다.
 
-Redact all sensitive information such as API keys, passwords, and personally identifiable information.
+API 키, 비밀번호, 개인 식별 정보 같은 민감 정보는 모두 가린다.
 
-If the user provided an argument, treat it as instructions on what the next session should focus on and reflect it in the document.
+사용자가 인자를 전달했다면, 그 인자를 다음 세션이 집중할 내용에 대한 설명으로 취급해 문서에 반영한다.

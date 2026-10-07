@@ -1,56 +1,56 @@
-# Category Investigation Criteria
+# 범주별 조사 기준
 
-Read only the selected technical categories and `Finding format`. Require an actual contract violation or concrete cost, not merely the presence of a pattern.
+선택된 기술 범주와 `발견 형식`만 읽는다. 단순한 패턴 존재가 아니라 실제 계약 위반이나 구체적 비용을 근거로 삼는다.
 
 ## correctness
 
-Inspect swallowed errors, boundaries/empty inputs, state transitions, cancellation/resource cleanup, async races, multi-write transactions, and retry idempotency. For type escapes, trace feasible inputs and calling paths.
+예외 누락, 경계값·빈 입력, 상태 전이, 취소·자원 해제, 비동기 경합, 다중 쓰기의 트랜잭션, 재시도 멱등성을 확인한다. 타입 우회가 있으면 실제로 가능한 입력과 호출 경로를 추적한다.
 
 ## security
 
-Trace trust boundaries from input to privileged APIs, SQL, shells, HTML, and filesystem paths; check server-side identity, ownership, and tenant validation. Judge uploads, mass assignment, sensitive logs, production configuration, and dependency risk by reachable paths. Never read and output secret values: report locations/types only and recommend rotation. Do not classify standard proxy or local development-tool behavior as vulnerabilities without evidence of added risk. Prioritize high-severity dependency advisories affecting runtime or build/distribution paths and state the current advisory source and lookup time. Do not generate attack reproductions or misuse procedures.
+입력부터 권한 있는 API·SQL·셸·HTML·파일 경로까지의 신뢰 경계와 서버 측 인증·소유권·테넌트 검증을 확인한다. 업로드, 객체 일괄 할당, 민감 로그, 운영 설정과 의존성 위험도 실제 도달 경로로 판단한다. 비밀값은 읽어 출력하지 말고 위치와 종류만 보고하며 교체를 권한다. 표준 프록시·로컬 개발 도구 동작은 추가 위험의 근거 없이 취약점으로 분류하지 않는다. 의존성 경고는 런타임 또는 빌드·배포 경로에 영향을 주는 높은 심각도 위주로 선별하고 최신 권고의 출처·조회 시점을 밝힌다. 취약점 재현 공격문이나 오용 절차는 만들지 않는다.
 
 ## performance
 
-Inspect N+1, repeated-scan complexity, duplicate computation/requests, unbounded queries/payloads, rendering/network waterfalls, connection/queue use, and redundant CI work. Without frequency, scale, schema, or measurements, propose verification rather than claiming a proven bottleneck.
+N+1, 반복 탐색의 복잡도, 중복 계산·요청, 무제한 조회·페이로드, 렌더링·통신 직렬화, 연결·큐 사용, CI 중복 작업을 확인한다. 호출 빈도·데이터 규모·스키마·측정 자료가 없으면 병목을 확정하지 않고 검증 방법을 제시한다.
 
 ## tests
 
-Check meaningful verification of critical payment/auth/data-mutation paths and unit/integration/E2E boundaries. Find tests that mirror implementation or only test mocks, and real-clock/network/order dependencies. Precede refactoring of high-churn untested areas with characterization tests. Missing or failing verification commands make a verification baseline a prerequisite.
+결제·인증·데이터 변경 등 핵심 경로의 의미 있는 검증과 단위·통합·E2E 경계를 확인한다. 구현을 그대로 반복하거나 모의 객체만 검증하는 테스트, 실제 시간·네트워크 의존과 순서 의존을 찾는다. 변경이 잦은 미검증 영역은 리팩터링보다 특성화 테스트를 선행시킨다. 검증 명령이 없거나 실패하면 검증 기반 확립을 선행조건으로 제시한다.
 
 ## tech-debt
 
-Inspect duplication requiring repeated edits, layering violations/cycles, concentrated responsibilities, actually unused code, inconsistent error/state handling, and excessive or missing abstractions. Do not recommend redesign based solely on file size or taste. Check representative conventions and the scope of ADR decisions together.
+반복 수정이 필요한 중복, 계층 침범·순환 의존, 책임 집중, 실제 사용되지 않는 코드, 일관되지 않은 오류·상태 처리, 과도하거나 부족한 추상화를 살핀다. 파일 크기나 취향만으로 재설계를 권하지 않는다. 관례의 대표 코드와 ADR의 결정 범위를 함께 확인한다.
 
 ## dependencies
 
-Inspect runtime/framework end-of-support, deprecated APIs actually used, abandoned critical-path dependencies, duplicate capabilities, and manifest/lockfile drift. Verify support/removal dates against official sources; flag uncertainty when unverified. Estimate affected files and compatibility cost without installing or upgrading.
+런타임·프레임워크 지원 종료, 실제 사용하는 폐기 API, 핵심 경로의 유지보수 중단 의존성, 중복 기능, manifest/lockfile 불일치를 확인한다. 지원 종료·제거 일정은 공식 자료로 검증하고 확인하지 못하면 불확실성을 표시한다. 마이그레이션 영향 파일과 호환성 비용을 추정하되 설치·업그레이드는 하지 않는다.
 
 ## dx
 
-Inspect actual failures or slow feedback in verification commands, CI, and development tooling, and hard-to-diagnose errors/logs. Report concrete reproduction/verification costs rather than missing configuration or agent instructions alone. Do not automatically create configuration or change user environments.
+검증 명령·CI·개발 도구의 실제 실패나 느린 피드백, 진단하기 어려운 오류·로그를 확인한다. 설정·에이전트 지침의 부재 자체보다 재현·검증에 드는 구체적 비용을 보고한다. 설정 파일을 자동 생성하거나 사용자의 환경을 바꾸지 않는다.
 
 ## docs
 
-Inspect costs caused by public API contracts or operational/development procedures disagreeing with code, and recurring decision confusion from missing rationale. Do not elevate priority or request generic introductory guides merely because documentation is absent. Cite disagreements with relevant code, commands, or settled decisions.
+공개 API 계약이나 운영·개발 절차가 실제 코드와 달라 발생하는 비용, 설명이 없어 반복되는 결정 혼선을 확인한다. 문서가 없다는 이유만으로 우선순위를 높이거나 일반 입문서를 요구하지 않는다. 관련 코드·명령·확정 결정과 문서의 불일치를 인용한다.
 
 ## direction
 
-Route to `vibe-next-plan` rather than duplicating investigation. Request repo-grounded investigation of unfinished intent, undelivered product goals, public capability asymmetries, and extensions supported by existing architecture. Target a separate two to four suggestions for full audits and four to six for direction alone, without padding. Prioritize settled product goals/ADRs and hand selected proposals off as `Kind: design-spike`.
+직접 중복 조사하지 않고 `vibe-next-plan`에 연결한다. 미완성 의도, 구현되지 않은 제품 목표, 공개 기능의 비대칭과 기존 구조가 지원하는 확장 가능성을 저장소 근거로 조사하게 한다. 전체 감사에는 별도 2~4개, 방향 단독에는 4~6개를 목표로 하되 수를 억지로 채우지 않는다. 확정된 제품 목표·ADR을 우선하고 선택된 제안은 `Kind: design-spike`로 인계한다.
 
-## Finding format
+## 발견 형식
 
-Return the following for each candidate. State unknowns and how to verify them rather than inventing facts.
+각 후보는 다음 내용을 반환한다. 모르면 추정으로 채우지 말고 미확인 사실과 확인 방법을 쓴다.
 
-- Item ID, canonical category, and short title.
-- Evidence: personally verified `file:line`, code/contract and calling-path explanation. Prefer the strongest two to five locations without inventing missing evidence. Include comparison SHAs and the evidence version in branch mode.
-- Impact: actual incorrect behavior or cost. Direction describes user/product value.
-- Effort: S (hours) / M (roughly a day) / L (multiple days), including tests, with assumptions.
-- Risk: LOW / MED / HIGH and the contracts a fix could break.
-- Confidence: HIGH (directly verified), MED (strong signal, verification needed), LOW (investigation needed). Distinguish confidence from whether verification commands ran.
-- Improvement sketch and trade-offs: alternative benefits, costs, and maintenance burden. Do not write an implementation plan.
-- Dependencies, unresolved questions, prerequisite verification/conventions/ADRs, and proposed plan kind.
-- Branch provenance: `introduced` / `pre-existing` with comparison evidence. Separate unverifiable origins as investigation needed.
-- Audited/excluded scope, commands actually run with results, and reasons for skipped checks.
+- 항목 ID와 표준 범주, 짧은 제목.
+- 근거: 직접 확인한 `file:line`, 해당 코드·계약과 호출 경로 설명. 강한 근거 2~5곳을 우선하되 존재하지 않는 근거를 만들지 않는다. 브랜치 모드에서는 비교 SHA와 근거 버전을 포함한다.
+- 영향: 실제로 잘못되는 동작·지불하는 비용. 방향은 사용자·제품 가치다.
+- 노력: 테스트를 포함한 S(몇 시간) / M(하루 정도) / L(여러 날) 추정과 전제.
+- 위험: LOW / MED / HIGH와 수정이 깨뜨릴 수 있는 계약.
+- 신뢰도: HIGH(직접 확인), MED(강한 신호, 검증 필요), LOW(조사 필요). 검증 실행 여부와 신뢰도는 구분한다.
+- 개선 개요와 절충안: 대안의 이득·비용·유지보수 부담. 구현 계획을 쓰지 않는다.
+- 의존성, 미해결 질문, 선행 검증·관례·ADR, 제안된 계획 종류.
+- 브랜치 기원: `introduced` / `pre-existing`와 비교 근거. 확인하지 못하면 조사 필요로 분리한다.
+- 조사 범위·제외 범위, 실제 실행한 명령·결과와 미실행 이유.
 
-Reject low-value or intentional behavior with reasons. Follow the user's and repository's output-language instructions for reports; omit secret values and unnecessary raw dumps.
+가치가 부족하거나 의도된 동작인 후보는 이유와 함께 거부한다. 보고서는 사용자·저장소의 출력 언어 지침을 따르며 비밀값·불필요한 원문 덤프를 포함하지 않는다.

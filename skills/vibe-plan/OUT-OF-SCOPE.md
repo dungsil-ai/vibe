@@ -1,19 +1,19 @@
-# Out-of-Scope Knowledge Base
+# 범위 밖 지식 베이스
 
-The repository's `docs/agents/out-of-scope/` directory retains a durable record of rejected feature requests, serving two purposes:
+저장소의 `docs/agents/out-of-scope/` 디렉터리는 거부된 기능 요청의 영구 기록을 보관한다. 두 목적을 한다:
 
-1. **Organizational Memory** — Why features were rejected, so reasons survive issue closure
-2. **Deduplication** — When incoming issues match prior rejections, skills surface prior decisions rather than reopening discussion
+1. **조직적 기억** — 기능이 왜 거부되었는지, 이슈가 닫혀도 이유가 사라지지 않게
+2. **중복 제거** — 이전 거부와 일치하는 새 이슈가 들어오면, 스킬이 이전 결정을 다시 논의하는 대신 표면에 드러낸다
 
-## Table of Contents
+## 목차
 
-- Directory Structure
-- File Format — Record template, file naming, writing reasons
-- When to Check `docs/agents/out-of-scope/`
-- When to Write to `docs/agents/out-of-scope/`
-- Updating or Removing Out-of-Scope Files
+- 디렉터리 구조
+- 파일 형식 — 기록 템플릿, 파일 이름 짓기, 이유 쓰기
+- `docs/agents/out-of-scope/`를 확인할 때
+- `docs/agents/out-of-scope/`에 쓸 때
+- 범위 밖 파일 갱신 또는 제거
 
-## Directory Structure
+## 디렉터리 구조
 
 ```
 docs/agents/out-of-scope/
@@ -22,92 +22,92 @@ docs/agents/out-of-scope/
 └── graphql-api.md
 ```
 
-One file per **concept**, not per issue. Multiple issues requesting the same thing cluster under one file.
+**개념**당 한 파일, 이슈당이 아니다. 같은 것을 요청하는 여러 이슈는 한 파일 아래 묶는다.
 
-## File Format
+## 파일 형식
 
-Write files in readable, natural prose — closer to short design documents than database entries. Use paragraphs, code samples, and examples so rationale is clear to newcomers:
+파일은 편안하고 읽기 쉬운 문체로 쓴다 — 데이터베이스 항목보다 짧은 설계 문서에 가깝게. 문단, 코드 샘플, 예시를 써서 처음 보는 사람에게도 이유가 명확하고 유용하게 한다.
 
 ```markdown
-# Dark Mode
+# 다크 모드
 
-This project does not support dark mode or user-facing theming.
+이 프로젝트는 다크 모드나 사용자 대면 테마를 지원하지 않는다.
 
-## Why Out of Scope
+## 왜 범위 밖인가
 
-The rendering pipeline assumes a single color palette defined in `ThemeConfig`.
-Supporting multiple themes would require:
+렌더링 파이프라인은 `ThemeConfig`에 정의된 단일 색 팔레트를
+가정한다. 여러 테마를 지원하려면 다음이 필요하다:
 
-- Theme context provider wrapping the entire component tree
-- Per-component theme-aware style resolution
-- Persistence layer for user theme preferences
+- 전체 컴포넌트 트리를 감싸는 테마 컨텍스트 제공자
+- 컴포넌트별 테마 인식 스타일 해석
+- 사용자 테마 선호도의 영속화 계층
 
-This represents a significant architectural change misaligned with the project's
-focus on content authoring. Theming is the concern of downstream consumers
-embedding or redistributing output.
+이것은 프로젝트의 콘텐츠 작성 초점과 일치하지 않는 중요한
+아키텍처 변경이다. 테마는 출력을 내장하거나 재배포하는
+다운스트림 소비자의 관심사다.
 
 ```ts
-// Current ThemeConfig interface is not designed for runtime switching:
+// 현재 ThemeConfig 인터페이스는 런타임 전환에 설계되지 않았다:
 interface ThemeConfig {
-  colors: ColorPalette; // Single palette resolved at build time
+  colors: ColorPalette; // 단일 팔레트, 빌드 시간에 해석
   fonts: FontStack;
 }
 ```
 
-## Previous Requests
+## 이전 요청
 
-- #42 — "Add dark mode support"
-- #87 — "Night theme for accessibility"
-- #134 — "Dark theme option"
+- #42 — "다크 모드 지원 추가"
+- #87 — "접근성을 위한 야간 테마"
+- #134 — "다크 테마 옵션"
 ```
 
-### File Naming
+### 파일 이름 짓기
 
-Use short, descriptive kebab-case names for concepts: `dark-mode.md`, `plugin-system.md`, `graphql-api.md`. Make them recognizable enough that someone browsing the directory understands what was rejected without opening files.
+개념에 대한 짧고 설명적인 kebab-case 이름을 쓴다: `dark-mode.md`, `plugin-system.md`, `graphql-api.md`. 디렉터리를 브라우징하는 사람이 파일을 열지 않아도 무엇이 거부되었는지 알 수 있을 만큼 인식 가능해야 한다.
 
-### Writing Reasons
+### 이유 쓰기
 
-Reasons must be substantive — explaining why rather than merely stating "not wanted". Good reasons cite:
+이유는 본질적이어야 한다 — "원하지 않는다"가 아니라 왜. 좋은 이유는 다음을 참조한다:
 
-- Project scope or philosophy ("This project focuses on X; theming is a downstream concern")
-- Technical constraints ("Supporting this requires Y, conflicting with our Z architecture")
-- Strategic decisions ("Chose A over B because...")
+- 프로젝트 범위나 철학 ("이 프로젝트는 X에 집중한다; 테마는 다운스트림 관심사다")
+- 기술적 제약 ("이것을 지원하려면 Y가 필요하고, 우리의 Z 아키텍처와 충돌한다")
+- 전략적 결정 ("B 대신 A를 쓰기로 했다. 왜냐하면...")
 
-Reasons must be durable. Do not reference temporary circumstances ("too busy right now") — that is deferral, not rejection.
+이유는 내구성이 있어야 한다. 일시적 상황을 참조하지 않는다("지금 너무 바쁘다") — 그것은 진짜 거부가 아니라 연기다.
 
-## When to Check `docs/agents/out-of-scope/`
+## `docs/agents/out-of-scope/`를 확인할 때
 
-During triage (Step 1: Gather Context), read all files in `docs/agents/out-of-scope/`. When evaluating new issues:
+트리아지 중(1단계: 맥락 수집), `docs/agents/out-of-scope/`의 모든 파일을 읽는다. 새 이슈를 평가할 때:
 
-- Check if request matches an existing out-of-scope concept
-- Match by conceptual similarity, not keywords — "night theme" matches `dark-mode.md`
-- If a match exists, surface to maintainer: "This is similar to `docs/agents/out-of-scope/dark-mode.md` — rejected previously for [reason]. Do you still feel the same?"
+- 요청이 기존 범위 밖 개념과 일치하는지 확인
+- 대조는 키워드가 아니라 개념 유사성으로 — "야간 테마"는 `dark-mode.md`와 일치
+- 일치가 있으면, 관리자에게 표면에 드러낸다: "이것은 `docs/agents/out-of-scope/dark-mode.md`와 유사합니다 — 이전에 [이유]로 거부했습니다. 여전히 같은 생각이신가요?"
 
-Maintainers can:
+관리자는 다음을 할 수 있다:
 
-- **Confirm** — New issue appends to "Previous Requests" in existing file, then closes
-- **Reconsider** — Out-of-scope file is deleted or updated; issue proceeds through normal triage
-- **Disagree** — Issue is related but distinct; proceeds through normal triage
+- **확인** — 새 이슈는 기존 파일의 "이전 요청" 목록에 추가된 뒤 닫힌다
+- **재고** — 범위 밖 파일이 삭제되거나 갱신되고, 이슈는 정상 트리아지를 진행
+- **반대** — 이슈는 관련은 있지만 별개, 정상 트리아지 진행
 
-## When to Write to `docs/agents/out-of-scope/`
+## `docs/agents/out-of-scope/`에 쓸 때
 
-Only when **enhancements** (not bugs) are *rejected* as `wontfix`. Applies identically to enhancement PRs — record rejected PRs here so the same request does not return as fresh code.
+**개선**(버그가 아님)이 `wontfix`로 *거부*될 때만. 이것은 이슈와 똑같이 개선 PR에도 적용된다 — 거부된 PR은 같은 요청이 새 코드로 돌아오지 않게 여기 기록한다.
 
-Do **not** write here when closing as `wontfix` because something is **already implemented**. That is a built feature, not a rejected request; recording it pollutes duplicate checks with false rejections. Closing comments point to existing code instead.
+무언가가 **이미 구현되어** `wontfix`로 닫힐 때는 여기 쓰지 **않는다**. 그것은 거부된 것이 아니라 구축된 기능이다; 기록하면 중복 검사를 잘못된 거부로 오염시킨다. 대신, 닫는 댓글이 기능이 이미 있는 곳을 가리킨다.
 
-Workflow:
+흐름:
 
-1. Maintainer decides feature request is out of scope
-2. Check if matching `docs/agents/out-of-scope/` file already exists
-3. If yes: append new issue to "Previous Requests"
-4. If no: create new file with concept name, decision, reason, and first previous request
-5. Post comment on issue explaining decision and referencing `docs/agents/out-of-scope/` file
-6. Close issue with `wontfix` label
+1. 관리자가 기능 요청이 범위 밖이라고 결정
+2. 일치하는 `docs/agents/out-of-scope/` 파일이 이미 있는지 확인
+3. 있으면: 새 이슈를 "이전 요청" 목록에 덧붙임
+4. 없으면: 개념 이름, 결정, 이유, 첫 번째 이전 요청으로 새 파일을 만듦
+5. 이슈에 결정을 설명하고 `docs/agents/out-of-scope/` 파일을 언급하는 댓글 게시
+6. `wontfix` 라벨로 이슈 닫기
 
-## Updating or Removing Out-of-Scope Files
+## 범위 밖 파일 갱신 또는 제거
 
-If maintainers change their mind on previously rejected concepts:
+관리자가 이전에 거부한 개념에 대해 마음이 바뀌면:
 
-- Delete the `docs/agents/out-of-scope/` file
-- No need to reopen old issues — they serve as historical records
-- The new issue prompting reconsideration proceeds through normal triage
+- `docs/agents/out-of-scope/` 파일을 삭제
+- 스킬은 옛 이슈를 다시 열 필요가 없다 — 역사적 기록이다
+- 재고를 유발한 새 이슈는 정상 트리아지를 진행

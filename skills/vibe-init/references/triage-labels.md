@@ -1,38 +1,38 @@
-# Labels
+# 라벨
 
-Skills speak in terms of canonical roles. This file maps those roles to actual label strings used in this repository's issue tracker.
+스킬은 정규 역할(canonical role) 기준으로 말한다. 이 파일은 그 역할을 이 저장소 이슈 트래커에서 실제로 쓰는 라벨 문자열에 매핑한다.
 
-## Triage Status Roles
+## 트리아지 상태 역할
 
-Five states incoming requests move through, used in the triage stage of `vibe-plan`.
+들어온 요청이 거치는 다섯 상태로, `vibe-plan`의 트리아지 단계에서 쓴다.
 
-| Canonical Role    | Tracker Label       | Meaning                                                  |
-| ----------------- | ------------------- | -------------------------------------------------------- |
-| `needs-triage`    | `상태:분류필요`     | Maintainer must evaluate this issue                      |
-| `needs-info`      | `상태:정보필요`     | Awaiting additional info from reporter                   |
-| `ready-for-agent` | `상태:에이전트작업` | Spec is complete and ready for AFK agent implementation  |
-| `ready-for-human` | `상태:사람작업`     | Must be implemented by a human directly                 |
-| `wontfix`         | `상태:처리안함`     | Will not be addressed                                    |
+| 정규 역할          | 우리 트래커의 라벨    | 의미                                     |
+| ------------------ | -------------------- | ---------------------------------------- |
+| `needs-triage`     | `상태:분류필요`      | 유지보수자가 이 이슈를 평가해야 함        |
+| `needs-info`       | `상태:정보필요`      | 보고자의 추가 정보를 기다리는 중          |
+| `ready-for-agent`  | `상태:에이전트작업`  | 명세가 완전해 AFK 에이전트가 작업할 준비가 됨 |
+| `ready-for-human`  | `상태:사람작업`      | 사람이 직접 구현해야 함                   |
+| `wontfix`          | `상태:처리안함`      | 조치하지 않음                            |
 
-When a skill mentions a role (e.g. "apply the ready-for-agent triage label"), use the corresponding label string from this table.
+스킬이 역할을 언급하면(예: "AFK 준비 트리아지 라벨을 적용하라") 이 표에서 해당 라벨 문자열을 사용한다.
 
-Edit the right column to match the vocabulary actually used in your tracker.
+실제로 쓰는 어휘에 맞추려면 오른쪽 칸을 편집한다.
 
-## Planning Labels
+## 계획 라벨
 
-Used by `vibe-plan` and `vibe-deep-plan` to mark planning artifacts. The plan type marks hosted spec/plan issues and decision maps. Map status marks an effort index as in progress, while decision types record how child tickets get resolved.
+`vibe-plan`과 `vibe-deep-plan`이 계획 산물을 표시할 때 쓴다. 계획 유형은 호스트형 명세/계획 이슈와 결정 맵을 표시한다. 맵 상태는 노력의 인덱스가 아직 진행 중임을 표시하고, 결정 유형은 자식 티켓이 어떻게 해결되는지 기록한다.
 
-| Canonical Role | Tracker Label    | Meaning                                                             |
-| -------------- | ---------------- | ------------------------------------------------------------------- |
-| plan           | `유형:계획`       | Parent planning artifact: a spec/plan issue or decision map         |
-| map            | `상태:초안`       | This issue is a decision map — index of effort, not actionable task |
-| research       | `유형:조사`       | Resolved by background subagent reading primary sources             |
-| prototype      | `유형:프로토타입` | Resolved by throwaway artifact to gauge reactions                   |
-| grilling       | `유형:인터뷰`     | Resolved by dialogue asking one question at a time                  |
-| task           | `유형:작업`       | Manual prerequisite work that must precede decisions                |
+| 정규 역할  | 우리 트래커의 라벨    | 의미                                            |
+| --------- | -------------------- | ----------------------------------------------- |
+| plan      | `유형:계획`          | 이 이슈는 명세/계획 또는 결정 맵인 부모 계획 산물 |
+| map       | `상태:초안`          | 이 이슈는 결정 맵 — 노력의 인덱스이지 할 일이 아님 |
+| research  | `유형:조사`          | 주요 출처를 읽는 백그라운드 서브에이전트로 해결  |
+| prototype | `유형:프로토타입`    | 반응을 살필 일회용 산출물로 해결                 |
+| grilling  | `유형:인터뷰`        | 한 번에 한 질문씩 나누는 대화로 해결             |
+| task      | `유형:작업`          | 결정 전에 반드시 먼저 해야 하는 수동 작업         |
 
-## Two Axes
+## 두 축
 
-`상태:` answers "what state is this in", while `유형:` answers "what planning artifact is this, or how does this decision resolve". An issue carries **at most one label per axis**.
+`상태:`는 "이것이 어떤 상태인가"에 답하고, `유형:`은 "어떤 계획 산물이거나 어떤 방식으로 결정을 해결하는가"에 답한다. 이슈는 **축당 최대 한 개의 라벨**만 가진다.
 
-A hosted spec/plan issue carries `유형:계획` together with the appropriate triage status. A decision map carries `유형:계획` together with `상태:초안`. Because `상태:초안` shares the state axis with triage statuses, a map does not carry a triage status. Decision tickets on the map carry one of the four decision `유형:` labels and no triage status. Triage statuses apply to implementation tickets only after the map finishes and `vibe-plan` publishes them. Skills speak in canonical roles; the right column of the tables above is the only label vocabulary. Do not translate those strings into English (`status:draft`, `type:plan`, `type:research`, …).
+호스트형 명세/계획 이슈는 `유형:계획`과 알맞은 트리아지 상태를 함께 가진다. 결정 맵은 `유형:계획`과 `상태:초안`을 함께 가진다. `상태:초안`은 트리아지 상태와 같은 축이므로 지도에서 트리아지 상태를 배제한다. 맵의 결정 티켓은 네 결정 `유형:` 라벨 중 하나만 가지며 트리아지 상태를 가지지 않는다. 맵이 통과하고 `vibe-plan`이 구현 티켓을 발행한 뒤에야 구현 티켓에 트리아지 상태가 다시 적용된다. 스킬은 정규 역할로 말하고, 위 표의 오른쪽 칸이 유일한 라벨 어휘다. 그 문자열을 영어(`status:draft`, `type:plan`, `type:research` 등)로 옮기지 않는다.

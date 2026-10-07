@@ -1,182 +1,182 @@
 ---
 name: vibe-goal
-description: Drives a goal through from request to review to committed code — routing to `/vibe-plan` (or `/vibe-deep-plan`) to obtain published tickets, dispatching a fresh subagent for each ticket into its own assigned branch and worktree, replaying reviewed ticket results into a single integration workspace, and safely landing only reviewed, gated results. Use when the user wants an end-to-end feature, says "do all of this", or asks to execute from planning through review in one go.
+description: 요청부터 리뷰를 거쳐 커밋된 코드까지 목표 전체를 끝까지 끌고 간다 — `/vibe-plan`(또는 `/vibe-deep-plan`)으로 라우팅해 발행된 티켓을 받아, 티켓마다 새 서브에이전트를 각자의 할당된 branch와 worktree에 파견하고, 리뷰를 거친 티켓 결과를 단일 통합 작업공간에 재생한 뒤, 리뷰되고 게이트를 통과한 결과만 안전하게 반영한다. 사용자가 기능을 처음부터 끝까지 원할 때, "이거 전부 다 해줘"라고 말할 때, 또는 계획부터 리뷰까지 한 번에 실행해 달라고 할 때 쓴다.
 disable-model-invocation: true
 metadata:
-  argument-hint: "Goal — idea, request, spec, or issue reference"
+  argument-hint: "목표 — 아이디어, 요청, 명세, 또는 이슈 참조"
 ---
 
-# Driving a Goal to Completion
+# 목표를 끝까지 끌고 가기
 
-Execute a single goal through review to committed code in one run. This skill **orchestrates**; it does not implement directly, and does not plan directly. `/vibe-plan` and `/vibe-deep-plan` are user-invoked, so route to them by telling the user to run them rather than loading them inline. It **does not perform planning work itself** — triage, exploration, spec drafting/editing, decomposition, ticket design, and ticket publishing are the responsibilities of those skills. Planning happens via `/vibe-plan` (or `/vibe-deep-plan` first if the effort is too large), each ticket is implemented by a **fresh subagent** running `/vibe-implement`, and the entire goal finishes with standard reviews plus a canonical requirement quality gate when `/rq` is available.
+목표 하나를 리뷰를 거쳐 커밋된 코드까지 한 번에 실행한다. 이 스킬은 **오케스트레이션한다**; 직접 구현하지 않고, 직접 계획하지 않는다. `/vibe-plan`과 `/vibe-deep-plan`은 사용자 전용이므로 직접 로드하지 않고 사용자에게 실행을 안내하는 방식으로 라우팅한다. **직접 계획 작업을 수행하지는 않는다** — 트리아지, 탐색, 명세 작성이나 수정, 분해, 티켓 설계, 티켓 발행은 그 스킬들의 책임이다. 계획은 `/vibe-plan`(또는 일이 너무 클 때 먼저 `/vibe-deep-plan`)을 통해 이루어지고, 각 티켓은 `/vibe-implement`를 실행하는 **새 서브에이전트**가 구현하며, 목표 전체는 표준 리뷰로 마무리하고 `/rq`가 있으면 정식 요구사항 품질 게이트를 덧붙인다.
 
-Each ticket gets its own **assigned branch and worktree** — a ticket-specific workspace isolated from all other tickets. Different tickets can run in parallel; the lifecycle of implementation → review → finding fixes → resumption for the same ticket reuses that ticket's exact assigned workspace. The goal maintains a single **integration workspace** separate from assigned workspaces: reviewed ticket results are replayed here for whole-goal verification, and ticket subagents do not commit directly to it. Resumption reuses recorded integration workspaces and each ticket's recorded assigned workspace using exact records — never opening a second one for the same goal or ticket.
+각 티켓은 자신만의 **할당된 branch와 worktree**를 갖는다 — 다른 모든 티켓과 격리된 티켓별 작업공간이다. 서로 다른 티켓은 병렬로 실행할 수 있다; 같은 티켓의 구현 → 리뷰 → 발견사항 수정 → 재개는 그 티켓의 정확히 하나의 할당된 작업공간을 재사용한다. 목표는 할당된 작업공간들과 분리된 단일 **통합 작업공간**을 유지한다: 리뷰를 거친 티켓 결과가 전체 목표 검증을 위해 여기에 재생되며, 티켓 서브에이전트가 여기에 직접 커밋하지는 않는다. 재개는 기록된 통합 작업공간과 각 티켓의 기록된 할당된 작업공간을 정확한 기록으로 재사용한다 — 같은 목표나 같은 티켓에 대해 두 번째를 열지 않는다.
 
-This orchestrator supplies assignment records via ledger/handoff to invoke `/vibe-implement`, which executes atomically for a single ticket without branching by mode name. Direct invocations outside this orchestration execute identically. Do not infer state from current worktree path or branch name alone.
+이 오케스트레이터가 원장/handoff로 할당 기록을 공급해 `vibe-implement`를 호출한다. `vibe-implement`는 모드를 나누지 않고 티켓 1개를 원자적으로만 실행한다. 직접 호출과 동일한 원자 실행이며, 현재 worktree 경로나 브랜치 이름만으로 상태를 추측하지 않는다.
 
-Read [Configuration Documents and Defaults](../vibe-init/references/defaults.md). Without configuration, proceed with local Markdown without requiring initialization. Pass the same tracker rules and local artifact paths to downstream planning, implementation, and review.
+[설정 문서와 기본값](../vibe-init/references/defaults.md)을 읽는다. 설정이 없으면 초기화를 요구하지 않고 로컬 Markdown으로 진행한다. 하위 계획·구현·리뷰에도 같은 트래커 규칙과 로컬 산출물 경로를 전달한다.
 
-## Landing and Tracker State
+## 반영과 트래커 상태
 
-`/vibe-review` is read-only: it reports findings and never alters tracker state. Review passes are not authority to close issues. Parent spec issues are read-only: never included in tracker change previews or modified. On hosted trackers, an issue that is both spec and the sole ticket is the ticket, not a parent.
+`/vibe-review`는 읽기 전용이다: 발견사항을 보고할 뿐 트래커 상태를 절대 바꾸지 않는다. 리뷰 통과는 이슈를 닫을 권한이 아니다. 부모 spec 이슈는 읽기 전용이다: 트래커 변경 미리보기에 절대 포함하지 않고 수정하지도 않는다. 호스트형에서 명세와 유일한 티켓이 같은 이슈이면 그것은 티켓이지 부모가 아니다.
 
-The goal owns integration and final landing. Acceptance checklists and issue close are separate. For **hosted** trackers, `/vibe-implement` ticks acceptance checkboxes after a clean review and before the human merges — the orchestrator does not defer checkboxes until after merge. The orchestrator does not close issues in Stage 3. Only after authoritative proof shows the exact reviewed integrated commit SHA is on the original target branch in Stage 4 do you present an exact preview of close, status, and comments, awaiting separate explicit approval immediately before writing — declines or non-responses leave issues open. For **version-controlled local Markdown** trackers, there is nothing to preview: each ticket's checklist travels within its own implementation commit, so integration and landing move code and checklist together. In either case, the orchestrator never directly edits ticket files or adds tracker-only commits to the target branch.
+목표는 통합과 최종 반영을 책임진다. 인수 체크리스트와 이슈 닫기는 별개다. **호스티드** 트래커의 인수 체크박스는 `/vibe-implement`가 깨끗한 검토 뒤, 사람이 머지하기 전에 켠다 — 오케스트레이터는 체크박스를 머지 후로 미루지 않는다. 오케스트레이터는 Stage 3에서 이슈를 닫지 않는다. Stage 4에서 정확한 리뷰된 통합 commit SHA가 원본 대상 branch에 있다는 권위 있는 증거가 나온 후에만 닫기·상태·코멘트의 정확한 미리보기를 보여주고, 쓰기 직전에 별도의 명시적 승인을 기다린다 — 거절이나 무응답은 이슈를 열린 채로 둔다. **버전 관리되는 local Markdown** 트래커의 경우 미리보기할 것이 없다: 각 티켓의 체크박스는 그 티켓 자신의 구현 commit에 실려 있으므로, 통합과 반영이 code와 checklist를 함께 옮긴다. 어느 쪽이든 오케스트레이터는 티켓 파일을 직접 수정하지 않고, 대상 branch에 트래커 전용 commit을 올리지 않는다.
 
-## Orchestrators Do Not Plan or Write Production Code
+## 오케스트레이터는 계획하거나 프로덕션 코드를 작성하지 않는다
 
-Context is the only thing holding the goal together: the ticket graph, what has landed, and what remains. Spending this on implementation kills the run midway.
+문맥은 목표를 하나로 묶는 유일한 것이다: 티켓 그래프, 무엇이 반영됐고, 무엇이 남았는지. 이것을 구현에 쓰면 실행이 중간에 죽는다.
 
-- **Never edit source files directly.** All code changes go through ticket subagents.
-- **Never read full diffs.** Read subagent reports and review verdicts; open code only when adjudicating specific disagreements.
-- **Stay in one context window** — from Stage 1 routing to the final ticket. If performance degrades nonetheless, ask the user to run `/vibe-handoff` — pass the ledger, not the history.
+- **직접 소스 파일을 편집하지 않는다.** 모든 코드 변경은 티켓 서브에이전트를 거친다.
+- **diff를 전체 읽지 않는다.** 서브에이전트의 보고와 리뷰 판정을 읽는다; 특정 이견을 판정할 때만 코드를 연다.
+- **하나의 컨텍스트 창에 머문다** — Stage 1 라우팅부터 마지막 티켓까지. 그래도 성능이 떨어지면 사용자에게 `/vibe-handoff` 실행을 요청한다 — 이력이 아니라 원장을 넘긴다.
 
-No exceptions. Planning stages belong to `/vibe-plan` and `/vibe-deep-plan`: route to them, let them produce tickets, and consume what they publish. If plans need changing later, route back to Stage 1 and planning skills — never modify plans directly.
+예외는 없다. 계획 단계는 `/vibe-plan`과 `/vibe-deep-plan`의 것이다: 라우팅하면, 그들이 티켓을 만들고, 당신은 그들이 발행한 것을 소비한다. 나중에 계획을 바꿔야 하면 Stage 1과 계획 스킬로 다시 라우팅한다 — 직접 계획을 수정하지 않는다.
 
-## Stage 1 — Goal Routing
+## Stage 1 — 목표 라우팅
 
-Read what the user brought, state entrypoint in one line, then act:
+사용자가 가져온 것을 읽고, 한 줄로 진입점을 고른 뒤, 행동한다:
 
-| What the user brought | Routing |
+|사용자가 가져온 것|라우팅|
 |---|---|
-| Work too large for one planning session — shrouded in fog to the destination | `/vibe-deep-plan` first; once the map clears, Destination and Decisions-so-far feed into `/vibe-plan`'s **spec** stage |
-| Everything else — external requests, loose ideas, concluded conversations, specs, issue references | `/vibe-plan`, which selects its own entry stage from the input |
-| A set of tickets published from a previous run | Skip to **Stage 2** |
+|한 계획 세션에 담기엔 너무 큰 일 — 여기서 목적지까지 안개가 낀 상태|먼저 `/vibe-deep-plan`; 지도가 걷히면, 그 Destination과 Decisions-so-far가 `/vibe-plan`의 **spec** 단계에 들어간다|
+|그 외 — 외부 요청, 느슨한 아이디어, 마무리된 대화, 명세, 이슈 참조|`/vibe-plan`, 같은 입력에서 자기 진입 단계를 고른다|
+|이전 실행에서 발행된 티켓 세트|**Stage 2**로 건너뛴다|
 
-Two routing outcomes terminate runs early, representing success rather than failure:
+두 라우팅은 실행을 일찍 끝내며, 이는 실패가 아니라 성공이다:
 
-- Triage resolves to `wontfix` or `needs-info` → Report outcome and stop. Nothing to implement.
-- Triage resolves to `ready-for-human` → Report why it cannot be delegated and stop.
+- Triage가 `wontfix` 또는 `needs-info`로 떨어지면 → 결과를 보고하고 멈춘다. 구현할 것이 없다.
+- Triage가 `ready-for-human`으로 떨어지면 → 위임할 수 없는 이유를 보고하고 멈춘다.
 
-`/vibe-deep-plan` is a **multi-session** skill. When routing there, expect the run to end if the session fills mid-map; hand off and resume. Do not force an entire decision map and its implementation into one window.
+`/vibe-deep-plan`은 **다중 세션** 스킬이다. 거기로 라우팅하면, 세션이 지도 중간에 차면 이 실행이 끝날 것으로 예상한다; 인계하고 재개한다. 전체 결정 지도와 그 구현을 한 창에 억지로 끼워 넣지 않는다.
 
-## Stage 2 — Create or Resume Ledger and Integration Workspace
+## Stage 2 — 원장과 통합 작업공간을 만들거나 재개
 
-Once `/vibe-plan` publishes tickets, first establish the **canonical goal ID** — the durable identifier to which this goal's work attaches: published spec issue / path, or the same identifier recorded in the ledger by a prior run upon resumption. This ID binds the logical goal to a single integration workspace across sessions, resumptions, and handoffs; nothing else does.
+`/vibe-plan`이 티켓을 발행하면, 먼저 **정규 목표 ID**를 확립한다 — 이 목표의 작업이 연결되는 내구 식별자: 발행된 명세 이슈 / 경로, 또는 재개 시 이전 실행이 원장에 기록한 같은 식별자. 이 ID가 논리적 목표를 세션, 재개, 인계에 걸쳐 하나의 통합 작업공간에 묶는다; 그 외에는 아무것도 그렇지 않다.
 
-### Resume or Create
+### 재개 또는 생성
 
-Before creating anything, determine whether this is a **resumption** or a **new goal**. Resumption occurs when the user explicitly asks to continue, finish, or follow up on a previous goal run — or entry comes from a published ticket set or handoff naming a prior run. Otherwise, it is a new goal. With this determination, locate existing **workspace records** — ledger, handoff, or caller records binding the canonical goal ID to an integration workspace with recorded original target, original fixed point, integration branch, worktree path, and current owner/status. **Never match by branch name, number, slug, latest `vibe/*` branch, or similar-looking names** — a plausible name is not a match. Only an exact record authorizes reuse.
+무엇이든 만들기 전에, 먼저 이것이 **재개**인지 **새 목표**인지 결정한다. 재개는 사용자가 이전 목표 실행을 계속, 마무리, 또는 이어서 해 달라고 명시적으로 요청할 때 — 또는 진입이 이전 실행을 명명하는 발행된 티켓 세트나 인계에서 올 때다. 그 외는 새 목표다. 이 결정을 가지고, 기존 **작업공간 기록**을 찾는다 — 정규 목표 ID를 기록된 원본 대상, 원본 고정점, 통합 branch, worktree 경로, 현재 소유자/상태와 함께 통합 작업공간에 묶는 원장, 인계, 또는 호출자 기록이다. **branch 이름, 번호, slug, 최신 `vibe/*` branch, 또는 비슷해 보이는 이름으로 매칭하지 않는다** — 맞아 보이는 이름은 매칭이 아니다. 정확히 하나의 기록만 재사용을 권한 부여한다.
 
-- **Exact record, no active owner, worktree exists and is clean** → Reuse that integration workspace as-is.
-- **Exact record, no active owner, worktree gone but recorded integration branch exists** → Reattach worktree to same integration branch (`git worktree add <path> <recorded-branch>`); do not create new branches.
-- **New goal, no matching record** → Truly a **new goal**. Record the original target branch or ref and its fixed point — the **original fixed point** held constant across the entire goal — and create a clean, goal-specific integration branch and separate worktree rooted at that exact fixed point: this is the **integration workspace**. Create it from commit objects without checking out, resetting, cleaning, stashing, staging, or altering the user's working checkout. Tracked or untracked, those changes belong to the user, even if dirty. If a clean separate worktree cannot be created, stop and report; never reuse working checkouts or shared worktrees.
-- **Resumption, but matching record not found** → A resumption without records cannot safely reuse workspaces, nor should it create a new sibling integration workspace — which forks the goal into two integration lines. Stop and report absence of resumption records for this canonical goal ID; user must locate records or explicitly authorize a fresh start. Do not guess, create, or reuse.
-- **Multiple candidates, active owner conflict (another run/subagent claiming recorded workspace), or branch head/cleanliness mismatching records** → Do not reuse, create sibling integration workspaces, or guess. Stop and report findings and ambiguity. User resolves conflict.
+- **정확한 기록, 활성 소유자 없음, worktree 존재하고 깨끗함** → 그 통합 작업공간을 있는 그대로 재사용한다.
+- **정확한 기록, 활성 소유자 없음, worktree 없어졌지만 기록된 통합 branch는 존재** → 같은 통합 branch에 worktree를 다시 붙인다(`git worktree add <path> <recorded-branch>`); 새 branch는 만들지 않는다.
+- **새 목표, 일치하는 기록 없음** → 이것은 진짜 **새 목표**다. 원본 대상 branch 또는 ref와 그 고정점 — 전체 목표에 걸쳐 고정된 **원본 고정점** — 을 기록하고, 정확히 그 고정점에 뿌리를 둔 깨끗하고 목표별 통합 branch와 별도 worktree를 만든다: 이것이 **통합 작업공간**이다. 사용자의 원본 checkout을 checkout, reset, clean, stash, stage, 또는 그 외 변경 없이 commit object에서 만든다. 추적되든 아니든 그 변경은 사용자 소유이며, 더러워도 그렇다. 깨끗한 별도 worktree를 만들 수 없으면, 멈추고 보고한다; 원본 checkout이나 공유 worktree를 절대 재사용하지 않는다.
+- **재개지만, 일치하는 기록을 찾을 수 없음** → 기록을 찾을 수 없는 재개는 작업공간을 안전하게 재사용할 수 없고, 새 형제 통합 작업공간을 만들어서도 안 된다 — 그러면 목표가 두 통합 라인으로 갈라진다. 멈추고 이 정규 목표 ID의 재개 기록이 없음을 보고한다; 사용자가 기록을 찾거나 새 시작을 명시적으로 권한 부여한다. 추측하지 않고, 만들지 않고, 재사용하지 않는다.
+- **후보가 둘 이상, 활성 소유자 충돌(다른 실행이나 서브에이전트가 기록된 작업공간을 점유), 또는 branch head나 깨끗한 상태가 기록과 불일치** → 재사용하지 않고, 새 형제 통합 작업공간을 만들지 않고, 추측하지 않는다. 무엇을 찾았고 왜 재사용이 모호한지 멈추고 보고한다. 사용자가 충돌을 해결한다.
 
-Upon reuse, the fixed point for continuous runs is the **original fixed point captured in the first run**, not the current head; Stage 4 whole-goal review still runs against that initial fixed point.
+재사용 시, 연속 실행의 고정점은 **최초 실행에서 기록이 잡은 원본 고정점**이지, 현재 head가 아니다; Stage 4 전체 목표 리뷰는 여전히 그 첫 고정점을 기준으로 실행된다.
 
-### The Ledger
+### 원장
 
-Author the **ledger** — the only artifact kept in context for the remainder of the run. It is the workspace record and the live state of all tickets. Refer to tickets by title, never by number alone.
+**원장**을 작성한다 — 실행의 나머지 동안 문맥에 보관하는 유일한 산출물이다. 작업공간 기록이자 모든 티켓의 살아 있는 상태다. 티켓은 제목으로 참조하고, 번호만으로는 절대 참조하지 않는다.
 
 ```markdown
-## Goal
+## 목표
 
-<One line — what "done" means for this run>
+<한 줄 — 이 실행에서 "완료"가 무엇을 의미하는지>
 
-## Canonical Goal ID
+## 정규 목표 ID
 
-<Published spec issue / path, or same identifier recorded by prior run on resume>
+<발행된 명세 이슈 / 경로, 또는 재개 시 이전 실행이 기록한 같은 식별자>
 
-## Original Target
+## 원본 대상
 
-<Branch or ref selected for final landing; user checkout remains untouched>
+<최종 반영을 위해 선택한 branch 또는 ref; 사용자 checkout은 그대로 둔다>
 
-## Original Fixed Point
+## 원본 고정점
 
-<Commit SHA captured on first run via `git rev-parse HEAD`; whole-goal review runs against this>
+<최초 실행에서 잡은 commit SHA, `git rev-parse HEAD`에서; 전체 목표 리뷰가 이것을 기준으로 실행>
 
-## Integration Workspace
+## 통합 작업공간
 
-<Goal-specific integration branch>; <separate worktree path>; rooted at <original fixed point>; clean; owner: <this run / idle>; status: <new / resumed>
+<목표별 통합 branch>; <별도 worktree 경로>; <원본 고정점>에 뿌리; 깨끗함; 소유자: <이 실행 / idle>; 상태: <new / resumed>
 
-## Spec
+## 명세
 
-<Published spec issue / path link>
+<발행된 명세 이슈 / 경로 링크>
 
-## Tickets
+## 티켓
 
-| Ticket (Canonical ID) | Assigned Branch / Worktree | Blockers | Status | Wave Base (Integration head at dispatch) | Owner / Status | Returned Reviewed SHA | Verification | Replay Proof |
+| 티켓 (정규 ID) | 할당된 branch / worktree | 블로커 | 상태 | Wave base (파견 시 통합 head) | 소유자 / 상태 | 반환된 리뷰된 SHA | 검증 | 재생 증거 |
 |---|---|---|---|---|---|---|---|---|
-| <Title> (link) | vibe/<id> ; .agents/worktrees/<id> | — | pending | — | — / idle | — | — | — |
-| <Title> (link) | vibe/<id> ; .agents/worktrees/<id> | <Title> | running | <base SHA> | subagent / active | <reviewed SHA> | <verdict> | — |
-| <Title> (link) | vibe/<id> ; .agents/worktrees/<id> | <Title> | integrated | <base SHA> | — / idle | <reviewed SHA> | <verdict> | Replayed in integration workspace @ <head> |
+| <제목> (링크) | vibe/<id> ; .agents/worktrees/<id> | — | pending | — | — / idle | — | — | — |
+| <제목> (링크) | vibe/<id> ; .agents/worktrees/<id> | <제목> | running | <base SHA> | 서브에이전트 / active | <리뷰된 SHA> | <판정> | — |
+| <제목> (링크) | vibe/<id> ; .agents/worktrees/<id> | <제목> | integrated | <base SHA> | — / idle | <리뷰된 SHA> | <판정> | 통합 작업공간에 재생 @ <head> |
 ```
 
-Status progresses `pending` → `running` → `integrated` → `landed`, or `blocked` / `failed`. `integrated` means reviewed ticket results were replayed onto integration head and passed ticket-attribution verification on that head; unblocks dependent tickets. `landed` is recorded only after Stage 4 proves reviewed integrated results exist on the original target branch. Ledger status is not authority to close issues.
+상태는 `pending` → `running` → `integrated` → `landed`, 또는 `blocked` / `failed`다. `integrated`는 리뷰를 거친 티켓 결과가 통합 head에 재생되고 그 head에서 티켓 귀속 검증을 통과했음을 의미한다; 의존 티켓의 블록을 푼다. `landed`는 Stage 4가 리뷰된 통합 결과가 원본 대상 branch에 있음을 증명한 후에만 기록된다. 원장 상태는 이슈를 닫을 권한이 아니다.
 
-Record original fixed point and clean integration workspace before the first ticket subagent launches. On resume, original fixed point remains the initial run's value, not current head.
+첫 티켓 서브에이전트가 시작하기 전에 원본 고정점과 깨끗한 통합 작업공간을 기록한다. 재개 시 원본 고정점은 최초 실행의 값으로 유지되며, 현재 head가 아니다.
 
-Show ledger to user and confirm execution order before dispatching anything.
+무엇이든 파견하기 전에 원장을 사용자에게 보여주고 실행 순서를 확인받는다.
 
-## Stage 3 — Dispatch Frontier in Parallel, Replay Results into Integration Workspace
+## Stage 3 — 프런티어를 병렬로 처리하고, 결과를 통합 작업공간에 재생
 
-The **frontier** is all tickets whose blockers are all `integrated` or `landed`. Dispatch the **entire frontier at once** — all ready tickets in parallel, each into its own assigned branch and worktree. Never serialize ready tickets; by definition, frontier tickets are independent. Within the frontier, different tickets run concurrently in separate assigned workspaces; tickets depending on others wait until blockers become `integrated` before joining the next wave.
+**프런티어**는 블로커가 모두 `integrated` 또는 `landed`인 모든 티켓이다. **전체 프런티어를 한 번에** 파견한다 — 준비된 모든 티켓을 병렬로, 각자 자신의 할당된 branch와 worktree에. 준비된 티켓을 직렬화하지 않는다; 정의상 프런티어는 독립적이다. 프런티어 안에서 서로 다른 티켓은 별도의 할당된 작업공간에서 동시에 실행된다; 다른 티켓에 의존하는 티켓은 블로커가 `integrated`될 때까지 기다린 뒤 다음 wave에 합류한다.
 
-### Dispatch
+### 파견
 
-For each ready ticket on the frontier, create a ticket-specific **assigned workspace**: dedicated branch and worktree rooted at integration head. Record that head as the ticket's **wave base** — the anchor against which reviews run. Create each assigned workspace from commit objects without checking out, resetting, cleaning, stashing, or altering working checkouts or integration workspaces. Record assigned branch, worktree path, wave base, owner, and state in ledger before subagents launch. Dispatch a **fresh subagent** for each ticket simultaneously. Each receives and receives only:
+프런티어의 각 준비된 티켓마다 티켓별 **할당된 작업공간**을 만든다: 통합 head에 뿌리를 둔 전용 branch와 worktree. 그 head를 티켓의 **wave base**로 기록한다 — 리뷰가 그것을 기준으로 실행될 고정점이다. 각 할당된 작업공간을 사용자의 원본 checkout이나 통합 작업공간을 checkout, reset, clean, stash, 또는 그 외 변경 없이 commit object에서 만든다. 할당된 branch, worktree 경로, wave base, 소유자, state를 서브에이전트가 시작하기 전에 원장에 기록한다. 티켓마다 **새 서브에이전트**를 동시에 파견한다. 각자 받고 오직 받는 것:
 
-- Ticket reference and full body (fetched from tracker — never make subagents guess where it lives).
-- Spec link for readable context if needed.
-- Assigned workspace: ticket's assigned branch and worktree, plus exact wave base SHA.
-- Instruction: **Implement this ticket atomically in the assigned workspace, following the implementation skill's TDD, verification, and read-only review core, and do nothing else.**
-- Boundaries: Implement **only** this ticket. Report out-of-scope issues without fixing.
-- Linearity rules: Commit **directly to assigned ticket branch** in worktree — stay linear from wave base, never merge original target or integration branch, create no extra branches or worktrees, and report if base shifted instead of rebasing/merging.
+- 티켓 참조와 전체 본문(트래커에서 가져온다 — 서브에이전트가 어디 있는지 추측하게 하지 않는다).
+- 명세 링크, 필요하면 읽을 수 있는 문맥용.
+- 할당된 작업공간 공급: 티켓 자신의 할당된 branch와 worktree, 그리고 정확한 wave base SHA.
+- 지시: **이 티켓을 할당된 작업공간에서 원자적으로 구현한다. 구현 스킬의 TDD·검증·읽기 전용 리뷰 핵심을 따르고, 그 외에는 아무것도 하지 않는다.**
+- 경계: **오직** 이 티켓만 구현한다. 범위 밖 문제는 고치지 않고 보고한다.
+- 선형성 규칙: worktree에서 **할당된 티켓 branch에 직접** 커밋한다 — wave base에서 선형을 유지하고, 원본 대상이나 통합 branch를 병합하지 않고, 추가 branch나 worktree를 만들지 않으며, 밑이 옮겨갔으면 rebase나 merge 대신 보고한다.
 
-Each ledger ticket holds **canonical ticket ID**, **assigned branch and worktree**, **wave base** (integration head at dispatch), **owner/status**, and **status** (`pending` → `running` → `integrated`/`failed`).
+원장의 각 티켓은 **정규 티켓 ID**, **할당된 branch와 worktree**, **wave base**(파견 시 통합 head), **소유자/상태**, 그리고 **상태**(`pending` → `running` → `integrated`/`failed`)를 가진다.
 
-**Retries of the same ticket** — fixing review findings or corrective redispatch — reuse that ticket's **exact assigned workspace**: same assigned branch and worktree recorded for that canonical ticket ID. Fresh subagents are permitted; new branches, worktrees, or ticket IDs are prohibited. If an assigned workspace is stale, dirty, or head mismatches recorded state, that is a stop-and-report condition, not a reset shortcut; preserve the exact workspace and surface mismatches for explicit resolution. Never guess workspaces by name, slug, number, or latest `vibe/*` branch; reuse solely via exact recorded records. Truly **new** tickets (split slices with own canonical IDs, or Stage 4 fix tickets) alone receive new assigned workspaces and ledger entries.
+**같은 티켓의 재시도** — 리뷰 발견사항 수정 또는 정정 재파견 — 는 그 티켓의 **정확한 할당된 작업공간**을 재사용한다: 그 정규 티켓 ID에 대해 기록된 같은 할당된 branch와 worktree. 새 서브에이전트는 허용된다; 새 branch, worktree, 또는 티켓 ID는 금지된다. 할당된 작업공간이 stale, dirty하거나, head가 기록된 상태와 불일치하면, 그것은 멈추고 보고하는 조건이지, reset 단축키가 아니다; 정확한 작업공간을 보존하고 불일치를 드러내 명시적으로 해결되게 한다. 이름, slug, 번호, 또는 최신 `vibe/*` branch로 작업공간을 절대 추측하지 않는다; 오직 정확한 기록된 기록으로만 재사용한다. 진짜 **새** 티켓(자체 정규 ID를 가진 split slice, 또는 Stage 4의 수정 티켓)만 자체 새 할당된 작업공간과 원장 항목을 얻는다.
 
-All goal-dispatched implementers adhere to this **shared return contract**: commit directly to assigned ticket branch in worktree atomically, maintain linearity from wave base, and return assigned branch name, exact wave base SHA, exact reviewed head SHA, verification proof, and read-only `/vibe-review` verdict. Must not merge target or integration branches into ticket branch, create additional branches/worktrees, alter working checkouts or integration workspaces, clean/delete assigned workspaces, or close hosted issues — they may tick acceptance checkboxes per `/vibe-implement` tracker updates; for version-controlled local Markdown trackers, ticket files are branch content belonging in the same commit, not separate commits. If wave base moved, report instead of rebasing or merging. Missing branch, head SHA, wave base SHA, verification records, or review verdicts constitute incomplete returns, not completed tickets.
+모든 목표 파견 구현자는 이 **공유 반환 계약**을 따른다: 할당된 작업공간에서 원자적으로, worktree의 할당된 티켓 branch에 직접 커밋하고, wave base에서 선형을 유지하고, 할당된 branch 이름, 정확한 wave base SHA, 정확한 리뷰된 head SHA, 검증 증거, 읽기 전용 `/vibe-review` 판정을 반환한다. 티켓 branch에 원본 대상이나 통합 branch를 병합하거나, 추가 branch나 worktree를 만들거나, 원본 checkout이나 통합 작업공간을 변경하거나, 할당된 작업공간을 clean하거나 delete하거나, 호스티드 이슈를 닫아서는 안 된다 — 인수 체크박스는 `/vibe-implement` 트래커 갱신에 따라 켤 수 있다; 버전 관리되는 local Markdown 트래커의 경우 자기 티켓 파일은 branch content이며 같은 commit에 속하지, 별도 commit이 아니다. wave base가 옮겨갔으면 rebase나 merge 대신 그것을 보고한다. 빠진 branch, head SHA, wave base SHA, 검증 기록, 또는 리뷰 판정은 불완전한 반환으로, 완료된 티켓이 아니다.
 
-Do not paste conversations, other tickets, or planning history. A ticket unintelligible from its own body is a planning defect — route back to planning skills to fix rather than compensating in prompts.
+대화, 다른 티켓, 또는 계획 이력를 붙여넣지 않는다. 자기 본문만으로 이해할 수 없는 티켓은 계획 결함이다 — 계획 스킬로 다시 라우팅해 고치게 하고, 프롬프트에서 보완하지 않는다.
 
-### Verify Each Return and Replay into Integration Workspace
+### 각 반환을 검증하고 통합 작업공간에 재생
 
-A subagent's `completed` is a claim, not a fact. Review passes are reporting evidence, not tracker authorization. To accept returned results, verify cheaply and independently:
+서브에이전트의 `completed`는 주장이지, 사실이 아니다. 리뷰 통과는 보고 증거이지, 트래커 권한이 아니다. 반환된 결과가 받아들여지려면, 저렴하고 독립적으로 확인한다:
 
-- Assigned ticket branch exists, head SHA matches returned reviewed SHA, and is based on returned wave base SHA — matching the base recorded at dispatch.
-- Acceptance criteria are met — per subagent verification proof and read-only `/vibe-review` verdict.
-- Review findings, if any, are resolved or explicitly accepted by user.
+- 할당된 티켓 branch가 존재하고, head SHA가 반환된 리뷰된 SHA이며, 반환된 wave base SHA에 기반해 있다 — 이 wave base는 파견 시 기록된 base와 일치해야 한다.
+- 인수 조건이 충족됐다 — 서브에이전트의 검증 증거와 읽기 전용 `/vibe-review` 판정에 따라.
+- 리뷰 발견사항은, 있으면, 수정됐거나 사용자가 명시적으로 받아들였다.
 
-Upon passing verification, **replay** reviewed ticket results into the integration workspace, **one at a time**: verify integration workspace is clean and head matches expected integration head, rebase or cherry-pick reviewed ticket commits onto that head, proceed fast-forward only (`--ff-only`), and verify patch-equivalent containment — reviewed ticket commits exist intact on new integration head without additions, omissions, or mutations. Then **re-run ticket's own verification on new integration head**: execute test/verification commands from ticket at that head in integration workspace and ensure they still pass — patches passing in isolation may break after they are combined. Replay is accepted only when patch containment and re-execution both pass. Record new integration head as replay proof. Unrelated dirty states, unexpected files, or integration head mutations require a safe stop: report and do not clean, reset, stash, delete, or touch working checkouts, integration workspaces, or assigned workspaces. If verification fails, ticket is not `integrated`; preserve both workspaces and report blockers.
+이 검증을 통과하면, 리뷰를 거친 티켓 결과를 통합 작업공간에 **재생**한다, **한 번에 하나씩**: 통합 작업공간이 깨끗하고 head가 예상 통합 head와 일치하는지 확인하고, 리뷰를 거친 티켓 commit을 그 head에 rebase 또는 cherry-pick하고, fast-forward only(`--ff-only`)로 진행하고, 패치 동등 포함을 검증한다 — 리뷰를 거친 티켓 commit이 새 통합 head에 추가·누락·변경 없이 온전히 있다. 그런 다음 **새 통합 head에서 티켓 자체 검증을 재실행**: 통합 작업공간의 그 head에서 티켓의 테스트/검증 명령을 실행하고 여전히 통과하는지 확인한다 — 격리 상태에서 통과했던 패치가 합친 뒤에 깨질 수 있다. 패치 포함과 재실행이 모두 통과할 때만 재생이 받아들여진다. 새 통합 head를 재생 증거로 기록한다. 관련 없는 더티 상태, 예상 밖 파일, 또는 통합 head 변경은 안전한 멈춤이다: 보고하고 사용자의 원본 checkout, 통합 작업공간, 또는 할당된 작업공간을 clean, reset, stash, delete, 또는 건드리지 않는다. 검증이 실패하면, 티켓은 `integrated`가 아니다; 두 작업공간 모두 보존하고 블로커를 보고한다.
 
-After successful replay, record ticket's returned reviewed SHA, verification, and replay proof in ledger, mark owner idle, and set ticket to `integrated`. **Retain assigned ticket branch and worktree** until goal lands: same-ticket review fixes or resumptions reattach by record to that exact branch and worktree, not a new one. `integrated` is integration head proof, not target landing proof. The orchestrator does not close issues during Stage 3; hosted acceptance checkboxes are already ticked by implementers. Version-controlled local Markdown ticket files arrive within ticket commits, not via orchestrator edits.
+재생 성공 후, 티켓의 반환된 리뷰된 SHA, 검증, 재생 증거를 원장에 기록하고, 소유자를 idle로 표시하고, 티켓을 `integrated`로 표시한다. 목표가 반영될 때까지 **할당된 티켓 branch와 worktree를 유지**: 같은 티켓 리뷰 수정이나 재개는 기록으로 그 정확한 branch와 worktree에 다시 붙으며, 새 것이 아니다. `integrated`는 통합 head 증거이지, 원본 대상 반영 증명이 아니다. Stage 3 동안 오케스트레이터는 이슈를 닫지 않는다; 호스티드 인수 체크박스는 구현자가 이미 켠다. 버전 관리되는 local Markdown 티켓 파일은 자기 티켓 commit 안에 도착하며, 오케스트레이터 편집으로가 아니다.
 
-### When a Ticket Fails
+### 티켓이 실패할 때
 
-Diagnose which case applies:
+이 중 어느 것인지 진단한다:
 
-- **Ticket too large for single context** — Route back to planning skills to split and publish as blocked slices; published slices enter ledger as new tickets, each with own assigned workspace. Slices execute next in dependency order.
-- **Insufficient ticket specification** — Halt implementation and ask the user to run `/vibe-plan` for missing decisions and ticket edits. `/vibe-goal` does not interrogate users or edit tickets directly; retry only after planning skills republish.
-- **Genuinely broken codebase** — Report blockers to `/vibe-plan`; only blocker tickets published by planning skills enter ledger to execute in assigned workspaces by loading the `vibe-debug` skill.
-- **Incorrect plan** — Stop execution, report, return to Stage 1: planning skills own corrections, never edit plans directly. Downstream tickets built on wrong plans waste more than restarts.
+- **한 컨텍스트에 담기엔 티켓이 너무 큼** — 계획 스킬로 다시 라우팅하고, 그 스킬이 blocked slice로 쪼개 발행한다; 발행된 slice가 새 티켓으로 원장에 들어오며, 각자 자신의 할당된 작업공간을 갖는다. 쪼개진 부분은 의존성 순서대로 다음에 실행된다.
+- **티켓 명세 불충분** — 구현을 멈추고 빠진 결정과 티켓 수정을 위해 사용자에게 `/vibe-plan` 실행을 요청한다. `/vibe-goal`은 사용자를 심문하거나 티켓을 직접 수정하지 않는다; 계획 스킬이 다시 발행한 후에만 재시도한다.
+- **코드베이스에 진짜 무언가 망가진 경우** — 블로커를 `/vibe-plan`에 보고한다; 계획 스킬이 발행한 블로커 티켓만 원장에 들어와 자기 할당된 작업공간에서 `vibe-debug` 스킬을 로드해 실행될 수 있다.
+- **계획이 틀린 경우** — 실행을 멈추고, 보고하고, Stage 1로 돌아간다: 계획 스킬이 수정을 책임지고, 직접 계획을 수정하지 않는다. 틀린 계획 위에 만들어진 하위 티켓은 재시작보다 더 낭비다.
 
-Failures or review findings staying within the same ticket execute in that ticket's **same assigned workspace** — retries of the same canonical ticket, not new workspaces, branches, or ticket IDs. New Stage 4 fix tickets must first be designed and published by `/vibe-plan`; only then can `/vibe-goal` add canonical IDs and assigned workspaces. If assigned workspaces are dirty or state is ambiguous, stop, preserve, and report; do not reset or guess.
+같은 티켓 안에 머무는 실패나 리뷰 발견사항은 그 티켓의 **같은 할당된 작업공간**에서 실행된다 — 같은 정규 티켓의 재시도이지, 새 작업공간, branch, 또는 티켓 ID가 아니다. 새 Stage 4 수정 티켓은 먼저 `/vibe-plan`이 설계하고 발행해야 한다; 그 후에만 `/vibe-goal`이 정규 ID와 할당된 작업공간을 추가할 수 있다. 할당된 작업공간이 dirty하거나 상태가 모호하면, 멈추고, 보존하고, 보고한다; reset하거나 추측하지 않는다.
 
-## Stage 4 — Review, Gate, and Safely Land Integrated Results
+## Stage 4 — 리뷰, 게이트, 그리고 통합 결과를 안전하게 반영
 
-When all tickets are `integrated` with no `pending`, `running`, `blocked`, or `failed` remaining, record integration branch and exact current head SHA as review candidates. Confirm integration workspace is clean; unexplained dirty states or files halt execution, preserving branch and SHA.
+모든 티켓이 `integrated`이고 `pending`, `running`, `blocked`, 또는 `failed`가 없으면, 통합 branch와 정확한 현재 head SHA를 리뷰 후보로 기록한다. 통합 작업공간이 깨끗한지 확인한다; 설명할 수 없는 더티 상태나 파일은 실행을 멈추고 그 branch와 SHA를 보존한다.
 
-1. **Full suite once.** Run type checks, tests, and all repo checks across the recorded candidate in the integration workspace — not per ticket and not in user checkout.
-2. **Separated Review Axes.** Load the `vibe-review` skill and run it from Stage 2 fixed point to recorded integration branch and commit. Per-ticket reviews saw single slices; this review examines the space between them, where interesting findings reside. Always run Standards. Also run Risk when the goal touched security, authentication, permissions, persistence, transactions, or external integrations, or requested a risk audit. If `/rq` will run in Step 3, skip Spec because the gate handles it. If `/rq` is unavailable, retain Spec — high-risk goals run Standards + Spec + Risk; low-risk goals run Standards + Spec.
-3. **Spec Verdict.** If the `/rq` skill is available in this session, run it with Stage 2 fixed point as change boundary, recorded integration results as head, scoped to implementation domains (`CODE`, plus `MIGRATION` if needed). Source requirements represent the goal's **definition of done** — acceptance criteria actually promised by execution (spec acceptance criteria, or ledger goal line if absent from spec). User stories beyond that remain tracking rows and are out of scope; gating every story in large specs duplicates per-ticket reviews. Gate returns per-item status and aggregate `PASS` / `WARNING` / `NEEDS_REVIEW` / `FAIL`.
-   - Default to gate's `LIGHT` tier. Use `HEAVY` only when the goal touched domains consistently requiring heavy tiers — security, auth, permissions, persistence, transactions, external integrations. These are also Risk-enabling signals, but they do not make direct `/vibe-review` invoke `/rq` automatically.
-   - Keep operational, deployment, and data obligations as **separate gates**. They do not downgrade implementation verdicts and do not run here unless requested.
-   If `/rq` is not available, **skip this step**. State that the formal spec gate was skipped. Do not invent `PASS`/`FAIL`. Missing `/rq` does not by itself make landing unsafe.
-4. **Adjudicate.** Present Standards findings, Risk findings when enabled, and gate reports when run side by side without merging. Items marked `not satisfied` or `unknown` by a gate that ran, plus Standards or Risk findings the user wants resolved, become **remediations**: route back to planning skills to design and publish new tickets, which flow through Stage 3 — never patch inline directly. Remediation tickets are genuinely new canonical tickets with own IDs and assigned workspaces, dispatched and replayed like any other ticket. After those tickets integrate, re-run the gate if it ran, otherwise re-run `/vibe-review`; goals never close on `FAIL`.
-5. **Land only when safe.** Use clean, isolated landing contexts; never checkout, reset, clean, stash, or merge in user working checkout. Land on original target **fast-forward only** (`--ff-only`), carrying exact reviewed integrated commits. If target shifted from recorded fixed point, rebase integration branch onto current target head, re-run Stage 4 full suite on new candidate, record new candidate SHA, then fast-forward. Never create merge commits on target, force-push, or reset/rewrite target. If workspace dirtiness, unexpected files, unclear conflicts, failed re-runs, or missing landing proofs make landing unsafe, do not land. Preserve reviewed integration branch and SHA, report, and leave tracker state untouched. Resolve clearly intended landing conflicts by staging explicit, intended conflict paths only — never whole-worktree staging, user files, secrets, or unexpected files.
-6. **Seek close approval after proving landing.** Record affected tickets as `landed` only after authoritative proof shows exact reviewed integrated commit SHA is on original target branch. For version-controlled local Markdown trackers, landing already carried checked checklists so there is nothing to preview or write — never add tracker-only commits to target. For hosted trackers, acceptance checkboxes were already ticked at implementation disposition. Display proposed close, status, and comments for each ticket; exclude parent spec issues (do not exclude an issue that is both spec and the sole ticket). Await separate explicit approval before applying preview alone. Declines or non-responses leave issues open.
-7. **Report.** Goal, landed tickets with links, integration branch and reviewed commit, final landing proof, overall gate status if a gate ran (otherwise that it was skipped), Standards findings, Risk findings when enabled, and intentional open items.
+1. **전체 suite 한 번.** 타입 검사, 테스트, 저장소의 모든 검사를 — 티켓별이 아니라 사용자 checkout이 아닌 통합 작업공간의 기록된 후보에서 실행한다.
+2. **분리된 리뷰 축.** Stage 2 고정점부터 기록된 통합 branch와 commit까지 `vibe-review` 스킬을 로드해 실행한다. 티켓별 리뷰는 각자 한 slice만 봤다; 이 리뷰는 그 사이를 보며, 흥미로운 발견사항은 거기에 있다. Standards는 항상 실행한다. 목표가 보안, 인증, 권한, 영속성, 트랜잭션, 외부 연동을 건드렸거나 위험 감사를 요청했다면 Risk도 실행한다. 3단계에서 `/rq`를 실행할 수 있으면 Spec은 게이트가 처리하므로 생략한다. `/rq`가 없으면 Spec을 유지한다 — 고위험 목표라면 Standards + Spec + Risk, 저위험 목표라면 Standards + Spec이다.
+3. **Spec 판정.** 이 세션에 `/rq` 스킬이 있으면, Stage 2 고정점을 change 경계로, 기록된 통합 결과를 head로 `/rq`를 실행하고, 구현 도메인(`CODE`, 목표가 필요하면 `MIGRATION` 추가)으로 범위를 좁힌다. 소스 요구사항은 목표의 **완료 정의**이다 — 실행이 실제로 약속한 인수 조건(spec의 인수 조건, 또는 spec에 없으면 원장의 목표 줄). 그 너머의 user stories는 추적 행으로 남으며, 범위 밖이다; 큰 spec의 모든 story를 게이팅하면 티켓별 리뷰가 이미 다룬 것을 중복한다. 게이트는 항목별 상태와 집계된 `PASS` / `WARNING` / `NEEDS_REVIEW` / `FAIL`을 반환한다.
+   - 기본으로 게이트의 `LIGHT` tier를 쓴다. 목표가 항상 무거운 tier가 필요한 도메인 — security, auth, permissions, persistence, transactions, external integrations — 을 건드렸을 때만 `HEAVY`를 쓴다. 이는 Risk를 켜는 고위험 신호와 같지만, 직접 `/vibe-review`가 `/rq`를 자동 호출한다는 뜻은 아니다.
+   - Operation, deployment, 데이터 의무는 **별도 게이트**로 둔다. 구현 판정을 낮추지 않으며, 사용자가 요청하지 않으면 여기서 실행하지 않는다.
+   `/rq`가 없으면 **이 단계를 건너뛴다.** 정식 spec 게이트를 건너뛰었다고 밝힌다. `PASS`/`FAIL`을 지어내지 않는다. `/rq`가 없다는 이유만으로 반영을 불안전하다고 보지 않는다.
+4. **판정하기.** Standards 발견사항, 켰다면 Risk 발견사항, 그리고 게이트를 실제로 돌렸다면 그 보고를 나란히, 병합 없이 보여준다. 실제로 실행한 게이트가 `not satisfied` 또는 `unknown`으로 표시한 것, 그리고 사용자가 고치기 원하는 Standards나 Risk 발견사항은 **수정**이 된다: 계획 스킬로 다시 라우팅하고, 그 스킬이 새 티켓을 설계하고 발행한다; 그런 다음 Stage 3를 통해 다시 흘러간다 — 직접 inline patch하지 않는다. 수정 티켓은 자체 정규 ID와 자체 할당된 작업공간을 가진 진짜 새 정규 티켓이며, 다른 티켓처럼 파견되고 재생된다. 그 티켓이 통합된 후, 게이트를 돌렸다면 게이트를 다시 실행하고 아니면 `/vibe-review`를 다시 실행한다; `FAIL`에서 목표가 닫히지 않는다.
+5. **안전할 때만 반영.** 깨끗하고 독립된 반영 context를 쓴다; 사용자의 원본 checkout에서 checkout, reset, clean, stash, 또는 merge하지 않는다. **fast-forward only**(`--ff-only`)로 원본 대상에 반영하며, 정확한 리뷰된 통합 commit을 싣는다. 대상이 기록된 고정점에서 옮겨갔으면, 통합 branch를 현재 대상 head에 rebase하고, 새 후보에서 Stage 4 전체 suite을 다시 실행하고, 새 후보 SHA를 기록하고, 그 다음에 fast-forward한다. 대상에 merge commit을 만들지 않고, force-push하지 않고, 대상을 reset하거나 다시 쓰지 않는다. 작업공간 더티 상태, 예상 밖 파일, 불분명한 충돌, 실패한 재실행, 또는 반영 증명 누락이 반영을 안전하지 않게 하면, 반영하지 않는다. 리뷰된 통합 branch와 SHA를 보존하고, 보고하고, 트래커 상태를 그대로 둔다. 명확히 의도된 반영 충돌은 명시적·의도된 충돌 path만 스테이징해서 해결한다 — 전체 worktree 스테이징, 사용자, 비밀, 또는 예상 밖 파일은 절대 안 된다.
+6. **반영을 증명한 뒤, 닫기 승인을 구한다.** 권위 있는 증거가 정확한 리뷰된 통합 commit SHA가 원본 대상 branch에 있음을 증명한 후에만, 영향받은 티켓을 `landed`로 기록한다. 버전 관리되는 local Markdown 트래커의 경우 반영이 이미 각 티켓의 체크된 checklist를 실었으므로 미리보기할 것도 쓸 것도 없다 — 대상에 트래커 전용 commit을 절대 추가하지 않는다. 호스티드 트래커의 인수 체크박스는 구현 처분에서 이미 켜져 있다. 각 티켓에 대해 제안된 닫기·상태·코멘트만 보여준다; 부모 spec 이슈는 제외한다(명세이자 유일한 티켓인 이슈는 제외하지 않는다). 그 미리보기만 적용하기 전에 별도의 명시적 승인을 기다린다. 거절이나 무응답은 이슈를 열린 채로 둔다.
+7. **보고.** 목표, 링크와 함께 반영된 티켓, 통합 branch와 리뷰된 commit, 최종 반영 증거, 게이트를 돌렸다면 그 전체 상태(없으면 건너뛴 사실), Standards 발견사항, 켰다면 Risk 발견사항, 그리고 의도적으로 남긴 미완료 사항.
 
-Never close, modify, or include parent spec issues in tracker change previews, even after landing proof and approval.
+반영 증명과 승인 후에도 부모 spec 이슈를 어떤 트래커 변경 미리보기에서도 절대 닫거나, 수정하거나, 포함하지 않는다.
 
-## Execution Completion — Exactly One Surviving Artifact
+## 실행 종료 — 정확히 하나의 산출물만 남긴다
 
-The sole final landing/publishing target is the **goal integrated result** — reviewed integrated commit on the original target branch. Assigned ticket branches are caller-owned ephemeral scaffolding reused across ticket implementation → review → fix → resume, never standalone publishing targets: never open per-ticket PRs or MRs on hosted trackers. After final reporting, execution leaves **exactly one surviving artifact**, cleaned up in safe order — worktree first, branch second.
+유일한 최종 반영·발행 대상은 **목표 통합 결과**다 — 원본 대상 branch 위의 리뷰된 통합 commit. 할당된 티켓 branch는 호출자 소유의 일시적 비계로, 티켓의 구현 → 리뷰 → 수정 → 재개에 걸쳐 재사용되며, 결코 standalone 발행 대상이 아니다: 호스티드 트래커에서 어느 것에도 티켓별 PR이나 MR을 열지 않는다. 최종 보고 후, 실행은 **정확히 하나의 생존 산출물**을 남기며, 안전한 순서로 정리한다 — worktree 먼저, branch 나중.
 
-- **With landing proof** — Survivor is the original target branch. Clean up ticket assigned artifacts and integration workspace created by this run: for each, remove worktree first via `git worktree remove <path>`, then delete branch via `git branch -D`. Leave only original target.
-- **Without landing proof** (landing unsafe or unapproved) — Survivor is reviewed integration branch and at most its own worktree. Clean up integrated ticket assigned artifacts only when patch-equivalent containment is proven in integration survivor **and** no longer needed for same-ticket review fixes or resumption; if either is unclear, preserve and report as named exceptions. Never force-delete branches without landing proof.
+- **반영 증명이 있는 경우** — 생존자는 원본 대상 branch다. 이 실행이 만든 티켓 할당 산출물과 통합 작업공간을 정리한다: 각각에 대해, 먼저 `git worktree remove <path>`로 worktree를 지우고, 그 다음 `git branch -D`로 branch를 삭제한다. 원본 대상만 남긴다.
+- **반영 증명이 없는 경우** (반영이 안전하지 않거나 승인되지 않음) — 생존자는 리뷰된 통합 branch와 기껏해야 그 자체 worktree다. 통합된 티켓의 할당 산출물은 그 패치 동등 포함이 통합 생존자에서 증명되고 **그리고** 같은 티켓 리뷰 수정이나 재개에 더 이상 필요하지 않을 때만 정리한다; 둘 중 하나라도 불분명하면, 보존하고 명명된 예외로 보고한다. 반영이 증명되지 않은 branch를 절대 force-delete하지 않는다.
 
-Always remove worktree before deleting branch — branches checked out in active worktrees cannot be deleted while worktrees exist, causing failures if attempted in reverse order. Never delete or alter user-owned or unrelated branches/worktrees, and never clean, reset, or stash them. If execution halts on blockers, preserve affected artifacts and report. Assigned workspaces are retained during same-ticket review/fixes and resumption (Stage 3), not deleted until goal lands.
+branch를 삭제하기 전에 항상 worktree를 먼저 지운다 — worktree가 잡고 있는 checked-out branch는 worktree가 살아 있는 동안 삭제할 수 없으므로, branch를 먼저 삭제하면 실패만 한다. 사용자 소유 또는 무관한 branch나 worktree를 절대 삭제하거나 변경하지 않으며, 절대 clean, reset, 또는 stash하지 않는다. 실행이 블로커에서 멈추면, 영향받은 산출물을 보존하고 보고한다. 티켓의 할당된 작업공간은 같은 티켓 리뷰/수정과 재개(Stage 3) 동안 유지되며, 목표가 반영될 때까지 삭제하지 않는다.

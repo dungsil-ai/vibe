@@ -1,143 +1,143 @@
 ---
 name: vibe-init
-description: Records issue tracker, triage label vocabulary, and domain document structure in AGENTS.md and configuration documents when the user requests creating or changing vibe-coding configuration. Missing configuration alone does not invoke initialization; other skills can proceed with local Markdown defaults.
+description: 사용자가 vibe-coding 설정을 만들거나 변경해 달라고 요청할 때 이슈 트래커, 트리아지 라벨 어휘, 도메인 문서 구조를 AGENTS.md와 설정 문서에 기록한다. 설정 파일이 없다는 이유만으로 실행하지 않으며, 다른 스킬은 로컬 Markdown 기본값으로 진행할 수 있다.
 disable-model-invocation: true
 ---
 
-# Vibe Init
+# 바이브 초기화
 
-**Korean repository text:** Before drafting Korean documents, commit messages, issues, pull requests, reviews, or comments, read the installed `vibe-docs` skill and follow its `Required application order`. `vibe-docs` controls wording only and does not expand this skill's authority or external side effects.
+**한국어 저장소 글:** 한국어 문서, 커밋 메시지, 이슈, PR, 리뷰 또는 댓글의 초안을 쓰기 전에 설치된 `vibe-docs` 스킬을 읽고 그 `필수 적용 순서`를 따른다. `vibe-docs`는 표현만 다루며 이 스킬의 권한이나 외부 변경 범위를 넓히지 않는다.
 
-Scaffold repository-specific configuration requested by the user. This is not a prerequisite for other skills. Follow [Configuration Documents and Defaults](references/defaults.md) when configuration files are absent; do not start this skill's configuration-writing workflow unless the user requested initialization.
+사용자가 요청한 저장소별 설정을 스캐폴드한다. 다른 스킬을 사용하기 위한 필수 선행 작업은 아니다. 설정 파일이 없을 때의 동작은 [설정 문서와 기본값](references/defaults.md)을 따르며, 사용자가 초기화를 요청하지 않았다면 이 스킬의 설정 작성 절차를 시작하지 않는다.
 
-- **Issue Tracker** — Where issues live (local Markdown when unconfigured; explicit initialization records the user's selected tracker)
-- **Triage Labels** — Strings used for five canonical triage roles (defaults to Korean / standard prefix)
-- **Domain Docs** — Where `CONTEXT.md` and ADRs live, and rules for reading them
+- **이슈 트래커** — 이슈가 사는 곳(미설정 기본값은 로컬 Markdown이며, 명시적 초기화에서는 사용자가 선택한 트래커를 기록)
+- **트리아지 라벨** — 다섯 정규 트리아지 역할에 쓰는 문자열(기본 한국어)
+- **도메인 문서** — `CONTEXT.md`와 ADR이 사는 곳, 그리고 읽는 규칙
 
-All configurations are recorded exclusively in `AGENTS.md`. This skill never reads or writes `CLAUDE.md` or other agent instruction files, even if present.
+모든 설정은 `AGENTS.md`에만 기록된다. 이 스킬은 `CLAUDE.md`나 다른 에이전트 지시 파일을 읽거나 쓰지 않는다 — 그런 파일이 있어도 마찬가지다.
 
-This is a prompt-driven skill, not a deterministic script. Explore, present findings, confirm with the user, then record.
+이것은 프롬프트 구동 스킬이지 결정적 스크립트가 아니다. 탐색하고, 발견한 것을 제시하고, 사용자와 확인한 뒤, 기록한다.
 
-## Process
+## 과정
 
-### 1. Explore
+### 1. 탐색
 
-Inspect the current repository to determine starting state. Read what exists; do not assume:
+현재 저장소를 살펴 출발 상태를 파악한다. 있는 것을 읽는다. 가정하지 않는다:
 
-- `git remote -v` and `.git/config` — Is it a GitHub repository? Which repository?
-- `git status --short` — Which changes already exist before this run? Record exact paths so they are not mixed with this skill's changes later.
-- Current branch and upstream difference — Which branch must be pushed for a hosted tracker? Are any commits already unpushed before this run?
-- `AGENTS.md` at repo root — Does it exist? Does it already have an `## Agent skills` section?
-- `CONTEXT.md` and `CONTEXT-MAP.md` at repo root
-- `docs/adr/` and `src/*/docs/adr/` directories
-- `docs/agents/` — Does prior output from this skill already exist?
-- `.agents/plans/` — Signal that local Markdown issue tracker conventions are already in use
-- `docs/agents/out-of-scope/` (or preexisting `.agents/out-of-scope/`) — Signal that rejected request knowledge base is in use
-- Are `vibe-plan` / `vibe-deep-plan` installed? (Skill folders beside this folder, or names in available skills list). They consume label vocabulary — both use the plan type, `vibe-plan` uses triage statuses, and `vibe-deep-plan` uses map status and decision types — determining whether Section B runs.
-- Monorepo signals — `pnpm-workspace.yaml`, `workspaces` field in `package.json`, or populated `packages/*` with own `src/`. Present only in genuinely large multi-package repositories. Absence implies single context, matching nearly all repositories.
+- `git remote -v`와 `.git/config` — GitHub 저장소인가? 어느 저장소인가?
+- `git status --short` — 이 실행 전에 이미 있던 변경은 무엇인가? 나중에 이 스킬의 변경과 섞지 않도록 정확한 경로를 기록한다.
+- 현재 브랜치와 upstream의 차이 — 원격 트래커를 사용할 때 어느 브랜치를 push해야 하는가? 이 실행 전에 이미 push되지 않은 commit이 있는가?
+- 저장소 루트의 `AGENTS.md` — 있는가? 이미 `## Agent skills` 섹션이 있는가?
+- 저장소 루트의 `CONTEXT.md`와 `CONTEXT-MAP.md`
+- `docs/adr/`과 `src/*/docs/adr/` 디렉터리
+- `docs/agents/` — 이 스킬의 이전 출력이 이미 있는가?
+- `.agents/plans/` — 로컬 마크다운 이슈 트래커 관행이 이미 쓰이고 있다는 신호
+- `docs/agents/out-of-scope/`(또는 기존 `.agents/out-of-scope/`) — 거부된 요청 지식베이스가 이미 쓰이고 있다는 신호
+- `vibe-plan` / `vibe-deep-plan`이 설치되어 있는가? (이 스킬 폴더 옆의 스킬 폴더, 또는 사용 가능 스킬 목록의 이름). 이들은 라벨 어휘를 소비한다 — 둘 다 계획 유형을, `vibe-plan`은 트리아지 상태를, `vibe-deep-plan`은 지도 상태와 결정 유형을 쓴다 — 그러므로 이것이 B절이 실행될지를 결정한다.
+- 모노레포 신호 — `pnpm-workspace.yaml`, `package.json`의 `workspaces` 필드, 또는 자체 `src/`를 가진 채워진 `packages/*`. 진짜로 큰 다중 패키지 저장소에서만 제시한다. 없으면 단일 컨텍스트이며, 이는 거의 모든 저장소에 해당한다.
 
-### 2. Present Findings and Ask
+### 2. 발견한 것을 제시하고 묻기
 
-Summarize what exists and what is missing. Walk through sections in order — one section, one answer, then next section.
+있는 것과 빠진 것을 요약한다. 그다음 절을 순서대로 — 한 절, 한 답, 그다음 절.
 
-Start each section with a recommended answer so the user can confirm with a single word. Add a one-line rationale only when choices genuinely diverge, skipping sections determined by exploration (Section B if triage not installed, Section C if not a monorepo).
+각 절을 권장 답으로 시작해 사용자가 한마디로 받을 수 있게 한다. 선택이 진짜로 갈릴 때만 한 줄 설명을 붙이고, 탐색이 이미 정한 절은 건너뛴다(트리아지가 설치되지 않은 B절, 모노레포가 아닌 C절).
 
-**Section A — Issue Tracker.**
+**A절 — 이슈 트래커.**
 
-> Explanation: "Issue Tracker" is where issues in this repo live. Skills like `vibe-plan` and `vibe-review` read and write here — they need to know whether to invoke `gh issue create`, write Markdown files under `.agents/plans/`, or follow other workflows described by the user. Choose where work is actually tracked in this repository.
+> 설명: "이슈 트래커"는 이 저장소의 이슈가 사는 곳이다. `vibe-plan`과 `vibe-review` 같은 스킬은 여기서 읽고 쓴다 — `gh issue create`를 호출할지, `.agents/plans/` 아래 마크다운 파일을 작성할지, 또는 사용자가 설명하는 다른 워크플로를 따를지 알아야 한다. 이 저장소에서 실제로 작업을 추적하는 곳을 고른다.
 
-Default stance: Skills are designed around GitHub. If `git remote` points to GitHub, propose GitHub. If `git remote` points to GitLab (`gitlab.com` or self-hosted), propose GitLab. Otherwise (or if requested by user), present:
+기본 태도: 이 스킬들은 GitHub에 맞춰 설계되었다. `git remote`가 GitHub을 가리키면 그것을 제안한다. `git remote`가 GitLab(`gitlab.com` 또는 자체 호스트)을 가리키면 GitLab을 제안한다. 그 밖의 경우(또는 사용자가 원하면) 다음을 제시한다:
 
-- **GitHub** — Issues live in repository GitHub Issues (using `gh` CLI)
-- **GitLab** — Issues live in repository GitLab Issues (using [`glab`](https://gitlab.com/gitlab-org/cli) CLI)
-- **Local Markdown** — Issues live as files under `.agents/plans/<feature>/` in this repo (ideal for personal projects or repos without remotes)
-- **Other** (Jira, Linear, etc.) — Ask user to describe workflow in one paragraph; skill records in free-form prose
+- **GitHub** — 이슈가 저장소의 GitHub Issues에 산다(`gh` CLI 사용)
+- **GitLab** — 이슈가 저장소의 GitLab Issues에 산다([`glab`](https://gitlab.com/gitlab-org/cli) CLI 사용)
+- **로컬 마크다운** — 이슈가 이 저장소의 `.agents/plans/<feature>/` 아래 파일로 산다(개인 프로젝트나 리모트 없는 저장소에 적합)
+- **기타**(Jira, Linear 등) — 사용자에게 워크플로를 한 단락으로 설명해 달라고 한다. 스킬이 자유 형식 글로 기록한다
 
-Record selection in `docs/agents/issue-tracker.md`. GitHub and GitLab templates include a "PR as request surface" flag, defaulted to **no** — leave disabled without mentioning. Users wanting external PRs in triage queues can enable the flag in the file later.
+선택을 `docs/agents/issue-tracker.md`에 기록한다. GitHub과 GitLab 템플릿은 "PR을 요청 표면으로" 플래그를 가지며, 기본값은 **꺼짐** — 꺼진 채로 두고 언급하지 않는다. 트리아지 대기열에 외부 PR을 원하는 사용자는 나중에 파일에서 플래그를 켤 수 있다.
 
-**Section B — Label Vocabulary.** Skip this entire section if neither `vibe-plan` nor `vibe-deep-plan` is installed (exploration indicates this) — nothing consumes labels.
+**B절 — 라벨 어휘.** `vibe-plan`과 `vibe-deep-plan` 둘 다 설치되지 않았다면(탐색이 알려준다) 이 절 전체를 건너뛴다 — 라벨을 소비할 것이 없다.
 
-If either is installed, ask exactly one question:
+둘 중 하나라도 설치되어 있으면 정확히 한 질문만 한다:
 
-> Keep default labels? (Recommended: **Yes**)
+> 기본 라벨을 유지하시겠습니까? (권장: **예**)
 
-Default values use Korean / prefixed axes:
+기본값은 한국어, 축별 접두사:
 
-- **Triage Status** (`vibe-plan`) — `상태:분류필요` (needs-triage), `상태:정보필요` (needs-info), `상태:에이전트작업` (ready-for-agent), `상태:사람작업` (ready-for-human), `상태:처리안함` (wontfix)
-- **Plan Type** (`vibe-plan` or `vibe-deep-plan`) — `유형:계획` for hosted spec/plan issues and decision maps
-- **Decision-Map Labels** (`vibe-deep-plan`) — `상태:초안` for decision-map status, and `유형:조사` / `유형:프로토타입` / `유형:인터뷰` / `유형:작업` for four decision-ticket types
+- **트리아지 상태**(`vibe-plan`) — `상태:분류필요` (needs-triage), `상태:정보필요` (needs-info), `상태:에이전트작업` (ready-for-agent), `상태:사람작업` (ready-for-human), `상태:처리안함` (wontfix)
+- **계획 유형**(`vibe-plan` 또는 `vibe-deep-plan`) — 호스트형 명세/계획 이슈와 결정 맵용 `유형:계획`
+- **결정 지도 라벨**(`vibe-deep-plan`) — 결정 맵 상태용 `상태:초안`, 그리고 네 결정 티켓 유형용 `유형:조사` / `유형:프로토타입` / `유형:인터뷰` / `유형:작업`
 
-Write only families for installed skills. If **Yes**, write as-is. Only when user says no — usually because the tracker already uses different names (e.g. `bug:triage` for needs-triage) — collect overrides to map existing labels instead of creating duplicates.
+설치된 스킬의 계열만 작성한다. **예**이면 그대로 작성한다. 사용자가 아니라고 할 때만 — 보통 트래커가 이미 다른 이름을 쓰기 때문(예: needs-triage를 `bug:triage`) — 중복을 만드는 대신 기존 라벨을 적용하도록 재정의를 모은다.
 
-**Section C — Domain Docs.** Default is **Single Context** — one `CONTEXT.md` at repo root + `docs/adr/`. Fits almost all repositories. Record without asking.
+**C절 — 도메인 문서.** 기본은 **단일 컨텍스트** — 저장소 루트에 하나의 `CONTEXT.md` + `docs/adr/`. 거의 모든 저장소에 맞다. 묻지 않고 기록한다.
 
-Only if exploration found monorepo signals do you propose **Multiple Contexts** — root `CONTEXT-MAP.md` pointing to context-specific `CONTEXT.md` files. Then confirm desired structure.
+탐색이 모노레포 신호를 찾은 경우에만 **다중 컨텍스트** — 루트 `CONTEXT-MAP.md`가 컨텍스트별 `CONTEXT.md` 파일을 가리키는 — 을 제시한다. 그 다음 어느 구조를 원하는지 확인한다.
 
-### 3. Review and Edit
+### 3. 확인하고 편집하기
 
-Show drafts to the user:
+사용자에게 다음의 초안을 보여준다:
 
-- `## Agent skills` block to add to `AGENTS.md`
-- Contents of `docs/agents/issue-tracker.md`, `docs/agents/domain.md`, and `docs/agents/triage-labels.md` (last one only if planning skills installed)
+- `AGENTS.md`에 추가할 `## Agent skills` 블록
+- `docs/agents/issue-tracker.md`, `docs/agents/domain.md`, `docs/agents/triage-labels.md`의 내용(마지막은 계획 스킬이 설치되어 있을 때만)
 
-Allow user to edit before writing.
+기록 전에 편집하게 한다.
 
-### 4. Record
+### 4. 기록하기
 
-Edit `AGENTS.md` if present, create if absent. Never edit `CLAUDE.md` — if only `CLAUDE.md` exists, create a new `AGENTS.md` and leave `CLAUDE.md` untouched.
+`AGENTS.md`가 있으면 편집하고, 없으면 만든다. 절대 `CLAUDE.md`를 편집하지 않는다 — `CLAUDE.md`만 있어도 새 `AGENTS.md`를 만들고 `CLAUDE.md`는 그대로 둔다.
 
-If `AGENTS.md` already contains an `## Agent skills` block, update contents in-place rather than appending duplicates. Do not overwrite user edits in surrounding sections.
+`AGENTS.md`에 이미 `## Agent skills` 블록이 있으면 중복을 추가하는 대신 내용을 제자리에서 갱신한다. 주변 섹션의 사용자 편집은 덮어쓰지 않는다.
 
-**`.gitignore`** — If repo uses git, ensure agent scratch paths are ignored: append `.agents/worktrees/` and `.agents/prototype/` to `.gitignore` if not already covered (create file if needed). In **Local Markdown** trackers, `.agents/plans/` must be **tracked** — skills commit ticket checklists inside implementation commits, impossible on ignored files — so ignore scratch paths only. Broad `.agents/` entries cannot be re-included by subsequent negations, so replace with `.agents/*` and `!.agents/plans/`. On other trackers, ignoring all of `.agents/` is fine.
+**`.gitignore`** — 저장소가 git을 쓰면 에이전트 스크래치 경로가 무시되게 한다: `.gitignore`가 이미 덮지 않을 때 `.agents/worktrees/`와 `.agents/prototype/`을 덧붙인다(필요 시 파일을 만든다). **로컬 마크다운** 트래커에서는 `.agents/plans/`이 **추적**되어야 한다 — 스킬이 티켓의 체크리스트를 구현 커밋 안에 함께 커밋하며, 무시된 파일에는 불가능하다 — 그러므로 스크래치 경로만 무시한다. 광범위한 `.agents/` 항목은 뒤의 부정으로 다시 포함할 수 없으므로, `.agents/*`와 `!.agents/plans/`로 바꾼다. 다른 트래커에서는 `.agents/` 전체를 무시해도 좋다.
 
-Block:
+블록:
 
 ```markdown
 ## Agent skills
 
 ### Korean repository text
 
-Before drafting Korean documents, commit messages, issues, pull requests, reviews, or comments, read the installed `vibe-docs` skill and follow its `Required application order`. Preserve the exact form of domain terms and label strings defined in `CONTEXT.md`, relevant ADRs, and `docs/agents/`.
+한국어 문서, 커밋 메시지, 이슈, PR, 리뷰 또는 댓글의 초안을 쓰기 전에 설치된 `vibe-docs` 스킬을 읽고 `필수 적용 순서`를 따른다. `CONTEXT.md`, 관련 ADR, `docs/agents/`에 정의된 도메인 용어와 라벨 문자열은 원래 표기를 그대로 유지한다.
 
 ### Issue tracker
 
-[One-line summary of where issues are tracked]. See `docs/agents/issue-tracker.md`.
+[이슈가 어디서 추적되는지 한 줄 요약]. `docs/agents/issue-tracker.md` 참조.
 
 ### Triage labels
 
-[One-line summary of label vocabulary]. See `docs/agents/triage-labels.md`.
+[라벨 어휘 한 줄 요약]. `docs/agents/triage-labels.md` 참조.
 
 ### Domain docs
 
-[Structure summary — "Single context" or "Multiple contexts"]. See `docs/agents/domain.md`.
+[구조 요약 — "단일 컨텍스트" 또는 "다중 컨텍스트"]. `docs/agents/domain.md` 참조.
 ```
 
-Include `### Triage labels` sub-block and write `docs/agents/triage-labels.md` only when planning skills are installed and Section B ran. Omit both otherwise.
+계획 스킬이 설치되어 있고 B절이 실행되었을 때만 `### Triage labels` 하위 블록을 포함하고 `docs/agents/triage-labels.md`를 작성한다. 그렇지 않을 때는 둘 다 생략한다.
 
-Then write documentation files using seed templates in this skill folder as starting points:
+그다음 이 스킬 폴더의 시드 템플릿을 출발점으로 써서 문서 파일을 작성한다:
 
-- [issue-tracker-github.md](references/issue-tracker-github.md) — GitHub issue tracker
-- [issue-tracker-gitlab.md](references/issue-tracker-gitlab.md) — GitLab issue tracker
-- [issue-tracker-local.md](references/issue-tracker-local.md) — Local Markdown issue tracker
-- [triage-labels.md](references/triage-labels.md) — Label mapping (only when planning skills installed)
-- [domain.md](references/domain.md) — Domain doc consumption rules + structure
+- [issue-tracker-github.md](references/issue-tracker-github.md) — GitHub 이슈 트래커
+- [issue-tracker-gitlab.md](references/issue-tracker-gitlab.md) — GitLab 이슈 트래커
+- [issue-tracker-local.md](references/issue-tracker-local.md) — 로컬 마크다운 이슈 트래커
+- [triage-labels.md](references/triage-labels.md) — 라벨 매핑(계획 스킬이 설치되어 있을 때만)
+- [domain.md](references/domain.md) — 도메인 문서 소비 규칙 + 구조
 
-For "Other" issue trackers, author `docs/agents/issue-tracker.md` from scratch using user descriptions. Include the same Korean-writing and domain-term protection rule used by the seed templates above.
+"기타" 이슈 트래커는 사용자의 설명으로 `docs/agents/issue-tracker.md`를 처음부터 작성한다. 위 시드 템플릿과 같은 한국어 작성 및 도메인 용어 보호 규칙을 포함한다.
 
-### 5. Commit
+### 5. 커밋하기
 
-When this is a Git repository and this run changed files, commit this skill's changes before any next remote mutation or task.
+Git 저장소이고 이 실행이 파일을 바꿨으면, 다음 원격 변경이나 다음 작업으로 넘어가기 전에 이 스킬의 변경을 커밋한다.
 
-1. Review the result with `git diff`. Do not treat changes present during exploration as this skill's work.
-2. Stage only exact files created or changed by this run; never use `git add .` or a broad path.
-3. If a target file contains preexisting user changes, separate only this run's hunks when that can be done safely. Otherwise do not commit; report the conflicting path and ask the user.
-4. Confirm the staged diff contains only this run's setup changes, then create one commit using the repository's existing message style.
-5. Verify the commit SHA. Stop if commit or verification fails.
-6. For GitHub, GitLab, or another hosted tracker, push the current branch normally before creating a label or issue, then verify that the remote branch contains the commit SHA. Never force-push.
-7. If commits were already unpushed during exploration, this push would publish them too. Do not push automatically; show the commits that would be included and ask the user.
+1. `git diff`로 결과를 확인한다. 탐색 때 이미 있던 변경은 이 스킬의 변경으로 보지 않는다.
+2. `git add .`이나 넓은 경로를 쓰지 않고, 이 실행에서 만든 또는 바꾼 정확한 파일만 stage한다.
+3. 대상 파일에 기존 사용자 변경이 섞여 있으면, 이 실행의 hunk만 안전하게 stage할 수 있을 때만 분리한다. 안전하게 나눌 수 없으면 커밋하지 말고 충돌한 경로를 알린 뒤 사용자에게 묻는다.
+4. staged diff가 이 실행의 설정 변경만 담는지 확인하고, 저장소의 기존 형식에 맞는 한 개의 커밋을 만든다.
+5. commit SHA를 확인한다. 커밋이나 확인이 실패하면 멈춘다.
+6. GitHub, GitLab 또는 다른 원격 트래커를 사용한다면, 라벨이나 이슈를 등록하기 전에 현재 브랜치를 일반 push하고 remote branch에 commit SHA가 반영되었는지 확인한다. force push는 하지 않는다.
+7. 탐색할 때부터 push되지 않은 기존 commit이 있었다면, 이 스킬의 push가 그 commit도 함께 게시한다. 자동으로 push하지 말고 포함될 commit을 보여준 뒤 사용자에게 묻는다.
 
-If no file changed or this is not a Git repository, skip the commit and state why. If the required push or remote-SHA verification fails, do not create or edit GitHub/GitLab labels or make any other issue-tracker mutation.
+변경할 파일이 없거나 Git 저장소가 아니면 커밋을 만들지 말고 그 이유를 알린다. 필수 push나 remote SHA 확인이 실패하면 GitHub/GitLab 라벨 생성·수정이나 다른 이슈 트래커 변경을 하지 않는다.
 
-### 6. Done
+### 6. 완료
 
-Inform user setup is complete and which engineering skills will read from these files. Note that they can edit `docs/agents/*.md` directly in the future — re-run this skill only when switching issue trackers or starting fresh.
+설정이 끝났고 어느 엔지니어링 스킬이 이 파일들에서 읽게 되는지 사용자에게 알린다. 나중에 `docs/agents/*.md`를 직접 편집할 수 있다고 안내한다 — 이슈 트래커를 바꾸거나 처음부터 다시 시작할 때만 이 스킬을 다시 실행하면 된다.

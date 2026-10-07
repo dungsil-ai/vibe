@@ -1,37 +1,37 @@
-# Deep Module Vocabulary
+# 깊은 모듈 어휘
 
-Design **deep modules**: lots of behavior behind small interfaces, placed at clean boundaries, tested through those interfaces. The goal is one interface covering many callers, fixes that stay in one place, and easier tests.
+**깊은 모듈**을 설계하라: 작은 인터페이스 뒤에 많은 동작, 깨끗한 경계에 두고, 그 인터페이스로 테스트. 목표는 인터페이스 하나로 여러 호출을 처리하고, 고칠 곳이 한곳에 있으며, 테스트하기 쉬워지는 것이다.
 
-In user-facing text (HTML reports, cards, questions, legends), use the Korean architectural terms and Korean plain explanations below. Do not attach English specialist terms such as `seam`, `leverage`, `locality`, `depth`, or `golden` as labels. Use only terms already used in Korean with these meanings, such as `모듈`, `인터페이스`, `어댑터`, and `경계`. Do not invent new translated nouns.
+사용자에게 보이는 글(HTML 보고서, 카드, 질문, 범례)에는 아래 말로 써라. `seam`, `leverage`, `locality`, `depth`, `golden` 같은 영어 전문용어를 라벨로 붙이지 마라. 모듈, 인터페이스, 어댑터, 경계처럼 한국에서 그 뜻으로 쓰는 말만 써라. 새 번역 용어를 만들지 마라.
 
-## Table of Contents
+## 목차
 
-- Glossary — module, interface, implementation, depth, boundary, adapter
-- Deep vs Shallow
-- Principles
-- Designing for Testability
-- Relationships
-- Rejected Phrasings
+- 용어집 — 모듈, 인터페이스, 구현, 깊이, 경계, 어댑터
+- 깊음 vs 얕음 — 구별법과 삭제 테스트
+- 원칙
+- 테스트하기 쉽게 설계하기
+- 관계
+- 쓰지 말 것
 
-## Glossary
+## 용어집
 
-**모듈** — Anything with an interface and an implementation. A function, class, package, or cross-layer slice. _Avoid_: unit, component, service.
+**모듈** — 인터페이스와 구현이 있는 모든 것. 함수, 클래스, 패키지, 계층을 가로지르는 조각. _피하라_: unit, component, service.
 
-**인터페이스** — Everything callers must know to use the module: not just types, but invariants, ordering, error modes, configuration, and performance. _Avoid_: API, signature (type surface only).
+**인터페이스** — 호출자가 모듈을 쓰려면 알아야 하는 모든 것: 타입뿐 아니라 불변 조건, 순서, 오류, 설정, 성능. _피하라_: API, signature(타입만 가리킴).
 
-**구현** — The code inside the module. Distinct from **어댑터**: a small adapter can wrap a large implementation (Postgres repository), or a large adapter can wrap a small implementation (in-memory fake). Use "어댑터" when talking about the boundary; otherwise "구현".
+**구현** — 모듈 안의 코드. **어댑터**와 구별: 작은 어댑터가 큰 구현을 감쌀 수도(Postgres repository), 큰 어댑터가 작은 구현을 감쌀 수도(메모리 fake) 있다. 경계를 말할 때 "어댑터", 그 외에는 "구현".
 
-**깊이** — How much behavior a caller can run per unit of interface learned. **깊다** when a lot sits behind a small interface. **얕다** when the interface is as complex as the implementation. In user-facing text say `깊다` / `얕다`, not `depth`.
+**깊이** — 배운 인터페이스 대비 실행되는 동작의 양. 작은 인터페이스 뒤에 동작이 많으면 **깊다**. 인터페이스가 구현만큼 복잡하면 **얕다**. 사용자 글에는 "깊다", "얕다". `depth`라고 쓰지 마라.
 
-**경계** — A place you can change behavior without editing that place; where the module's interface sits. Where to put it is a separate decision from what sits behind it. In user-facing text say `경계` or `테스트하는 곳`. Do not say `seam`. For a DDD bounded context, say `바운디드 컨텍스트` so it does not mix with this boundary.
+**경계** — 그 자리를 고치지 않고 동작을 바꿀 수 있는 곳. 모듈 인터페이스가 있는 위치. 어디에 둘지는 그 뒤에 무엇을 넣을지와 별개의 결정이다. 사용자 글에는 "경계" 또는 "테스트하는 곳". `seam`이라고 쓰지 마라. DDD의 bounded context는 "바운디드 컨텍스트"라고 써서 이 경계와 섞지 마라.
 
-**어댑터** — The concrete thing that fills an interface at a boundary. Names the role, not what is inside.
+**어댑터** — 경계에서 인터페이스를 채우는 구현. 역할(어느 칸인지)을 말하고, 안이 무엇인지는 말하지 않는다.
 
-Do not mint nouns for what callers gain or what maintainers gain. Write `인터페이스 하나로 여러 호출을 처리한다` and `고칠 곳이 한곳이다`.
+호출자가 깊이에서 얻는 것, 고치는 사람이 깊이에서 얻는 것은 새 명사로 부르지 마라. "인터페이스 하나로 여러 호출을 처리한다", "고칠 곳이 한곳이다"처럼 문장으로 써라.
 
-## Deep vs Shallow
+## 깊음 vs 얕음
 
-**깊은 모듈** = **작은 인터페이스** + **많은 구현**:
+**깊은 모듈** = 작은 인터페이스 + 많은 구현:
 
 ```
 ┌─────────────────────┐
@@ -43,7 +43,7 @@ Do not mint nouns for what callers gain or what maintainers gain. Write `인터�
 └─────────────────────┘
 ```
 
-**얕은 모듈** = **큰 인터페이스** + **적은 구현** (피하라):
+**얕은 모듈** = 큰 인터페이스 + 적은 구현 (피하라):
 
 ```
 ┌─────────────────────────────────┐
@@ -53,22 +53,22 @@ Do not mint nouns for what callers gain or what maintainers gain. Write `인터�
 └─────────────────────────────────┘
 ```
 
-When designing interfaces, ask in Korean:
+인터페이스를 설계할 때 물어라:
 
 - 메서드 수를 줄일 수 있는가?
 - 매개변수를 단순화할 수 있는가?
 - 더 많은 복잡성을 안에 숨길 수 있는가?
 
-## Principles
+## 원칙
 
-- **`깊이는 구현이 아니라 인터페이스의 속성이다.`** Internals may be small and swappable — they just are not public. A module may have an outer `바깥 경계` plus inner `안쪽 경계` used only by its own tests.
-- **`삭제 테스트`.** Imagine deleting the module. If complexity vanishes, it was a pass-through. If complexity reappears across N callers, it was earning its keep.
-- **`인터페이스가 테스트하는 면이다.`** Callers and tests pass through the same boundary. If you want to test *past* the interface, the module is probably misshapen.
-- **`어댑터가 하나면 경계를 만들지 마라.`** Add one only when there are two (usually production and test).
+- **깊이는 구현이 아니라 인터페이스의 속성이다.** 깊은 모듈 안은 작고 갈아끼울 수 있어도 된다. 다만 그건 공개 인터페이스가 아니다. 모듈은 공개 **바깥 경계** 외에, 자기 테스트만 쓰는 **안쪽 경계**를 가질 수 있다.
+- **삭제 테스트.** 모듈을 지운다고 상상하라. 복잡성이 사라지면 통과형이었다. 복잡성이 호출자 여러 곳에 다시 나타나면 제 몫을 하고 있었다.
+- **인터페이스가 테스트하는 면이다.** 호출자와 테스트는 같은 경계를 지난다. 인터페이스 *너머*를 테스트하고 싶다면 모듈 형태가 잘못된 경우가 많다.
+- **어댑터가 하나면 경계를 만들지 마라.** 둘(보통 프로덕션과 테스트)일 때만 경계를 둔다.
 
-## Designing for Testability
+## 테스트하기 쉽게 설계하기
 
-1. **Accept dependencies rather than creating them.**
+1. **의존성을 만들지 말고 받아라.**
 
    ```typescript
    // 테스트 가능
@@ -80,7 +80,7 @@ When designing interfaces, ask in Korean:
    }
    ```
 
-2. **Return results rather than causing side effects.**
+2. **부수 효과를 만들지 말고 결과를 반환하라.**
 
    ```typescript
    // 테스트 가능
@@ -92,19 +92,19 @@ When designing interfaces, ask in Korean:
    }
    ```
 
-3. **Keep the surface small.** Fewer methods = fewer tests. Simpler parameters = simpler setup.
+3. **겉면을 작게 하라.** 메서드가 적으면 테스트도 적다. 매개변수가 단순하면 준비도 단순하다.
 
-## Relationships
+## 관계
 
-- A **모듈** has one **인터페이스**.
-- **깊이** is measured against that interface.
-- A **경계** is where that interface sits.
-- An **어댑터** fills the interface at the boundary.
-- **깊이** lets callers do more with one interface, and keeps fixes in one place.
+- **모듈**은 **인터페이스**를 하나 가진다.
+- **깊이**는 그 인터페이스로 잰다.
+- **경계**는 그 인터페이스가 있는 곳이다.
+- **어댑터**는 경계에서 인터페이스를 채운다.
+- 깊으면 호출자는 인터페이스 하나로 더 많은 일을 하고, 고치는 사람은 한곳만 보면 된다.
 
-## Rejected Phrasings
+## 쓰지 말 것
 
-- **`구현 줄 수 대비 인터페이스 줄 수로 깊이를 재기`** (Ousterhout): rewards bloated implementations. Measure by what callers gain.
-- **TypeScript `interface`나 public 메서드만 `인터페이스`로 보기**: too narrow.
+- **구현 줄 수 대비 인터페이스 줄 수로 깊이를 재기** (Ousterhout): 구현을 부풀리게 한다. 호출자가 얼마나 이득을 보는지로 재라.
+- **TypeScript `interface`나 public 메서드만 "인터페이스"로 보기**: 호출자가 알아야 할 사실을 모두 포함한다.
 - **영어 전문용어를 라벨로 붙이기** (`seam`, `leverage`, `locality`, `depth`, `golden`).
-- **새 번역 명사 만들기** (`이음새`, `한곳 모임`, `호출자 이득`). Use ordinary words and Korean plain sentences.
+- **새 번역 명사 만들기** (이음새, 한곳 모임, 호출자 이득). 이미 쓰는 말과 문장으로 풀어라.

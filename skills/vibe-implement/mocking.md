@@ -1,59 +1,59 @@
-# When to Mock
+# 언제 모킹할까
 
-Mock only at system boundaries:
+시스템 경계에서만 모킹한다:
 
-- External APIs (payments, email, etc.)
-- Databases (prefer test DBs when practical)
-- Time / randomness
-- File system (sometimes)
+- 외부 API(결제, 이메일 등)
+- 데이터베이스(때로는 테스트 DB를 선호)
+- 시간/무작위
+- 파일 시스템(때로는)
 
-What NOT to mock:
+모킹하지 않는 것:
 
-- Classes/modules you authored
-- Internal collaborators
-- Anything you control
+- 자기가 만든 클래스/모듈
+- 내부 협력자
+- 제어할 수 있는 모든 것
 
-## Designing for Mockability
+## 모킹 가능성을 위한 설계
 
-Design interfaces that are easy to mock at system boundaries:
+시스템 경계에서 모킹하기 쉬운 인터페이스를 설계한다:
 
-**1. Use Dependency Injection**
+**1. 의존성 주입을 사용한다**
 
-Pass external dependencies rather than instantiating them internally:
+외부 의존성을 내부에서 만들지 말고 전달한다:
 
 ```typescript
-// Easy to mock
+// 모킹하기 쉬움
 function processPayment(order, paymentClient) {
   return paymentClient.charge(order.total);
 }
 
-// Hard to mock
+// 모킹하기 어려움
 function processPayment(order) {
   const client = new StripeClient(process.env.STRIPE_KEY);
   return client.charge(order.total);
 }
 ```
 
-**2. Prefer SDK-Style Interfaces over Generic Fetch Helpers**
+**2. 범용 fetch 헬퍼보다 SDK 형태의 인터페이스를 선호한다**
 
-Instead of one generic function with conditional logic, create specific functions for each external operation:
+조건부 로직이 있는 하나의 범용 함수 대신, 각 외부 작업마다 특정 함수를 만든다:
 
 ```typescript
-// Good: each function is independently mockable
+// 좋음: 각 함수가 독립적으로 모킹 가능
 const api = {
   getUser: (id) => fetch(`/users/${id}`),
   getOrders: (userId) => fetch(`/users/${userId}/orders`),
   createOrder: (data) => fetch('/orders', { method: 'POST', body: data }),
 };
 
-// Bad: mocking requires conditional logic
+// 나쁨: 모킹에 조건부 로직이 필요
 const api = {
   fetch: (endpoint, options) => fetch(endpoint, options),
 };
 ```
 
-What the SDK approach provides:
-- Each mock returns one specific shape
-- No conditional logic in test setups
-- Easier to identify which endpoints a test uses
-- Per-endpoint type safety
+SDK 방식의 의미:
+- 각 모킹이 하나의 특정 형태를 반환
+- 테스트 설정에 조건부 로직이 없음
+- 어떤 엔드포인트를 테스트가 사용하는지 더 쉽게 파악
+- 엔드포인트별 타입 안전성

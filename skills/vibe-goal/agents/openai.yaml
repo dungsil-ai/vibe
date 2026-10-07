@@ -1,7 +1,7 @@
 interface:
-  display_name: "Vibe Goal"
-  short_description: "Drive from plan through implementation and review in one go"
-  default_prompt: "Use $vibe-goal to drive this goal from planning through published tickets to implemented, reviewed code in one go."
+  display_name: "바이브 목표"
+  short_description: "계획부터 구현·리뷰까지 한 번에 완주"
+  default_prompt: "$vibe-goal을 사용해 이 목표를 계획 단계부터 발행된 티켓을 거쳐 구현·검토된 코드까지 한 번에 끝내세요."
 
 policy:
   allow_implicit_invocation: false

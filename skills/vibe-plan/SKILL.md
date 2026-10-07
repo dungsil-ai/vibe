@@ -1,352 +1,352 @@
 ---
 name: vibe-plan
-description: Triages incoming requests, records glossaries and ADRs, and refines interviews into specs and tracer-bullet tickets. Use for issue or external PR triage, feature planning, specs/PRDs, and tickets. Explicit plan/review-plan/reconcile or confirmed audit/next selections route to self-contained execution-plan authoring, refinement, and status reconciliation.
+description: 접수된 요청을 트리아지하고, 용어집과 ADR을 기록하며 인터뷰로 다듬은 뒤 명세와 tracer-bullet 티켓을 작성한다. 이슈나 외부 PR의 트리아지, 기능 계획, 명세·PRD·티켓 작성에 사용한다. 명시적 plan/review-plan/reconcile 또는 audit/next의 확정된 선택을 받으면 자기완결 실행계획의 작성·보완·상태 조정을 담당한다.
 disable-model-invocation: true
 ---
 
-# Planning Work
+# 작업 계획하기
 
-Moves from a request or loose idea to agent-executable tickets in one flow. Four stages: **Triage** (judges incoming external requests; can end execution), **Grill** (sharpens through interviews, recording decisions into docs), **Spec** (synthesizes established decisions), and **Tickets** (slices into tracer-bullet units with blocking edges).
+요청이나 느슨한 아이디어에서 에이전트가 집을 수 있는 티켓까지 한 번에 간다. 네 단계: **트리아지**(들어온 외부 요청을 판단; 실행을 끝낼 수 있다), **그릴**(인터뷰로 날카롭게 하고, 결정이 나면 문서로 기록), **명세**(결정된 것을 합성), **티켓**(tracer-bullet 슬라이스로 쪼개고 차단 간선을 건다).
 
-## Check the Execution-Plan Route First
+## 실행계획 분기 먼저 확인
 
-For explicit `/vibe-plan plan <description>`, `review-plan <file>`, `reconcile`, or confirmed selections handed off by `/vibe-audit` or `/vibe-next-plan`, read [EXECUTION-PLAN.md](EXECUTION-PLAN.md) and follow only that route. For an unselected investigation list, first apply that document's selection gate. Do not convert an input into an execution plan merely because it mentions "plan" or supplies an existing spec, ticket, or decision map.
+명시적 `/vibe-plan plan <description>`, `review-plan <file>`, `reconcile` 또는 `/vibe-audit`·`/vibe-next-plan`에서 확정된 선택을 인계받으면 [EXECUTION-PLAN.md](EXECUTION-PLAN.md)를 읽고 그 경로만 수행한다. 선택이 미확정인 조사 목록은 먼저 해당 문서의 선택 게이트를 적용한다. 단순히 "계획"이라는 단어가 있거나 기존 명세·티켓·결정 지도를 받았다는 이유로 실행계획으로 바꾸지 않는다.
 
-This route changes only plan files and the index, applying that document's GitHub publishing procedure only with explicit `--issues`. The Stage 0–3 rules below for automatic modeling-document edits, commits/pushes, and ordinary ticket publication do not apply. Execution belongs to `/vibe-implement execute <plan>`. Otherwise retain the existing Stage 0–3 flow.
+이 분기에서는 계획파일과 색인만 변경하며, `--issues`가 명시된 경우에만 해당 문서의 GitHub 게시 절차를 적용한다. 아래 Stage 0~3의 모델링 문서 자동수정, 커밋·push, 일반 티켓 게시 규칙은 적용하지 않는다. 실행은 `/vibe-implement execute <plan>`에 맡긴다. 이 분기 외에는 기존 Stage 0~3을 그대로 따른다.
 
-Read [Configuration Documents and Defaults](../vibe-init/references/defaults.md) to resolve tracker, label, and domain-document rules. When configuration is absent, proceed with local Markdown without requiring initialization.
+[설정 문서와 기본값](../vibe-init/references/defaults.md)을 읽고 트래커·라벨·도메인 문서 규칙을 해석한다. 설정이 없으면 초기화를 요구하지 않고 로컬 Markdown으로 진행한다.
 
-## Enter at the Correct Stage
+## 올바른 단계로 진입
 
-**Do not ask what can be inferred from what the user brought.** Read arguments and dialogue, then enter at the earliest stage lacking complete input:
+**사용자가 가져온 것에서 추론할 수 있는 건 묻지 않는다.** 인자와 대화를 읽은 뒤, 입력이 아직 없는 첫 단계로 진입한다:
 
-| What user brought | Entry Stage |
+| 사용자가 가져온 것 | 진입 단계 |
 | --- | --- |
-| External request — bug report you didn't write, feature request, issue link/number, or external PR | **Stage 0 — Triage** |
-| Loose idea, or plan with open questions | **Stage 1 — Grill** |
-| Resolved dialogue, no open decisions | **Stage 2 — Spec** |
-| Preexisting spec, PRD, plan, issue number, or URL authored by you | **Stage 3 — Tickets** |
+| 외부 요청 — 당신이 쓰지 않은 버그 신고, 기능 요청, 이슈 링크나 번호, 또는 외부 PR | **Stage 0 — 트리아지** |
+| 느슨한 아이디어, 또는 열린 질문이 있는 계획 | **Stage 1 — 그릴** |
+| 정리된 대화, 열린 결정이 없음 | **Stage 2 — 명세** |
+| 당신이 작성한 기존 명세, PRD, 계획, 이슈 번호, 또는 URL | **Stage 3 — 티켓** |
 
-**Treat as external if the author is not you.** Bare links, issue numbers, pasted reports, "someone filed this", or collaborator PRs — anything you and the user did not create directly in this repository's planning goes through Stage 0 first. Tickets published by this skill are already `ready-for-agent` by construction: **never triage your own output.** If ambiguous, state which interpretation you took and allow the user to correct with one word.
+**출처가 당신이 아니면 외부로 취급한다.** 단독 링크나 이슈 번호, 복사해 붙인 신고, "누가 올렸다", 협업자의 PR — 이 저장소의 계획에서 당신과 사용자가 직접 만들지 않은 내용은 모두 먼저 Stage 0을 지난다. 이 스킬이 게시한 티켓은 구조상 이미 `ready-for-agent`다: **자기 산출물을 절대 트리아지하지 않는다.** 모호하다면 어느 쪽으로 읽었는지 말하고, 사용자가 한마디로 고치게 한다.
 
-**Decision maps are not requests.** Issues labeled `상태:초안`, or decision tickets labeled `유형:조사`, `유형:프로토타입`, `유형:인터뷰`, or `유형:작업`, belong to `/vibe-deep-plan` — they are in-progress planning artifacts rather than triage targets. `유형:계획` identifies a spec/plan issue published by this skill, so do not classify it as a decision ticket. If pointed at a decision map or one of its tickets, state so and recommend `/vibe-deep-plan`. Once such maps clear, their Destination and Decisions-so-far serve as valid input for **Stage 2 — Spec**. Resolve actual decision-ticket strings from `docs/agents/triage-labels.md`; never invent English stand-ins such as `status:draft`.
+**결정 지도는 요청이 아니다.** `상태:초안` 라벨이 붙은 이슈, 또는 그 `유형:조사` / `유형:프로토타입` / `유형:인터뷰` / `유형:작업` 결정 티켓은 `/vibe-deep-plan`에 속한다 — 진행 중인 계획 산물이지 트리아지 대상이 아니다. `유형:계획`은 이 스킬이 게시한 명세/계획 이슈를 뜻하므로 결정 티켓으로 분류하지 않는다. 사용자가 결정 지도나 그 티켓을 가리키면 그렇게 말하고 대신 `/vibe-deep-plan`을 제안한다. 그런 지도가 정리되면, 그 Destination과 Decisions-so-far는 **Stage 2 — 명세**의 유효한 입력이다. 실제 결정 티켓 문자열은 `docs/agents/triage-labels.md`에서 푼다. `status:draft` 같은 영어 대역을 만들지 않는다.
 
-When entering Stage 3 with a reference (spec path, issue number, or URL), fetch and read the entire body and comments. Do not re-interview decisions already recorded in the source or re-synthesize existing specs — skipping ahead is the point of this table.
+Stage 3을 참조(명세 경로, 이슈 번호나 URL)와 함께 진입할 때, 가져와서 본문과 댓글 전체를 읽는다. 원본이 이미 기록한 결정을 다시 인터뷰하지 않고, 이미 존재하는 명세를 다시 합성하지 않는다 — 앞으로 건너뛰는 것이 이 표의 요점이다.
 
-State entry stage and rationale in one line, then begin.
+어느 단계로 진입하는지 그리고 왜인지 한 줄로 말한 뒤 시작한다.
 
-Before entering a stage that may change local planning documents, record `git status`, the current branch, its upstream difference, and any commits that are already unpushed. Use this baseline to separate this plan's changes from preexisting user work.
+로컬 계획 문서를 바꿀 수 있는 단계에 들어가기 전에, `git status`, 현재 브랜치, upstream과의 차이, 이미 push되지 않은 commit을 기록한다. 이후 이 계획의 변경과 기존 사용자 작업을 구분하는 기준으로 쓴다.
 
-## Context Hygiene
+## 맥락 위생
 
-Maintain executed stages in a **single unbroken context window** — never compressing or clearing until tickets are published — so triage findings, grilling, specs, and tickets build upon the same foundation. Each ticket is subsequently implemented in a fresh session focused on that ticket alone.
+실행하는 단계들을 **하나의 끊기지 않는 맥락 창**에 유지한다 — 티켓이 게시될 때까지 압축하거나 비우지 않는다 — 그래서 트리아지 발견, 그릴, 명세, 티켓이 모두 같은 생각 위에 쌓인다. 각 티켓은 그 뒤 티켓만으로 작업하는 새 세션에서 구현된다.
 
-If the session degrades before tickets are produced, do not force through: ask the user to run `/vibe-handoff` to continue in a fresh session.
+세션이 티켓이 들어오기 전에 저하되면, 밀어붙이지 않는다: 사용자에게 `/vibe-handoff` 실행을 요청하고 새 세션에서 이어간다.
 
-## Output Language
+## 산출물 언어
 
-Write execution plans in the repository's documentation language too, but do not translate machine-consumed keys and literals such as `Kind`, `Status`, `Planned at`, or `Depends on`. Restrictions on file paths/code excerpts apply only to ordinary specs, tickets, and agent briefs; execution plans include exact paths and excerpts of current code.
+실행계획도 저장소 문서가 쓰는 언어로 작성하되 `Kind`, `Status`, `Planned at`, `Depends on` 등 기계가 소비하는 키와 리터럴은 번역하지 않는다. 파일 경로·코드 발췌 제한은 일반 명세·티켓·에이전트 브리프에만 적용하며, 실행계획에는 현재 코드의 정확한 경로와 발췌를 포함한다.
 
-Template headings below are placeholders, not literal output. Write every published artifact — titles, headings, and body — in the language this repository's documentation uses, reusing the heading vocabulary already present on existing issues rather than translating afresh. Mixed-language output (English headings over translated body) means the template was copied verbatim.
+아래 템플릿의 헤딩은 자리표시자이며 그대로 출력할 문구가 아니다. 게시하는 모든 산출물 — 제목, 헤딩, 본문 — 을 이 저장소 문서가 쓰는 언어로 쓰고, 새로 번역하기보다 기존 이슈에 이미 쓰인 헤딩 어휘를 재사용한다. 본문은 번역됐는데 헤딩만 영어인 혼합 출력은 템플릿을 그대로 복사했다는 신호다.
 
 ---
 
-## Stage 0 — Triage
+## Stage 0 — 트리아지
 
-Directs incoming requests through a state machine of triage roles. **This stage can end execution** — `wontfix` and `needs-info` are successful terminal outcomes, not failures. Only requests reaching `ready-for-agent` or `ready-for-human` proceed; where they proceed depends on what triage established:
+들어온 요청을 트리아지 역할의 작은 상태 기계로 흘려보낸다. **이 단계는 실행을 끝낼 수 있다** — `wontfix`와 `needs-info`는 실패가 아니라 종료 결과다. `ready-for-agent` 또는 `ready-for-human`에 도달한 요청만 계속된다; 어디로 계속되는지는 트리아지가 무엇을 확정했느냐에 달린다:
 
-- Fully specified with no open decisions → **Stage 3 — Tickets** (or leave the issue as-is if a single ticket suffices).
-- Open decisions remain after triage → **Stage 1 — Grill**, carrying triage notes forward.
+- 완전히 명세화됐고, 결정할 게 없다 → **Stage 3 — 티켓**(또는 티켓 하나로 충분하면 그 이슈를 있는 그대로 둔다).
+- 트리아지 뒤에도 결정이 열려 있다 → 트리아지 노트를 앞으로 가져가며 **Stage 1 — 그릴**.
 
-If this repo treats external PRs as request surfaces (see tracker config), this stage includes them: **PRs are issues with attached code** — same roles, same states, same mechanics, with minor differences noted under "For PRs" below. Bare `#42` resolves to issue or PR per tracker config.
+이 저장소가 외부 풀 리퀘스트를 요청 표면으로 취급하면(이슈 트래커 설정 참조), 이 단계는 그것도 포함한다: **PR은 코드가 딸린 이슈다** — 같은 역할, 같은 상태, 같은 기계, 아래에 "PR의 경우"로 표시된 약간의 차이만 있다. 단독 `#42`는 트래커 설정에 따라 이슈나 PR로 푼다.
 
-All comments or issues posted during triage **must** begin with this notice:
+트리아지 중 이슈 트래커에 게시하는 모든 댓글이나 이슈 **반드시** 이 고지문으로 시작한다:
 
 ```
 > *이 내용은 트리아지 중 AI가 생성했습니다.*
 ```
 
-Reference docs for this stage:
+이 단계의 참고 문서:
 
-- [AGENT-BRIEF.md](AGENT-BRIEF.md) — How to write durable agent briefs
-- [OUT-OF-SCOPE.md](OUT-OF-SCOPE.md) — How the `docs/agents/out-of-scope/` knowledge base operates
+- [AGENT-BRIEF.md](AGENT-BRIEF.md) — 내구성 있는 에이전트 브리프를 쓰는 법
+- [OUT-OF-SCOPE.md](OUT-OF-SCOPE.md) — `docs/agents/out-of-scope/` 지식 베이스가 어떻게 동작하는가
 
-### Roles
+### 역할
 
-Two **category** roles:
+두 **범주** 역할:
 
-- `bug` — Something is broken
-- `enhancement` — New feature or improvement
+- `bug` — 무언가 망가졌다
+- `enhancement` — 새 기능 또는 개선
 
-Five **state** roles:
+다섯 **상태** 역할:
 
-- `needs-triage` — Maintainer must evaluate
-- `needs-info` — Awaiting additional info from reporter
-- `ready-for-agent` — Fully specified, ready for AFK agent
-- `ready-for-human` — Human must implement
-- `wontfix` — Will not be addressed
+- `needs-triage` — 관리자가 평가해야 한다
+- `needs-info` — 신고자의 추가 정보를 기다리는 중
+- `ready-for-agent` — 완전히 명세화됐고, AFK 에이전트가 가져갈 준비가 됨
+- `ready-for-human` — 사람이 구현해야 한다
+- `wontfix` — 조치하지 않는다
 
-For PRs, states apply to the attached code: `ready-for-agent` means brief is attached and agent should take next steps on the diff; `ready-for-human` means ready for human merge.
+PR의 경우, 같은 상태가 첨부된 코드에 대해 읽힌다: `ready-for-agent`는 브리프가 첨부되었고 에이전트가 diff에 대한 다음 단계를 밟아야 함을 뜻한다; `ready-for-human`은 사람이 병합할 준비가 됨을 뜻한다.
 
-Every triaged issue must have exactly one category role and one state role. Flag conflicting state roles and ask the maintainer before proceeding.
+트리아지된 모든 이슈는 정확히 하나의 범주 역할과 하나의 상태 역할을 가져야 한다. 상태 역할이 충돌하면, 그것을 표시하고 다른 일을 하기 전에 관리자에게 묻는다.
 
-These are canonical role names — actual label strings used in tracker may differ. Resolve via `docs/agents/triage-labels.md`.
+이것은 canonical 역할 이름이다 — 이슈 트래커에서 쓰는 실제 라벨 문자열은 다를 수 있다. `docs/agents/triage-labels.md`를 통해 해결한다.
 
-State transitions: unlabeled issues typically move to `needs-triage` first, then to `needs-info`, `ready-for-agent`, `ready-for-human`, or `wontfix`. `needs-info` returns to `needs-triage` once reporter replies. Maintainers may override anytime — flag unusual transitions and confirm before acting.
+상태 전이: 라벨 없는 이슈는 보통 먼저 `needs-triage`로 간다; 거기서 `needs-info`, `ready-for-agent`, `ready-for-human`, 또는 `wontfix`로 이동한다. `needs-info`는 신고자가 답하면 `needs-triage`로 돌아간다. 관리자는 언제든 덮어쓸 수 있다 — 흔해 보이지 않는 전이를 표시하고 진행 전에 묻는다.
 
-### Invocation
+### 호출
 
-Explain-then-act: interpret maintainer requests and execute. Examples:
+설명-하고-행동: 관리자가 요청한 것을 해석하고 실행한다. 예:
 
-- "Show me what needs attention"
-- "Look at #42" (issue or PR)
-- "Move #42 to ready-for-agent"
-- "What is ready for an agent to pick up?"
+- "주의가 필요한 것을 보여줘"
+- "#42를 보자"(이슈 또는 PR)
+- "#42를 ready-for-agent로 옮겨줘"
+- "에이전트가 집어갈 준비가 된 건 뭐야?"
 
-### Showing What Needs Attention
+### 주의가 필요한 것 보여주기
 
-Query issue tracker and present three buckets, oldest first:
+이슈 트래커를 조회해 세 버킷을, 오래된 것부터 제시한다:
 
-1. **Unlabeled** — Never triaged.
-2. **`needs-triage`** — Evaluation in progress.
-3. **`needs-info` with reporter activity since last triage note** — Needs re-evaluation.
+1. **라벨 없음** — 트리아지된 적 없음.
+2. **`needs-triage`** — 평가 진행 중.
+3. **마지막 트리아지 노트 이후 신고자 활동이 있는 `needs-info`** — 재평가 필요.
 
-If PRs are in scope, include external PRs in these buckets, marking lines with `[PR]` or `[issue]`. Discovery surfaces *external* PRs only (per tracker definition) — collaborator in-progress PRs are not triage tasks. This filter applies to discovery only; explicitly named PRs are always triaged regardless of author.
+PR이 범위 안이면, 이 버킷에 외부 PR을 포함하고 각 줄에 `[PR]` 또는 `[issue]`로 표시한다. 발견은 *외부* PR만 표면에 드러낸다(누가 외부인지는 트래커 설정이 정의) — 협업자의 진행 중 PR은 트리아지 작업이 아니다. 이 필터는 발견 전용이다; 명시적으로 지정된 PR은 작성자와 무관하게 항상 트리아지한다.
 
-Display counts and one-line summaries per item. Let maintainer choose.
+개수와 항목당 한 줄 요약을 보여준다. 관리자가 고르게 한다.
 
-### Triaging a Specific Issue or PR
+### 특정 이슈 또는 PR 트리아지
 
-1. **Gather Context.** Read full issue or PR (body, comments, labels, author, date; diff for PRs). Parse prior triage notes to avoid re-asking resolved questions. Explore codebase using domain glossary, respecting ADRs in the area. Run two codebase checks: (a) **Duplicates** — search for existing implementations using domain concepts (not request phrasing) and report findings. If found, this is an already-implemented `wontfix` (Step 5). (b) **Prior Rejections** — read `docs/agents/out-of-scope/*.md` and surface similarities.
+1. **맥락 수집.** 이슈 또는 PR 전체를 읽는다(본문, 댓글, 라벨, 작성자, 날짜; PR이면 diff도). 이전 트리아지 노트가 있으면 파싱해 해결된 질문을 다시 묻지 않는다. 프로젝트의 도메인 용어집을 써서 코드베이스를 탐색하고, 해당 영역의 ADR을 존중한다. 코드베이스에 두 검사를 실행한다: (a) **중복** — 도메인 개념(요청의 표현이 아니라)으로 요청된 동작의 기존 구현을 찾고, 찾은 곳을 보고한다. 있으면, 그것은 이미 구현된 `wontfix`다(5단계). (b) **이전 거부** — `docs/agents/out-of-scope/*.md`를 읽고 이 요청과 유사한 것을 표면에 드러낸다.
 
-2. **Recommend.** Provide category and state recommendations with rationale to maintainer, plus codebase summary related to the request (including existing implementations). Await instructions.
+2. **권고.** 관리자에게 범주와 상태 권고를 이유와 함께, 요청과 관련된 코드베이스 요약(이미 구현되었는지 포함)과 함께 말한다. 지시를 기다린다.
 
-3. **Verify Claims.** Confirm claims hold before grilling. For bugs, reproduce using reporter's steps. **For external PRs:**
-   - **Static Review First.** Review diff and repo context before checkout or command execution. Evaluate all core PR claims as statically supported, refuted, or unverified, identifying runtime evidence needed for unverified claims.
-   - **Propose, Then Await.** Execute only when resolving key unverified claims is necessary for triage recommendations. Present rationale, exact commands, expected side effects, and sandbox guarantees (disposable, no secrets, no write credentials, network blocked by default). Await separate explicit approval — initial requests to triage or test are not approvals.
-   - **Execute in Security Sandbox Only.** After approval, run untrusted code only in disposable sandboxes matching those guarantees. Dedicated worktrees provide checkout isolation only; they are not security sandboxes and do not constitute goal integration workspaces. Never treat worktrees as meeting this requirement.
-   - **Safe Stop.** If suitable sandboxes are unavailable or approval is absent/declined, do not checkout or execute anything. Finish static review, stating unverified claims and verification limits.
+3. **주장 검증.** 그릴 전에, 주장이 성립하는지 확인한다. 버그면 신고자의 단계로 재현한다. **외부 PR의 경우:**
+   - **정적 검토 먼저.** checkout이나 명령 실행 전에, diff와 관련 저장소 맥락을 검토한다. 모든 핵심 PR 주장을 정적으로 뒷받침됨, 반박됨, 미검증으로 평가하고, 각 미검증 주장에 필요한 런타임 증거를 식별한다.
+   - **제안하고, 그 뒤 기다린다.** 트리아지 권고에 핵심 미검증 주장을 해결하는 게 필요할 때만 실행한다. 먼저 이유; 정확한 명령; 예상 부작용; 샌드박스 보장(일회용, 비밀 없음, 쓰기 자격증명 없음, 기본 네트워크 차단)을 보여준다. 그 뒤 별도의 명시적 승인을 기다린다 — PR을 트리아지하거나 테스트하라는 초기 요청은 승인이 아니다.
+   - **보안 샌드박스에서만 실행.** 승인 후, 그 보장을 갖춘 일회용 샌드박스에서만 신뢰할 수 없는 코드를 실행한다. 전용 worktree는 checkout 격리만 제공한다; 보안 샌드박스가 아니며 그 자체로 목표별 통합 작업공간을 구성하지도 않는다. 이 요구를 절대 충족하지 않는다.
+   - **안전하게 멈춘다.** 조건을 갖춘 샌드박스가 없거나 승인이 없거나 거부되면, checkout하거나 어떤 것도 실행하지 않는다. 정적 검토를 마치고 미검증 주장과 검증 한계를 명시한다.
 
-   Report outcomes: confirmed (with code paths or run evidence), failed, statically supported but runtime unverified, or lacking detail (strong `needs-info` signal). Confirmed verification yields stronger agent briefs.
+   일어난 일을 보고한다: 확인됨(코드 경로나 실행 증거와 함께), 실패, 정적으로 뒷받침됐지만 런타임 미검증, 또는 상세 부족(강한 `needs-info` 신호). 확인된 검증은 훨씬 강한 에이전트 브리프를 만든다.
 
-4. **Grill (if needed).** If request needs fleshing out, run **Stage 1 — Grill** now and apply results upon return. Resolved items feed briefs or triage notes.
+4. **그릴(필요 시).** 요청이 살을 붙여야 하면, 지금 당장 **Stage 1 — 그릴**을 실행하고, 돌아와 결과를 적용한다. 그것이 해결한 모든 것은 브리프나 트리아지 노트에 들어간다.
 
-5. **Apply Outcome:**
-   - `ready-for-agent` — Post agent brief comment ([AGENT-BRIEF.md](AGENT-BRIEF.md)).
-   - `ready-for-human` — Match agent brief structure, stating reasons preventing delegation (judgment, external access, architectural decisions, manual testing).
-   - `needs-info` — Post triage notes (template below).
-   - `wontfix` — Close; comments depend on *why*:
-     - **Already Implemented** — Point to existing code; do **not** write to `docs/agents/out-of-scope/` (that KB is for *rejected* requests).
-     - **Rejected (Bug)** — Polite explanation, then close.
-     - **Rejected (Enhancement)** — Write to `docs/agents/out-of-scope/`, link from comment, then close ([OUT-OF-SCOPE.md](OUT-OF-SCOPE.md)).
-   - `needs-triage` — Apply role. Comments optional if partial progress was made.
+5. **결과 적용:**
+   - `ready-for-agent` — 에이전트 브리프 댓글 게시([AGENT-BRIEF.md](AGENT-BRIEF.md)).
+   - `ready-for-human` — 에이전트 브리프와 같은 구조이되, 위임할 수 없는 이유(판단, 외부 접근, 설계 결정, 수동 테스트)를 적는다.
+   - `needs-info` — 트리아지 노트 게시(아래 템플릿).
+   - `wontfix` — 닫고, 댓글은 *왜*에 따라 다르다:
+     - **이미 구현됨** — 변경이 코드베이스에 이미 있다. 있는 곳을 가리킨다; `docs/agents/out-of-scope/`에 쓰지 **않는다**(그 KB는 *거부된* 요청용이지 구현된 것용이 아니다).
+     - **거부(버그)** — 정중한 설명, 그 뒤 닫는다.
+     - **거부(개선)** — `docs/agents/out-of-scope/`에 쓰고, 댓글에서 연결한 뒤 닫는다([OUT-OF-SCOPE.md](OUT-OF-SCOPE.md)).
+   - `needs-triage` — 역할을 적용한다. 부분 진척이 있으면 댓글은 선택이다.
 
-### Fast State Overrides
+### 빠른 상태 덮어쓰기
 
-When maintainers say "Move #42 to ready-for-agent", trust them and apply roles directly. Confirm planned actions (role change, comments, close) then execute. Skip grilling. When moving to `ready-for-agent` without grilling, ask whether to author an agent brief.
+관리자가 "#42를 ready-for-agent로 옮겨줘"라고 하면, 신뢰하고 역할을 직접 적용한다. 무엇을 하려는지(역할 변경, 댓글, 닫기) 확인한 뒤 실행한다. 그릴을 건너뛴다. 그릴 세션 없이 `ready-for-agent`로 옮기면, 에이전트 브리프를 쓸지 묻는다.
 
-### Needs-Info Template
+### Needs-info 템플릿
 
 ```markdown
 ## Triage Notes
 
-**Confirmed So Far:**
+**지금까지 확정된 것:**
 
-- Point 1
-- Point 2
+- 요점 1
+- 요점 2
 
-**Needed From You (@reporter):**
+**당신에게 필요한 것 (@reporter):**
 
-- Question 1
-- Question 2
+- 질문 1
+- 질문 2
 ```
 
-Capture everything resolved during grilling under "Confirmed So Far" so work is not lost. Questions must be specific and actionable, not "please provide more info".
+그릴 중 해결된 모든 것을 "지금까지 확정된 것" 아래 잡아 작업이 사라지지 않게 한다. 질문은 구체적이고 실행 가능해야 한다, "추가 정보를 제공해 주세요"가 아니다.
 
-### Resuming Prior Sessions
+### 이전 세션 재개
 
-When prior triage notes exist on an issue/PR, read them, check if reporter answered open questions, and present updated picture before continuing. Never re-ask resolved questions.
-
----
-
-## Stage 1 — Grill
-
-Load the `vibe-grilling` and `vibe-modeling` skills separately and apply both: interview one question at a time until reaching shared understanding, sharpening domain terms and writing `CONTEXT.md` / ADR updates immediately as decisions solidify.
-
-Do not proceed to Stage 2 until the user confirms shared understanding.
+이슈나 PR에 이전 트리아지 노트가 있으면, 읽고, 신고자가 남은 질문에 답했는지 확인하고, 계속하기 전에 갱신된 그림을 제시한다. 해결된 질문을 다시 묻지 않는다.
 
 ---
 
-## Stage 2 — Spec
+## Stage 1 — 그릴
 
-Synthesize a spec (also known as a PRD) from established decisions. Do **not** interview the user here — questioning belongs to Stage 1; this stage is purely synthesis.
-When Stage 2 receives a cleared decision map from `/vibe-deep-plan`, read the map and follow all resolved records or ticket links in `Decisions so far` before synthesizing. First load each linked decision's question and final answer: `## Question` and `## Answer` in local Markdown, or issue body/question and final decision comment/note in hosted trackers. Follow raw `## Research`, comments, attachments, or prototype artifacts only when final answers reference them or spec requires evidence. Maps are indexes, not replacements for linked decisions. In local Markdown, if the map is at `.agents/plans/<effort>/map.md`, reuse `.agents/plans/<effort>/` and write `spec.md` there; do not create a new `<feature-slug>` directory. Hosted trackers use provided map URLs/numbers and configured spec publishing surfaces.
+`vibe-grilling`과 `vibe-modeling` 스킬을 각각 로드해 적용한다: 한 번에 한 질문씩 공유 이해에 도달할 때까지 인터뷰하고, 결정이 굳어질 때 도메인 용어를 날카롭게 하며 `CONTEXT.md` / ADR 갱신을 즉시 쓴다.
 
-### Local Decision Gate
+사용자가 공유 이해를 확인하기 전까지 Stage 2로 넘어가지 않는다.
 
-However Stage 2 was entered, load the `vibe-modeling` skill and review established decisions against its criteria before writing the spec. Do not reopen settled choices. Record new domain terms in `CONTEXT.md`, and write any decision that meets all three ADR conditions but is not yet recorded. Do not duplicate an existing decision record.
+---
 
-Before the first hosted-tracker spec, label, or ticket is published or edited, commit `CONTEXT.md` and ADR changes made by this planning run, then push the current branch normally. Never use `git add .`; stage only exact paths from this run and do not mix preexisting user changes. Review the staged diff and commit SHA, then verify that the remote branch contains that SHA after the push. Never force-push. If commits were already unpushed at the start, show every commit that would be published and ask the user first. If existing changes cannot be separated safely, commit or push fails, or remote-SHA verification fails, stop without mutating the remote tracker. If no local modeling document changed, do not create a new commit or push.
+## Stage 2 — 명세
 
-1. Explore repository to understand current codebase state (if not already done). Use domain glossary vocabulary throughout the spec, respecting ADRs in touched areas.
+이미 결정된 것에서 명세(이 문서를 PRD로 알 수 있다)를 만든다. 여기서 사용자를 인터뷰하지 **않는다** — 질문은 Stage 1이 담당; 이 단계는 합성 전용이다.
+Stage 2가 `/vibe-deep-plan`에서 정리된 결정 지도를 받으면, 명세를 합성하기 전에 지도를 읽고 그 `Decisions so far`의 모든 해결된 기록이나 티켓 링크를 따른다. 먼저 각 연결된 결정의 질문과 최종 답을 적재한다: 로컬 마크다운이면 `## Question`과 `## Answer`를 읽는다; 호스트 트래커면 이슈 질문/본문과 최종 결정 댓글 또는 노트를 읽는다. 미가공 `## Research`, 댓글, 첨부, 또는 프로토타입 산물은 최종 답이 참조하거나 명세에 증거가 필요할 때만 따른다. 지도는 연결된 결정을 대체하는 것이 아니라 색인이다. 로컬 마크다운에서, 지도가 `.agents/plans/<effort>/map.md`이면, `.agents/plans/<effort>/`를 재사용하고 거기에 `spec.md`를 쓴다; 새 `<feature-slug>` 디렉터리를 만들지 않는다. 호스트 트래커는 주어진 지도 URL이나 번호와 그 설정된 명세 게시 표면을 쓴다.
 
-2. Sketch boundaries for testing the feature. Prefer existing boundaries over new ones. Use the outermost boundary you can. Propose a new boundary at the outermost level if needed. Fewer boundaries across the codebase are better — ideal count is one.
+### 로컬 결정 게이트
 
-Confirm that boundary with the user.
+Stage 2로 어떻게 진입했든, 명세를 쓰기 전에 `vibe-modeling` 스킬을 로드해 그 기준으로 확정된 결정을 확인한다. 이미 끝난 결정을 다시 인터뷰하지 않는다. 새 도메인 용어는 `CONTEXT.md`에 기록하고, ADR 세 조건을 만족하지만 아직 기록되지 않은 결정은 ADR로 쓴다. 같은 결정을 다시 기록하지 않는다.
 
-3. Author the spec using the template below, then post it to the issue tracker. On hosted trackers, apply both `유형:계획` and the `ready-for-agent` triage label to the spec/plan issue — no further triage is needed. Do not apply hosted labels to local Markdown specs.
+호스트형 트래커에 명세, 라벨, 티켓을 처음 게시하거나 수정하기 전에, 이번 계획에서 바꾼 `CONTEXT.md`와 ADR을 커밋하고 현재 브랜치를 일반 push한다. `git add .`을 쓰지 않고 이번 실행의 정확한 경로만 stage하며, 기존 사용자 변경을 섞지 않는다. staged diff와 commit SHA를 확인하고, push 뒤 remote branch에 그 SHA가 반영되었는지 확인한다. force push는 하지 않는다. 시작할 때부터 push되지 않은 기존 commit이 있었다면 함께 게시될 commit을 보여주고 사용자에게 먼저 묻는다. 안전하게 분리할 수 없는 기존 변경, 커밋 실패, push 실패 또는 remote SHA 확인 실패가 있으면 멈추고 원격 트래커를 바꾸지 않는다. 로컬 모델링 문서가 바뀌지 않았으면 새 commit이나 push를 만들지 않는다.
+
+1. 저장소를 탐색해 코드베이스의 현재 상태를 이해한다(아직 안 했다면). 명세 전체에 프로젝트의 도메인 용어집 어휘를 쓰고, 손대는 영역의 ADR을 존중한다.
+
+2. 기능을 테스트할 경계를 스케치한다. 기존 경계를 새 경계보다 우선한다. 가능한 한 바깥 경계를 쓴다. 새 경계가 필요하면, 가능한 한 바깥에서 제안한다. 코드베이스에 걸친 경계가 적을수록 좋다 - 이상적인 수는 하나다.
+
+이 경계가 기대와 맞는지 사용자에게 확인한다.
+
+3. 아래 템플릿으로 명세를 쓴 뒤, 프로젝트 이슈 트래커에 게시한다. 호스트형 명세/계획 이슈에는 `유형:계획`과 `ready-for-agent` 트리아지 라벨을 함께 적용한다 - 추가 트리아지는 필요 없다. 로컬 Markdown 명세에는 호스트형 라벨을 쓰지 않는다.
 
 <spec-template>
 
-## Problem Definition
+## 문제 정의
 
-The problem faced by the user, from the user's perspective.
+사용자가 직면한 문제, 사용자 관점에서.
 
-## Solution
+## 해결 방안
 
-The solution to the problem, from the user's perspective.
+문제에 대한 해결, 사용자 관점에서.
 
-## User Stories
+## 사용자 스토리
 
-A long, numbered list of user stories. Each user story must follow this format:
+긴, 번호가 매겨진 사용자 스토리 목록. 각 사용자 스토리는 다음 형식이어야 한다:
 
-1. As a <actor>, I want <capability>, so that <benefit>
+1. <행위자>로서, <기능>을 원한다, 왜냐하면 <이득>
 
 <user-story-example>
-1. As a mobile banking customer, I want to see my account balance, so that I can make better spending decisions
+1. 모바일 뱅킹 고객으로서, 계좌 잔액을 보고 싶다, 지출에 대해 더 잘 판단할 수 있도록
 </user-story-example>
 
-This user story list must be comprehensive, covering all aspects of the feature.
+이 사용자 스토리 목록은 매우 광범위해야 하고 기능의 모든 측면을 덮어야 한다.
 
-## Implementation Decisions
+## 구현 결정사항
 
-List of implementation decisions made. May include:
+내려진 구현 결정 목록. 다음을 포함할 수 있다:
 
-- Modules to build/modify
-- Interfaces of modified modules
-- Developer technical clarifications
-- Architectural decisions
-- Schema changes
-- API contracts
-- Concrete interactions
+- 구축/수정할 모듈
+- 수정될 그 모듈의 인터페이스
+- 개발자의 기술적 명확화
+- 아키텍처 결정
+- 스키마 변경
+- API 계약
+- 구체적인 상호작용
 
-Do **not** include specific file paths or code snippets — they quickly become stale.
+구체적인 파일 경로나 코드 조각을 포함하지 **않는다**. 빠르게 시대에 뒤떨어질 수 있다.
 
-Exception: If prototypes created snippets encoding decisions more accurately than prose (state machines, reducers, schemas, type shapes), inline within that decision and briefly note provenance. Retain decision-rich fragments only — essential logic, not full working demos.
+예외: 프로토타입이 산문보다 더 정확하게 결정을 부호화한 조각(상태 기계, 리듀서, 스키마, 타입 형태)을 만들었다면, 해당 결정 안에 인라인하고 프로토타입에서 왔다고 간략히 적는다. 결정이 풍부한 부분만 남긴다 — 작동하는 데모가 아니라 중요한 부분만.
 
-## Testing Decisions
+## 테스트 결정사항
 
-List of testing decisions made. Including:
+내려진 테스트 결정 목록. 다음을 포함:
 
-- Criteria for good tests (testing observable behavior only, not implementation details)
-- Modules to test
-- Testing precedents (similar tests in codebase)
+- 좋은 테스트의 조건(구현 세부가 아니라 외부 동작만 테스트)
+- 테스트할 모듈
+- 테스트의 선례(즉, 코드베이스의 비슷한 유형의 테스트)
 
-## Out of Scope
+## 범위 밖
 
-Explicit description of what is out of scope for this spec.
+이 명세에서 범위 밖인 것에 대한 설명.
 
-## Additional Notes
+## 추가 참고사항
 
-Additional notes regarding the feature.
+기능에 대한 추가 메모.
 
 </spec-template>
 
 ---
 
-## Stage 3 — Tickets
+## Stage 3 — 티켓
 
-Break down the spec — or incoming plan/dialogue — into **tickets**: tracer-bullet vertical slices, each declaring tickets that **block** it.
+명세 — 또는 진입하면서 가져온 계획이나 대화 — 를 **티켓**으로 쪼갠다: tracer-bullet 세로 슬라이스, 각각 자신을 **차단하는** 티켓을 선언한다.
 
-Before drafting, explore codebase if not done already. Ticket titles and descriptions must use domain glossary vocabulary and respect ADRs in touched areas. Identify preparatory refactoring opportunities that simplify implementation: "make the change easy, then make the easy change."
+초안 작성 전에, 아직 안 했다면 코드베이스를 탐색한다. 티켓 제목과 설명은 프로젝트의 도메인 용어집 어휘를 써야 하고, 손대는 영역의 ADR을 존중해야 한다. 구현을 쉽게 만드는 코드 사전 리팩터링 기회를 찾는다. "변경을 쉽게 만든 다음, 쉬운 변경을 한다."
 
-### 1. Draft Vertical Slices
+### 1. 세로 슬라이스 초안
 
-Decompose work into **tracer bullet** tickets.
+작업을 **tracer bullet** 티켓으로 쪼갠다.
 
 <vertical-slice-rules>
 
-- Each slice cuts a narrow but complete path across all layers (schema, API, UI, tests) — vertical, not horizontal single-layer slices
-- Completed slices are independently demonstrable or verifiable
-- Slices are sized to fit within a single fresh context window
-- Preparatory refactoring, if present, comes first
+- 각 슬라이스는 모든 계층(스키마, API, UI, 테스트)을 가로지르는 좁지만 완전한 경로를 자른다 — 세로, 한 계층의 가로 슬라이스가 아니다
+- 완성된 슬라이스는 자체적으로 데모하거나 검증할 수 있다
+- 각 슬라이스는 하나의 새 맥락 창에 들어가도록 크기를 잡는다
+- 사전 리팩터링이 있으면 먼저 한다
 
 </vertical-slice-rules>
 
-Attach **blocking edges** to each ticket — other tickets that must complete before this one starts. Tickets without blockers can start immediately.
+각 티켓에 **차단 간선** — 시작하려면 먼저 완료되어야 할 다른 티켓 — 을 건다. 차단자가 없는 티켓은 즉시 시작할 수 있다.
 
-**Broad refactorings are exceptions to vertical slicing.** A **broad refactoring** is a single mechanical change — renaming columns, changing shared symbol types — whose **blast radius** spans the codebase, where a single edit breaks thousands of call sites and no vertical slice can land green. Do not force into tracer bullets; order via **expand–contract**. First expand: add new shapes alongside old without breaking existing callers. Then migrate call sites in batches scoped by blast radius (per package/directory), each batch as its own ticket blocked by expand, keeping CI green per batch because old shapes remain. Finally contract: delete old shapes once no callers remain, in a ticket blocked by all migration batches. If batches cannot remain independently green, retain ordering while sharing an integration branch — ending in a final integrate-and-verify ticket blocking on all batches, where green is promised only at the end.
+**넓은 리팩터링은 세로 슬라이스의 예외다.** **넓은 리팩터링**은 하나의 기계적 변경 — 컬럼 이름 바꾸기, 공유 심볼 타입 바꾸기 — 으로 그 **blast radius**가 코드베이스 전체에 퍼져, 단일 편집이 수천 호출 지점을 한꺼번에 부수고 어떤 세로 슬라이스도 green으로 들어갈 수 없는 것이다. tracer bullet에 강제하지 않는다; **expand–contract**로 순서를 잡는다. 먼저 expand: 아무것도 부수지 않게 옆에 새 형태를 추가한다. 그 뒤 blast radius 단위(패키지별, 디렉터리별)로 호출 지점을 배치로 옮긴다, 각 배치는 expand에 차단된 자체 티켓으로, 옛 형태가 여전히 존재하므로 배치마다 CI를 green으로 유지한다. 마지막으로 contract: 남은 호출자가 없으면 옛 형태를 지운다, 모든 migrate 배치에 차단된 티켓에서. 배치들이 단독으로 green을 유지할 수 없으면, 순서는 유지하되 같은 통합 브랜치를 공유하게 하고 — 그 브랜치가 모두 차단하는 최종 integrate-and-verify 티켓을 둔다 — green은 거기서만 약속된다.
 
-### 2. Confirm with User
+### 2. 사용자에게 확인
 
-Present proposed decomposition as a numbered list. For each ticket:
+제안된 분해를 번호 목록으로 제시한다. 각 티켓에:
 
-- **Title**: Short descriptive name
-- **Blockers**: Other tickets that must complete first (if any)
-- **Delivers**: End-to-end behavior made functional by this ticket
+- **제목**: 짧은 설명형 이름
+- **차단자**: (있으면) 먼저 완료되어야 할 다른 티켓
+- **전달하는 것**: 이 티켓이 작동하게 만드는 엔드투엔드 동작
 
-Ask user:
+사용자에게 묻는다:
 
-- Is granularity appropriate? (Too large / too fine)
-- Are blocking edges accurate — does each ticket depend only on what truly blocks it?
-- Should any tickets be merged or further split?
+- 세분성이 맞는가? (너무 크다 / 너무 잘다)
+- 차단 간선이 맞는가 — 각 티켓이 정말로 자신을 가로막는 티켓에만 의존하는가?
+- 병합하거나 더 쪼갤 티켓이 있는가?
 
-Iterate until user approves decomposition.
+사용자가 분해를 승인할 때까지 반복한다.
 
-### 3. Publish Tickets to Configured Tracker
+### 3. 설정된 트래커에 티켓 게시
 
-Publish approved tickets in dependency order (blockers first) so ticket blocking edges reference actual identifiers. **How** this happens depends on the resolved tracker configuration, defaulting to local Markdown when unconfigured. Tickets are identical either way; only parent links and blocking edge representations change. Apply the `ready-for-agent` triage role unless directed otherwise (resolve strings from `docs/agents/triage-labels.md` or the bundled default mapping). For local work, record it in Markdown without creating remote labels.
-For cleared local Markdown maps, retain the map's existing `<effort>` directory as output root for implementation tickets. Do not create a second feature directory or rewrite the map's `spec.md` in Stage 3.
+승인된 티켓을 의존성 순서(차단자 먼저)로 게시해 각 티켓의 차단 간선이 실제 식별자를 참조할 수 있게 한다. **어떻게**는 해석된 트래커 설정에 달리며, 미설정 기본값은 로컬 Markdown이다. 티켓은 어느 쪽이든 같고, 달라지는 것은 부모 링크와 차단 간선의 형태뿐이다. 달리 지시받지 않는 한 `ready-for-agent` 트리아지 역할을 적용한다(실제 문자열은 `docs/agents/triage-labels.md` 또는 내장 기본 매핑 참조). 로컬에서는 Markdown에 기록하고 원격 라벨을 만들지 않는다.
+정리된 로컬 마크다운 지도의 경우, 지도의 기존 `<effort>` 디렉터리를 구현 티켓의 출력 루트로 유지한다. Stage 3에서 두 번째 기능 디렉터리를 만들지 않고 지도의 `spec.md`를 다시 쓰지 않는다.
 
-**Hosted tracker + one ticket.** If the approved decomposition is exactly one ticket and the tracker is GitHub, GitLab, or another remote, do not split spec and plan. Do not create a child (sub-issue / task / linked issue). Fold **What to Implement** and **Acceptance Criteria** into the spec issue body — that issue is both spec and the sole ticket. If Stage 2 already posted the spec, update that body; do not post a second issue, and keep its existing `유형:계획` and `ready-for-agent` labels. Local Markdown does not use this fold: keep `spec.md` and `issues/01-*.md` separate.
+**호스트형 트래커 + 티켓 하나.** 승인된 분해가 정확히 한 장이고 트래커가 GitHub·GitLab·그 외 원격이면, 명세와 구현 계획을 나누지 않는다. 자식(sub-issue / task / 링크된 이슈)을 만들지 않는다. 명세 이슈 본문에 **구현할 내용**과 **완료 조건**을 합친다 — 그 이슈가 명세이자 유일한 티켓이다. Stage 2가 이미 명세를 게시했으면 그 본문을 갱신하고 두 번째 이슈를 만들지 않으며, 기존 `유형:계획`과 `ready-for-agent` 라벨을 유지한다. 로컬 마크다운은 이 통합을 쓰지 않는다: `spec.md`와 `issues/01-*.md`를 계속 따로 둔다.
 
-- **Local Files** → If input was a cleared map `.agents/plans/<effort>/map.md`, write one implementation issue per ticket under `.agents/plans/<effort>/issues/<NN>-<slug>.md`; if input was a spec at `.agents/plans/<effort>/spec.md`, write under the same effort's `issues/`; otherwise, for other local spec paths, write `.agents/plans/<feature-slug>/issues/<NN>-<slug>.md`. Number tickets from `01` in dependency order (blockers first). List depending numbers/titles under "Prerequisites" in each file. Use per-ticket file template below — one file per ticket, never combined.
-- **GitHub** → When two or more tickets: make each ticket a **sub-issue** of the spec issue so parents render progress and children are navigable in UI. Create issue first (`gh issue create`), then link via `gh api --method POST repos/<owner>/<repo>/issues/<parent>/sub_issues -F sub_issue_id=<child-db-id>`, where `<child-db-id>` is child's numeric **database id** (`gh api repos/<owner>/<repo>/issues/<n> --jq .id`, not `#number` or `node_id`). Where sub-issues are unavailable, fall back to task lists in parent body and `Parent Issue: #<parent>` at top of child body. Use GitHub **native issue dependencies** for blocking edges: `gh api --method POST repos/<owner>/<repo>/issues/<child>/dependencies/blocked_by -F issue_id=<blocker-db-id>`.
-- **GitLab** → When two or more tickets: make each ticket a **task** (GitLab child work item type) of the spec issue so parents track real work item checklists rather than plain text. **Never use quick actions to build structure** — `/parent` does not exist, `/set_parent` and `/blocked_by` fail to apply on some instances, and unrecognized quick actions post **as literal comments** instead of failing. Use these API paths only:
-  - **Create**: `glab api --method POST "projects/:id/issues" -F "title=<title>" -F "issue_type=task" -F "description=<body>"`.
-  - **Parent link**: resolve child and parent work item global IDs via GraphQL (`workItems { nodes { id iid } }`), then call `workItemUpdate(input: { id: <child-gid>, hierarchyWidget: { parentId: <parent-gid> } })`.
-  - **Blocking edges**: attempt once with `glab api --method POST "projects/:id/issues/<child>/links" -F target_project_id=<id> -F target_issue_iid=<blocker> -F link_type=is_blocked_by`. `HTTP 400 link_type does not have a valid value` means the tier lacks native blocking (Free/CE) — then record blockers only in the ticket's own "Prerequisites" section, never appending a separate `Prerequisites:` line at the top of the description (it duplicates the section).
-  - **Verify**: after publishing, re-query hierarchy and links, and treat any remaining comment starting with `/` as a failed structure attempt on that ticket.
-- **Other Trackers (Linear, Jira, ...)** → When two or more tickets: publish one issue per ticket using native parent/sub-issue relations and native blocking relations where available; otherwise set "Prerequisites" on each ticket to blocking issues.
+- **로컬 파일** → 입력이 정리된 지도 `.agents/plans/<effort>/map.md`이면, 같은 `.agents/plans/<effort>/issues/<NN>-<slug>.md` 아래에 티켓당 하나의 구현 이슈를 쓴다; 입력이 `.agents/plans/<effort>/spec.md`의 명세면, 같은 effort의 `issues/` 아래에 쓴다; 그렇지 않고, 다른 로컬 명세 경로를 포함해, `.agents/plans/<feature-slug>/issues/<NN>-<slug>.md`를 쓴다. 티켓을 의존성 순서(차단자 먼저)로 `01`부터 번호를 매긴다. 각 파일의 "선행 작업"은 의존하는 번호/제목을 나열한다. 아래의 티켓당 파일 템플릿을 쓴다 — 티켓당 한 파일, 절대 하나로 합친 파일이 아니다.
+- **GitHub** → 티켓이 둘 이상이면 각 티켓을 명세 이슈의 **sub-issue**로 만들어, 부모가 진행을 렌더하고 자식이 UI에서 탐색 가능하게 한다. 먼저 이슈를 만들고(`gh issue create`), 그 뒤 `gh api --method POST repos/<owner>/<repo>/issues/<parent>/sub_issues -F sub_issue_id=<child-db-id>`로 연결한다, 여기서 `<child-db-id>`는 자식의 숫자 **database id**다(`gh api repos/<owner>/<repo>/issues/<n> --jq .id`, `#number`나 `node_id`가 아니다). sub-issues가 활성화되지 않은 곳에서는, 부모 본문의 작업 목록과 각 자식의 맨 위 `상위 이슈: #<parent>`로 폴백한다. 차단 간선은 GitHub의 **네이티브 이슈 의존성**를 쓴다: `gh api --method POST repos/<owner>/<repo>/issues/<child>/dependencies/blocked_by -F issue_id=<blocker-db-id>`.
+- **GitLab** → 티켓이 둘 이상이면 각 티켓을 명세 이슈의 **task**(GitLab의 자식 work item 타입)로 만들어, 부모가 일반 텍스트가 아니라 실제 work item의 체크리스트로 추적하게 한다. 구조를 만들 때 **퀵 액션을 쓰지 않는다** — `/parent`는 존재하지 않고, `/set_parent`와 `/blocked_by`는 인스턴스에 따라 적용되지 않으며, 인식되지 않은 퀵 액션은 실패하는 대신 **본문 그대로 댓글로 올라간다**. 아래 API 경로만 쓴다:
+  - **생성**: `glab api --method POST "projects/:id/issues" -F "title=<제목>" -F "issue_type=task" -F "description=<본문>"`.
+  - **부모 연결**: GraphQL로 자식과 부모의 work item global ID를 얻고(`workItems { nodes { id iid } }`), `workItemUpdate(input: { id: <child-gid>, hierarchyWidget: { parentId: <parent-gid> } })`를 호출한다.
+  - **차단 간선**: `glab api --method POST "projects/:id/issues/<child>/links" -F target_project_id=<id> -F target_issue_iid=<blocker> -F link_type=is_blocked_by`를 한 번 시도한다. `HTTP 400 link_type does not have a valid value`면 네이티브 차단이 없는 티어(Free/CE)이므로, 차단 관계는 티켓 본문의 "선행 작업" 섹션에만 남긴다 — 설명 맨 위에 `선행 작업:` 같은 줄을 따로 덧붙이지 않는다(섹션과 중복된다).
+  - **검증**: 게시 후 계층과 링크를 다시 질의해 확인하고, `/`로 시작하는 댓글이 남았으면 그 티켓은 구조 설정이 실패한 것이다.
+- **다른 트래커(Linear, Jira, …)** → 티켓이 둘 이상이면 티켓당 하나의 이슈를 게시하고, 플랫폼의 네이티브 parent/sub-issue 관계를 쓰고, 네이티브 차단 관계가 있으면 그것을 쓴다; 없으면 각 티켓의 "선행 작업"을 차단 이슈로 설정한다.
 
-Work the **frontier**: tickets whose blockers are all completed. Top-to-bottom for purely linear chains.
+**프론티어**를 작업한다: 차단자가 모두 끝난 티켓. 순수 선형 사슬이면 위에서 아래로.
 
-Do **not** close parent issues. Do not modify parent issues — except the single-ticket fold above.
+부모 이슈를 닫지 **않는다**. 부모 이슈를 수정하지 않는다 — 위 단일 티켓 통합만 예외다.
 
 <local-ticket-template>
 
-# <NN> — <Ticket Title>
+# <NN> — <티켓 제목>
 
-**What to Implement:** End-to-end behavior made functional by this ticket, from user perspective — not a layer-by-layer task list.
+**구현할 내용:** 이 티켓이 작동하게 만드는 엔드투엔드 동작, 사용자 관점에서 — 계층별 구현 목록이 아니다.
 
-**Prerequisites:** Numbers/titles of tickets blocking this ticket, or "None — ready to start immediately".
+**선행 작업:** 이 티켓을 가로막는 티켓의 번호/제목, 또는 "없음 — 즉시 시작 가능".
 
-**Status:** ready-for-agent
+**상태:** ready-for-agent
 
-- [ ] Acceptance condition 1
-- [ ] Acceptance condition 2
+- [ ] 완료 조건 1
+- [ ] 완료 조건 2
 
 </local-ticket-template>
 
 <issue-template>
 
-## Parent Issue
+## 상위 이슈
 
-Reference to parent issue in tracker. Omit this section if natively linked — GitHub sub-issues and GitLab tasks link parents in tracker UI, making body references redundant. Retain only as fallback when native relations are unavailable.
+트래커의 부모 이슈에 대한 참조. 티켓이 이미 네이티브로 연결된 경우 이 섹션을 생략한다 — GitHub sub-issue나 GitLab task는 트래커 자체에 부모 링크를 담고 있으므로, 본문에 다시 적는 것은 중복이다. 네이티브 관계를 사용할 수 없었을 때의 폴백으로만 유지한다.
 
-## What to Implement
+## 구현할 내용
 
-End-to-end behavior made functional by this ticket, from user perspective — not layer-by-layer tasks.
+이 티켓이 작동하게 만드는 엔드투엔드 동작, 사용자 관점에서 — 계층별 구현이 아니다.
 
-## Acceptance Criteria
+## 완료 조건
 
-- [ ] Condition 1
-- [ ] Condition 2
+- [ ] 조건 1
+- [ ] 조건 2
 
-## Prerequisites
+## 선행 작업
 
-- Reference to each blocking ticket, or "None — ready to start immediately".
+- 각 차단 티켓에 대한 참조, 또는 "없음 — 즉시 시작 가능".
 
 </issue-template>
 
-Avoid specific file paths or code snippets in either format — they quickly become stale. Exception: inline decision-rich fragments (state machines, reducers, schemas, types) from prototypes, noting provenance.
+어느 형태든, 구체적인 파일 경로나 코드 조각을 피한다 — 빠르게 시대에 뒤떨어진다. 예외: 프로토타입이 산문보다 더 정확하게 결정을 부호화한 조각(상태 기계, 리듀서, 스키마, 타입 형태)을 만들었다면, 인라인하고 프로토타입에서 왔다고 간략히 적는다. 결정이 풍부한 부분만 남긴다 — 작동하는 데모가 아니라 중요한 부분만.

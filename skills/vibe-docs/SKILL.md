@@ -1,132 +1,191 @@
 ---
 name: vibe-docs
-description: Writes and reviews clear Korean repository text for Agent Skill work. Use for Korean skill files, related documents, commit messages, issues, pull requests, reviews, and comments. Do not use for source code, code comments, logs, or quoted text.
+description: Agent Skill 작업에서 명확한 한국어 문서와 저장소 글을 작성하고 검토한다. 스킬 파일, 관련 문서, 커밋 메시지, 이슈, PR, 리뷰, 댓글을 한국어로 만들거나 다듬을 때 사용한다. 소스 코드, 코드 주석, 로그, 인용문에는 사용하지 않는다.
 ---
 
 # Vibe Docs
 
-Keep the meaning of Korean text clear in Agent Skill work.
+Agent Skill 작업에서 한국어로 작성되는 결과물의 의미를 분명하게 유지한다.
 
-## Scope
+## 적용 범위
 
-- Skill files and related documents
-- Commit messages
-- Issue titles, bodies, and comments
-- Pull request titles, bodies, reviews, and comments
+- 스킬 파일과 관련 문서
+- 커밋 메시지
+- 이슈 제목, 본문, 댓글
+- PR 제목, 본문, 리뷰, 댓글
 
-Preserve repository templates and structural rules, such as title formats and commit prefixes. Apply the complete Korean rules below to the Korean wording. Within this scope, this section overrides the commit-message exclusion in item 2 under `Operating scope`.
+저장소의 템플릿, 제목 형식, 커밋 접두사와 같은 구조 규칙은 그대로 지킨다. 다만 한국어 문장은 아래 전체 지침을 따른다. 이 범위에서는 아래 `동작 범위` 2번의 커밋 메시지 제외 규칙보다 이 절이 우선한다.
 
-This skill only governs writing and review. It does not grant authority to create commits, publish issues or pull requests, or send comments. The calling skill and the user's request control those side effects.
+이 스킬은 글의 작성과 검토만 맡는다. 커밋 생성, 이슈나 PR 게시, 댓글 전송과 같은 변경 권한을 새로 주지 않는다. 실제 변경 여부는 호출한 스킬과 사용자의 요청이 정한다.
 
-## Required application order
+## 필수 적용 순서
 
-1. Read every rule in this file **before** drafting any Korean output.
-2. Apply every rule from the first draft, including titles, bodies, lists, and comments.
-3. After completing the final draft, review it against every rule again immediately before any save, commit, publish, or send action.
-4. Pass only the reviewed final text to the real command.
+1. 한국어 결과물의 초안을 쓰기 **전에** 이 파일의 전체 지침을 읽는다.
+2. 제목, 본문, 목록, 댓글을 포함한 첫 초안부터 전체 지침을 적용한다.
+3. 최종 초안을 만든 뒤, 실제 저장·커밋·게시·전송 직전에 전체 지침으로 다시 검토한다.
+4. 검토를 통과한 최종본만 실제 명령에 넣는다.
 
-If this skill is read after drafting has started, do not treat the existing text as compliant; review it again from the start against every rule. Reading it before drafting does not allow the final review to be skipped. When producing multiple issues or comments in one run, review every title and body separately. Do not replace the complete rules with a summary.
+초안을 쓴 뒤에 이 스킬을 읽었다면 이미 쓴 글을 적용된 것으로 보지 않고, 전체 지침으로 처음부터 다시 검토한다. 초안을 쓰기 전에 이 스킬을 읽었더라도 게시 직전 검토를 생략할 수 없다. 여러 이슈나 댓글을 한 번에 만들 때에는 모든 제목과 본문을 각각 검토한다. 전체 지침을 요약문으로 바꾸지 않는다.
 
-The text fails the review if any of these conditions apply:
+다음 글은 검토를 통과하지 못한 것이다.
 
-- Unneeded English wording hides the meaning of normal Korean prose.
-- A particle, predicate, or sentence ending is missing and breaks the meaning.
-- A title or list awkwardly joins Korean and English nouns.
-- Only some items in a multi-item output were reviewed.
+- 일반 한국어 문장에 뜻을 숨기는 불필요한 영어 표현이 남아 있다.
+- 조사, 서술어, 문장 끝이 빠져 뜻이 끊긴다.
+- 제목이나 목록이 한국어와 영어 명사를 어색하게 이어 붙인 형태다.
+- 여러 결과물 중 일부만 검토했다.
+- 아래 `단순 기술 문체 규칙`의 검토 항목에 해당하는 결함이 남아 있다.
 
-Preserve code identifiers, commands, API names, file paths, quotations, and technical terms that must stay in their original form. Do not extend this exception to normal English wording.
+코드 식별자, 명령, API 이름, 파일 경로, 인용문, 반드시 원문을 유지해야 하는 기술 용어는 바꾸지 않는다. 이 예외를 일반 영어 표현을 그대로 두는 이유로 넓혀 쓰지 않는다.
 
-## Protect established domain terms
+## 확정된 도메인 용어 보호
 
-Before drafting, check domain terms established by the user and by repository sources such as `CONTEXT.md`, relevant ADRs, and issue tracker documents. Treat these terms as project contracts, not wording choices.
+초안을 쓰기 전에 사용자의 정의와 저장소의 `CONTEXT.md`, 관련 ADR, 이슈 트래커 문서에서 확정된 도메인 용어를 확인한다. 이 용어는 글의 표현이 아니라 프로젝트의 계약으로 다룬다.
 
-- Keep the exact form, whether it is Korean, English, or mixed.
-- Do not translate, transliterate, explain away, generalize, neutralize, or replace it with a synonym for smoother prose.
-- Change it only when a source defines a new name or the user requests the change.
-- If sources conflict, report the conflict instead of silently choosing a replacement.
+- 한국어, 영어, 혼합 표기와 상관없이 원래 표기를 그대로 쓴다.
+- 자연스럽게 보이게 하려고 번역, 음역, 풀어쓰기, 일반화, 중립화 또는 동의어 교체를 하지 않는다.
+- 원문이 새 이름을 정했거나 사용자가 변경을 요청했을 때만 바꾼다.
+- 여러 문서의 표기가 충돌하면 한쪽을 임의로 고치지 말고 충돌을 알린다.
 
-This section overrides general vocabulary rules below. An established domain term does not fail the "unneeded English wording" check above.
+이 절은 아래 전체 지침의 일반적인 어휘 선택 규칙보다 우선한다. 확정된 도메인 용어는 위의 "불필요한 영어 표현" 검사 대상이 아니다.
 
-## Repository prose content norms
+## 저장소 글의 내용 규범
 
-Beyond sentence quality, keep the content structure and stance of issues, pull requests, reviews, comments, and commit messages human-shaped.
+문장 품질과 별개로, 이슈, PR, 리뷰, 댓글, 커밋 메시지의 내용 구조와 태도도 사람이 쓴 글답게 유지한다.
 
-### Check the existing voice first
+### 기존 문체 확인
 
-Before writing or editing, sample two or three recent artifacts from the same repository: past commit messages, the maintainer's recent replies, existing issues and pull requests. Match their register, length, and formatting habits. The repository's existing voice outranks the general standards in this document.
+새 글을 쓰거나 고치기 전에 같은 저장소의 최근 산출물을 두세 개 살핀다. 지난 커밋 메시지, 관리자의 최근 답변, 기존 이슈와 PR이 기준이다. 그 어조, 길이, 서식 습관에 맞추며, 저장소의 기존 문체가 이 문서의 일반 기준보다 우선한다.
 
-### Content and stance
+### 내용과 태도
 
-1. Write the answer first. Put the verdict or conclusion in the first sentence of a reply or review comment, then add only as much reasoning as needed. Do not open by restating the question or report.
-2. A claim about code points at the code. Cite checkable evidence such as `file:line`, a commit SHA, verbatim error text, or a documentation link.
-3. Commit to a judgment where one is required. Do not write a review without a verdict or a reply that calls both sides right. Hedge only genuinely fragile claims, and when you do not know, say so briefly.
-4. State disagreement and refusal plainly, with a reason. Do not wrap them in apology or sandwich them between praise. For a wontfix or out-of-scope request, state the fact, one reason, and a link to where the decision is recorded.
-5. In review comments, distinguish severity the way the repository already does, so that a merge-blocking problem and a minor nit do not read with the same weight.
-6. Keep length proportional to the stakes. Do not stretch a one-sentence answer into a bullet list, and do not trim away a required caveat or the next step.
-7. Take versions, numbers, timestamps, and quotations from the actual change, incident, or data. Never invent what cannot be verified; ask the user or leave an explicit TODO. A wrong fact stated confidently is itself the top defect.
+1. 답을 먼저 쓴다. 답변과 리뷰 댓글의 첫 문장에 결론이나 판정을 놓고, 필요한 만큼만 근거를 덧붙인다. 상대의 질문이나 보고 내용을 다시 나열하며 시작하지 않는다.
+2. 코드에 관한 주장은 그 코드를 가리킨다. `파일:줄`, 커밋 SHA, 오류 메시지 원문, 문서 링크처럼 확인 가능한 근거를 함께 적는다.
+3. 판단이 필요한 자리에서는 판단을 내린다. 결론 없는 리뷰나 양쪽을 모두 옳다고 하는 답변은 쓰지 않는다. 정말 불확실한 주장에만 단서를 달고, 모를 때는 모른다고 짧게 적는다.
+4. 반대와 거절은 이유와 함께 분명하게 적는다. 사과로 포장하거나 칭찬 사이에 끼워 넣지 않는다. 수정하지 않기로 했거나 범위 밖인 요청에는 그 사실, 이유 한 가지, 결정이 기록된 곳의 링크를 적는다.
+5. 리뷰 댓글에서는 저장소의 기존 방식대로 심각도를 구분한다. 병합을 막아야 하는 문제와 사소한 지적이 같은 무게로 보이지 않게 한다.
+6. 길이는 사안의 무게에 비례하게 한다. 한 문장이면 될 답을 글머리 기호 목록으로 늘리지 않고, 필요한 주의 사항이나 다음 단계를 잘라내지도 않는다.
+7. 버전, 수치, 시각, 인용은 실제 변경이나 사건, 자료에서 가져온다. 확인할 수 없는 내용을 지어내지 않고, 사용자에게 묻거나 명시적인 TODO로 남긴다. 확신에 차서 적은 잘못된 사실은 그 자체로 가장 큰 결함이다.
 
-### Expressions to remove
+### 지우는 표현
 
-- Habitual praise or thanks as an opener. Thank people only when there is a clear reason, such as a first contribution or unusual effort.
-- Closing pleasantries attached after the content ends, such as `도움이 되었기를 바랍니다` ("hope this helps") or `궁금한 점이 있으면 말씀해 주세요` ("let me know if you have any questions").
-- Summary sections that restate what was already said and vague outlooks such as `앞으로도 계속 개선하겠습니다` ("we will continue to improve"). End when the content ends.
-- Repetition that phrases every item in the same sentence frame, and formatting polished only on the surface. Vary the phrasing or tabulate instead.
+- 습관적인 칭찬과 감사로 여는 서두. 첫 기여나 각별한 노력처럼 감사할 이유가 분명할 때만 예외로 한다.
+- `도움이 되었기를 바랍니다`, `궁금한 점이 있으면 말씀해 주세요`처럼 내용이 끝난 뒤에 붙는 마무리 인사.
+- 이미 한 말을 되풀이하는 요약 절과 `앞으로도 계속 개선하겠습니다` 같은 막연한 전망. 내용이 끝나면 글도 끝낸다.
+- 모든 항목을 같은 문형으로 맞춘 반복과 겉모양만 다듬은 형식. 표현을 바꾸거나 표로 정리한다.
 
-### Review stance
+### 검토 태도
 
-Fix only the items where a defect is actually confirmed; do not sand down sound sentences. Repository-conventional templates, formal register in a formal venue, terse unadorned replies, and the author's own verified habits are not defects.
+실제로 결함이 확인된 항목만 고치고, 멀쩡한 문장까지 매만지지 않는다. 저장소가 관례로 쓰는 템플릿, 격식 있는 자리의 격식체, 짧고 꾸밈없는 답변, 글쓴이 본인의 검증된 습관은 결함이 아니다.
 
-### Per-model prose habits
+### 모델별 문체 습관
 
-When the model that wrote the text under review or the model now writing is known, check that model's known habits in the table below first. Never infer a model from the prose alone. Treat a row as the default only when the release matches exactly; for another or unknown release in the same family, use the row only as a reference prior. When the model is unknown, do not apply this table. The rows come from each vendor's prompting documentation, not from measurement.
+검토할 글을 쓴 모델이나 지금 글을 쓰고 있는 모델을 알면, 아래 표에서 해당 모델의 알려진 습관을 우선 점검한다. 문장만 읽고 모델을 추측하지 않는다. 표의 릴리스와 정확히 일치할 때만 그 내용을 기본값으로 삼고, 같은 패밀리의 다른 릴리스나 모르는 릴리스에서는 참고 기준으로만 쓴다. 모델을 알 수 없으면 이 표를 적용하지 않는다. 표의 내용은 측정된 결과가 아니라 각 벤더의 프롬프트 안내 문서에 적힌 설명에서 가져온 것이다.
 
-| Model release | Vendor-stated default | What to check |
+| 모델 릴리스 | 알려진 기본 습관 | 점검 방향 |
 | --- | --- | --- |
-| Claude Fable 5.1 / Mythos 5.1 | Mannered prose: metaphor and flourish where a literal phrase exists; longer sentences, fewer paragraph breaks | Replace metaphors that stand in for available literal phrases; split run-ons. Sparse formatting is not evidence of a human author. |
-| Claude Fable 5 / Mythos 5 | Elaborates past the task; arrow-chain shorthand such as `A → B → fails` | Trim option surveys and over-long root-cause explanations; expand shorthand into sentences. |
-| Claude Opus 5 | Longer responses and documents than prior models; filler sections and redundant summaries; announces intent before acting | Run the density check harder; cut announcements of intent and corrections that change nothing for the reader. |
-| Claude Opus 4.8 | Direct, opinionated style by default | Missing validation openers and emoji are not evidence of a human. Check density and specificity instead. |
-| GPT-5.6 | More concise by default; may drop required caveats | Run the density check in both directions; restore trimmed caveats and next steps. |
-| GPT-6 Astra | Heavy use of lists, tables, and Markdown; recurring canned phrases | Run the formatting check harder. Hunt `delve`, `foster`, `leverage`, `it's worth noting`, `importantly`, `genuinely`, `Bottom Line:`, `In short:`, the `Question? Answer.` frame, `X, not Y` contrasts, hyphenated compound descriptors, and unprompted statements about what will not be done. A refusal that answers the request stays. |
-| Gemini 3 / 3.1 | Less verbose by default; direct, efficient answers | Terse and unadorned prose is not evidence of a human. Look for required caveats dropped for efficiency. |
-| DeepSeek, Kimi | No vendor prose guidance published | Apply only the shared standards. |
+| Claude Fable 5.1 / Mythos 5.1 | 직접 서술이 가능한 자리에 은유와 수식을 쓰는 꾸민 문체. 문장이 길고 문단 나눔이 적음 | 일반 어휘가 있는 자리의 은유를 바꾸고 긴 문장을 나눈다. 서식이 적은 것은 사람이 썼다는 근거가 아니다. |
+| Claude Fable 5 / Mythos 5 | 요청받은 일을 넘어서는 장황한 설명. `A → B → 실패` 같은 화살표 연결 축약 | 선택지 나열과 긴 원인 설명을 줄이고, 축약 표현을 문장으로 푼다. |
+| Claude Opus 5 | 답변과 문서가 이전 모델보다 김. 채우기 절과 중복 요약. 하기 전에 할 일을 미리 알리는 서술 | 분량 검사를 강하게 적용하고, 의도 알림과 내용 변화가 없는 정정 서술을 지운다. |
+| Claude Opus 4.8 | 직접적이고 주장이 분명한 문체가 기본값 | 공감 서두와 이모지가 없는 것은 사람이 썼다는 근거가 아니다. 분량과 구체성을 점검한다. |
+| GPT-5.6 | 기본이 간결해져서 필수 주의 사항까지 잘라내는 경우가 있음 | 분량 검사를 양방향으로 적용하고, 잘려 나간 주의 사항과 다음 단계를 복구한다. |
+| GPT-6 Astra | 목록, 표, 마크다운 서식의 남용. 상투구 반복 | 서식 검사를 강하게 적용한다. `delve`, `foster`, `leverage`, `it's worth noting`, `importantly`, `genuinely`, `Bottom Line:`, `In short:`, `Question? Answer.` 형식, `X, not Y` 형 대조, 하이픈으로 이은 복합 표현, 묻지 않은 "하지 않을 것" 서술을 찾는다. 요청에 대한 답으로서의 거절은 그대로 둔다. |
+| Gemini 3 / 3.1 | 간결하고 직접적인 답변이 기본값 | 짧고 꾸밈없는 것은 사람이 썼다는 근거가 아니다. 효율을 이유로 빠진 필수 주의 사항을 찾는다. |
+| DeepSeek, Kimi | 공개된 문체 안내 없음 | 공통 기준만 적용한다. |
 
-## Complete Korean writing rules
+## 단순 기술 문체 규칙
 
-Whenever a situation requires Korean, follow the instructions in this document. Doing so improves the efficiency of communication. These instructions explain in detail how to produce Korean sentences with clear meaning, relatively good readability, and a stable structure. Do not apply them to quotations, code, or code comments.
+이 절은 [0xpili/simplified-technical-english](https://github.com/0xpili/simplified-technical-english)가 정리한 ASD-STE100 Simplified Technical English(STE) 규칙 가운데 한국어 문장에 옮길 수 있는 규칙을 가져온 것이다. 스킬 파일, 문서의 절차와 설명, 이슈와 PR 본문처럼 기술 내용을 전달하는 글에 적용한다.
 
-## Context and goal
+- 영어 승인 단어 목록, `-ing` 형태 제한, 미국식 철자처럼 영어 문법에만 해당하는 규칙은 가져오지 않는다.
+- 저장소의 기존 문체와 사용자가 요청한 문체가 이 절보다 우선한다.
+- 문장을 짧게 만들려고 아래 `전체 한국어 작성 지침`이 요구하는 조사, 어미, 문장 성분을 빼지 않는다. 길이가 상한을 넘으면 성분을 줄이지 말고 문장을 나눈다.
 
-- LLMs show several traits when using Korean. Some of these traits lower the quality of the result or make the user spend more effort on communication. Following this document improves those problems.
+### 글의 종류 구분
 
-- In general, do not summarize these instructions. A summary removes the examples attached to each item, making the intended behavior harder to understand. It can also create pressure to follow only the few rules that remain in the summary. If a summary removes the purpose and intent but keeps only restrictions, the model may check the rules mechanically instead of meeting their goal.
+쓰기 전에 각 부분이 절차 글인지 설명 글인지 구분한다. 한 문단에 두 종류를 섞지 않는다.
 
-## Operating scope
+- 절차 글: 읽는 이가 할 일을 지시한다. [`` `pnpm test`를 실행한다.``]
+- 설명 글: 정보를 전달한다. [`이 스크립트는 빌드 결과를 dist 폴더에 저장한다.`]
 
-1. These instructions require clear Korean when Korean is used. They do not require foreign-language sentences or terms to be translated into or replaced with Korean.
+### 문장과 문단
 
-2. Text that belongs to code, such as variable names, comments, commit messages, and log strings, must follow the project's existing conventions. Do not apply these instructions to that text. This item repeats the boundary to make it explicit.
+1. 절차 문장은 20어절, 설명 문장은 25어절을 넘지 않는다. 숫자와 단위, 약어, 식별자, 따옴표로 묶은 문구는 각각 한 어절로 센다.
+2. 절차 문장 하나에는 지시를 하나만 쓴다. 두 동작이 동시에 일어나야 할 때만 한 문장에 함께 쓴다.
+3. 문단 하나는 주제 하나만 다루며, 여섯 문장을 넘지 않는다. 설명 문단은 주제 문장으로 시작한다.
+4. 조건이 지시보다 앞에 오면 조건 뒤에 쉼표를 둔다. [`설정 파일이 없으면, 로컬 Markdown 형식으로 진행한다.`]
+5. 세미콜론을 쓰지 않고 두 문장으로 나눈다.
+6. 복잡한 조건이나 여러 단계는 세로 목록으로 쓴다. 금지 지시를 목록으로 나열할 때는 항목마다 부정 표현을 다시 쓴다. [`- 강제 푸시하지 않는다.` / `- 기본 브랜치에 직접 커밋하지 않는다.`]
+7. 참고 항목에는 정보만 쓰고 지시나 요구 사항을 넣지 않는다. 피해를 막는 정보라면 아래 `안전 지시` 형식으로 쓴다.
 
-3. For proper nouns and technical terms, prefer an established translation or transliteration when one exists. Otherwise, keep the source-language term so Korean readers can understand it more easily and correctly.
+### 동사와 주어
 
-4. Do not imitate the tone or vocabulary of the user's message. Apply these instructions consistently regardless of how the user writes.
+1. 절차 문장은 지시형으로 쓰고, 같은 문서에서는 같은 종결어미를 유지한다.
+2. 능동문을 쓰고 행위자를 주어로 둔다. 행위자가 분명하지 않으면 읽는 이나 에이전트를 주어로 둔다. `~되어진다` 같은 이중 피동은 쓰지 않는다. 상태를 나타내는 `~되어 있다`는 쓸 수 있다. [`캐시가 삭제된다.` → `에이전트가 캐시를 삭제한다.`]
+3. 지시와 요구 사항의 강도는 `~해야 한다`, `~할 수 있다`, `~하지 않는다`로 나타낸다. `~하는 것이 좋을 수도 있다`, `~해도 될 것 같다`처럼 강도가 흐린 표현은 쓰지 않는다. 사실의 불확실성을 밝히는 단서는 위 `내용과 태도` 3번을 따른다.
+4. 동작은 동사로 쓴다. 명사에 `~을 수행한다`, `~을 진행한다`를 붙여 동작을 감추지 않는다. [`검증을 수행한다` → `검증한다`]
 
-## Sentence level
+### 어휘
 
-1. Do not omit meaningful sentence parts. The reader must be able to understand the sentence fully. [`그러면 경고가 붙습니다.` → Revise it with enough context and information, such as `그러면 이미 작업 중인 파일에도 경고 표지가 추가됩니다.`] In particular, using the possessive particle `~의` more than necessary can make it easy to omit meaningful sentence parts. [`사본의 문구는 작업의 상황을` → `사본에 기재된 문구는 작업이 진행되는 상황을`]
+1. 한 대상에는 한 이름만 쓴다. 같은 문서 안에서 `설정 파일`, `구성 파일`, `config`를 번갈아 쓰지 않는다. 확정된 도메인 용어는 위 `확정된 도메인 용어 보호` 절을 따른다.
+2. 명사를 조사 없이 네 개 이상 잇지 않는다. 조사와 어미로 명사 사이의 관계를 밝힌다. [`토큰 카운트 함수 오류 처리 정책` → `토큰 카운트 함수에서 발생한 오류를 처리하는 정책`]
+3. 막연한 표현 대신 구체적인 수량, 이름, 동작을 쓴다. [`몇몇 파일을 적절히 수정한다` → `` `SKILL.md`와 `README.md`를 수정한다``]
+4. 대명사나 `이것`, `해당`이 둘 이상의 대상을 가리킬 수 있으면 그 명사를 다시 쓴다.
 
-2. This item is not mandatory for headings and lists. Do not end a sentence with a noun phrase, adverbial phrase, or connective ending. Finish it as a complete sentence with a predicate and a sentence-final ending.
+### 안전 지시
 
-## Phrase level
+되돌리기 어려운 작업을 다룰 때는 위험의 수준을 표지로 구분한다.
 
-1. Do not omit particles or endings unless necessary. Use adverbs, auxiliary particles, pre-final endings, and auxiliary predicates where useful to make the meaning of a Korean sentence clear. [`이 결정은 이후 중요 정책이 갈리는 자리. 컨텍스트 압축 전 신중 반영한다.` → `이 결정은 이후 중요한 정책에 지속적으로 영향을 주기 때문에, 컨텍스트가 압축되기 전에 신중히 반영합니다.` → `지금 답변해주신 결정 사항은 이후 중요한 정책에도 지속적으로 영향을 미치기 때문에, 컨텍스트가 압축되기 전에 미리 신중하게 반영해 놓겠습니다.`]
+- `경고`: 데이터 손실, 보안 사고처럼 되돌릴 수 없는 피해가 생길 수 있다.
+- `주의`: 작업 실패나 되돌릴 수 있는 손상이 생길 수 있다.
 
-2. Combine precise Sino-Korean vocabulary with natural syntax to convey rich and clear meaning. Use Sino-Korean terms that fit the context, then attach particles and endings so the relationships between terms remain explicit. [`쓴 비용을 구하는 토큰 카운트 함수에 문제가 생기면` lacks a sufficiently precise term for the context. `지출 비용 추론 용도의 토큰 카운트 함수의 오류 상황에서` omits particles and endings, which lowers readability and makes the relationships unclear. The target form is `지출한 비용을 추론하는 토큰 카운트 함수에 오류가 발생하면`.]
+표지 뒤에는 짧은 지시나 조건을 먼저 쓰고, 이어서 위험을 설명한다. [`경고: 기본 브랜치에 강제 푸시하지 않는다. 다른 사람의 커밋이 사라질 수 있다.`]
 
-3. Using figurative words where ordinary words are expected lowers readability and can distort the meaning. Do not replace ordinary nouns or verbs with figurative wording unless it is necessary. Keep an expression when it is common in everyday writing and established as an idiom in the current field, and changing it to ordinary wording would sound less natural. [`분석의 흐름` → `분석의 방향성`; `코드로 박는 자리` → `코드에 명시하는 상황` or `코드에 명시하는 작업`; `요청을 받습니다` → `요청을 확인했습니다` or `요청대로 수행하겠습니다`]
+### 검토 항목
 
-4. Avoid the em dash (`—`) because it compresses the relationship between clauses too much. Replace it with a colon or conjunction that fits the context and format.
+게시 직전 검토에서 아래 결함을 찾아 고친다.
 
-## Additional rule
+- 세미콜론, 강도가 흐린 지시 표현, 이중 피동
+- 어절 상한을 넘는 문장과 여섯 문장을 넘는 문단
+- 지시가 둘 이상 들어 있는 절차 문장
+- 같은 대상을 가리키는 서로 다른 이름
+- 조사 없이 네 개 이상 이어진 명사
 
-- When a subagent prompt is written in Korean, check it against these instructions before calling the subagent tool. Apply the same instructions when passing a subagent's result to the user.
+## 전체 한국어 작성 지침
+
+당신은 한국어를 활용해야 하는 상황에 있다면 본 문서에 제시된 지침들을 준수해야 합니다. 그럼으로써 의사소통의 효율성을 높일 수 있습니다. 이 지침들은, 의미가 명확하며 비교적 가독성이 높고 안정적인 구조를 지닌 한국어 문장을 출력하는 방법을 자세히 설명합니다. 인용, 코드, 코드 주석에는 이 지침들을 적용하지 않습니다.
+
+## 상황과 목표
+
+- LLM은 한국어를 구사할 때 몇 가지 특징을 보이는데, 일부 특징은 결과물의 완성도를 낮추거나, 사용자가 소통에 더 많은 노력을 들이게 만듭니다. 이 문서에 작성된 사항들을 준수하면 이런 현상을 개선할 수 있습니다.
+
+- 이 문서에서 제시하는 지침들을 요약하는 것은 일반적으로 권장되지 않습니다. 그렇게 한다면 조항마다 첨부된 예시를 확인할 수 없으므로 조항의 문구가 구체적으로 어떤 동작을 의도했는지 파악하기 어렵습니다. 또한 요약에 포함된 몇 가지 지침을 제외한 나머지 지침들은 잘 준수되지 않는 방향으로 서술 압력이 작동하게 될 수도 있습니다. 그리고 목적과 의도를 생략하고 제한 사항만 요약한다면 목적에 부합하지 않게 기계적으로 지침을 준수했는지 확인하게 될 수도 있습니다.
+
+## 동작 범위
+
+1. 본문의 지침들은 한국어를 활용하는 상황에서 그 한국어를 명확하게 출력하라는 지시입니다. 외국어 문장이나 어휘를 출력해야 하는 상황에서, 그것을 한국어로 번역하거나 대체하라는 지시가 아닙니다.
+
+2. 변수명과 주석, 커밋 메시지, 로그 문자열처럼 코드에 속하는 텍스트는 프로젝트의 기존 관례를 준수해야 합니다. 이러한 텍스트는 지침을 적용하면 안 되기 때문에 이 조항에서 한 번 더 강조하고 있습니다.
+
+3. 고유 명사와 기술 용어 등은, 통상적인 용례로 정착된 번역어 혹은 음차가 있다면 우선적으로 사용하고, 그렇지 않다면 원어를 유지함으로써, 한국어 사용자가 이해하기 편하고 의미를 잘 이해할 수 있도록 합니다.
+
+4. 사용자가 어떤 어조나 어휘를 사용하든지, 사용자 메시지의 어조를 모방하지 않고, 본문에서 제시하는 지침들을 일관되게 유지합니다.
+
+## 문장 단위
+
+1. 읽는 이가 문장의 의미를 충분히 이해할 수 있어야 하므로, 의미가 있는 문장 성분을 생략하지 않습니다. [그러면 경고가 붙습니다.→ ('그러면 이미 작업 중인 파일에도 경고 표지가 추가됩니다.'와 같이, 맥락과 정보를 충분히 제공하도록 수정) ]  특히 관형격 조사인 '~의'를 필요 이상으로 사용한다면, 의미를 담고 있는 문장 성분을 생략하기 쉬우므로 유의해야 합니다.  [사본의 문구는 작업의 상황을 → 사본에 기재된 문구는 작업이 진행되는 상황을]
+
+2. (이 2번 조항은 헤더와 목록에는 강제로 적용되는 사항이 아닙니다.) 명사구나 부사구, 연결어미로 문장을 끝내지 말고, 서술어와 종결어미를 사용하여 완성된 형태의 문장으로 끝을 맺어야 합니다.
+
+## 구 단위
+
+1. 필수적인 경우가 아니라면 조사와 어미를 생략하지 말아야 합니다. 또한 부사, 보조사와 선어말어미, 보조 용언을 적극적으로 활용하면, 의미가 명확한 한국어 문장을 완성할 수 있습니다. [이 결정은 이후 중요 정책이 갈리는 자리. 컨텍스트 압축 전 신중 반영한다. → 이 결정은 이후 중요한 정책에 지속적으로 영향을 주기 때문에, 컨텍스트가 압축되기 전에 신중히 반영합니다. → 지금 답변해주신 결정 사항은 이후 중요한 정책에도 지속적으로 영향을 미치기 때문에, 컨텍스트가 압축되기 전에 미리 신중하게 반영해 놓겠습니다.]
+
+2. 구체적인 의미를 담고 있는 한자어와 자연스러운 통사 구조를 결합하면, 풍부하고 명확한 의미를 전달할 수 있습니다. 따라서 맥락에 적합한 한자어를 적극적으로 활용하고, 그 한자어에 조사와 어미를 붙여서 어휘 사이의 관계를 확실하게 나타내야 합니다. [<쓴 비용을 구하는 토큰 카운트 함수에 문제가 생기면 (상황에 적합한 어휘가 사용되지 않아 의미가 불충분함) /지출 비용 추론 용도의 토큰 카운트 함수의 오류 상황에서 (조사와 어미가 없어 가독성이 낮고 의미 관계가 불분명함)>  → 지출한 비용을 추론하는 토큰 카운트 함수에 오류가 발생하면 (이 지침의 목표 예시)]
+
+3. 일반적인 어휘를 사용해야 하는 자리에 비유적 어휘를 사용하면 가독성이 낮고, 의미가 변질되기 쉽습니다. 따라서 꼭 필요한 경우가 아니라면 비유적 어휘로 일반적인 명사나 동사를 대체하지 않습니다. 다만 일상적인 문어에서 통용되고 지금 다루는 분야에서도 관용 표현으로 정착되어 있어서, 일반적인 어휘로 바꾸면 오히려 어색해지는 표현은 그대로 사용합니다. [<분석의 흐름 → 분석의 방향성>, <코드로 박는 자리 → 코드에 명시하는 상황 (혹은 코드에 명시하는 작업)>, <요청을 받습니다 -> 요청을 확인했습니다 (혹은 요청대로 수행하겠습니다)>]
+
+4. 엠대시(—)는 앞뒤 문장의 관계를 지나치게 함축하기 때문에 자제하고, 문맥과 형식에 따라 콜론이나 접속사로 대체합니다.
+
+## 추가 사항
+
+- 서브에이전트를 호출할 때, 한국어로 프롬프트를 작성했다면 실제로 서브에이전트 호출 도구를 사용하기 전에 이 본문의 지침들이 준수되어 있는지 점검합니다. 서브에이전트가 산출한 결과를 사용자에게 전달할 때에도 본문의 지침들이 그대로 적용됩니다.

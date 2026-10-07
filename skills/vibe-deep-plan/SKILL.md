@@ -1,169 +1,169 @@
 ---
 name: vibe-deep-plan
-description: Charts large blocks of work too big for a single agent session into a shared map of decision tickets on the repository issue tracker, then resolves them one by one until the path to the destination is clear. Use when work is too large to plan in one session, or when asked to chart, expand, or advance a decision map.
+description: 에이전트 세션 하나가 담기기엔 너무 큰 작업 덩어리를 저장소 이슈 트래커 위의 결정 티켓 공유 지도로 설계한 뒤, 목적지까지 길이 트일 때까지 한 번에 하나씩 해결한다. 작업이 한 세션에 계획하기엔 너무 클 때, 또는 사용자가 결정 지도를 만들거나 확장하거나 진행하라고 요청할 때 쓴다.
 disable-model-invocation: true
 ---
 
-# Charting a Decision Map
+# 결정 지도 설계
 
-A loose idea has arrived — too large for a single agent session, shrouded in fog. The path from here to the **Destination** is not yet visible. Wayfinding is not rushing toward the destination; it is finding the path. This skill charts the path as a **shared map** on the repository issue tracker, then works through its **decision tickets** — questions whose resolution is a decision, not an execution build step — one at a time until the path is clear.
+느슨한 아이디어가 도착했다 — 에이전트 세션 하나에 담기엔 너무 크고, 안개에 싸여 있다. 여기서 **목적지**까지의 길은 아직 보이지 않는다. 길찾기는 목적지로 돌진하는 게 아니라 그 길을 찾는 것이다. 이 스킬은 길을 저장소 이슈 트래커 위의 **공유 지도**로 설계한 뒤, 그 **결정 티켓** — 해결이 결정이지 실행할 빌드 조각이 아닌 질문 —을 길이 트일 때까지 한 번에 하나씩 다룬다.
 
-The destination varies by effort, and naming it is the first act of charting — it shapes every ticket. It may be a spec to hand off for iteration, decisions to lock before planning begins, or an in-place change like a data structure migration. Maps are domain-agnostic — engineering tasks, course content, or whatever fits the shape.
+목적지는 노력마다 다르고, 이름을 붙이는 것이 설계의 첫 행위이다 — 모든 티켓의 형태를 결정한다. 인계해 반복할 명세, 계획 시작 전에 잠글 결정, 또는 데이터 구조 마이그레이션처럼 자리에서 이루어지는 변경일 수 있다. 지도는 도메인에 무관하다 — 엔지니어링 작업, 강좌 콘텐츠, 형태에 맞는 무엇이든.
 
-## Plan, Do Not Build
+## 계획하지, 하지 않는다
 
-This skill is fundamentally **planning**: each ticket resolves a decision, and the map ends when the path is clear — when nothing remains to decide before someone goes and does the work. The urge to simply do the work is usually the signal that you have reached the end of the map and it is time to hand off. An effort may override this in its **Notes** — pulling execution into the map — but without that, produce decisions, not deliverables.
+이 스킬은 기본적으로 **계획**이다: 각 티켓은 결정을 해결하고, 지도는 길이 트였을 때 끝난다 — 누군가 가서 일을 하기 전에 결정할 게 아무것도 남지 않았을 때. 그냥 일을 하고 싶은 당김은 보통 지도의 끝에 도달해 인계할 때라는 신호다. 노력은 자신의 **Notes**에서 이것을 덮어쓸 수 있다 — 실행을 지도 안으로 가져오는 것 — 하지만 그것이 없으면, 산출물이 아니라 결정을 낸다.
 
-### Hand Off When Map Ends — Do Not Build
+### 지도가 끝나면 인계 — 짓지 않는다
 
-A map is finished when there are no open tickets and **Not yet specified** is empty. Hand off to the **spec** phase of `/vibe-plan`. If using local Markdown, pass the clean `map.md` path. `/vibe-plan` reuses the parent `.agents/plans/<effort>/` directory, writing `spec.md` there in Stage 2 and implementation tickets under `issues/` in the same directory in Stage 3. If using GitHub, GitLab, or another hosted tracker, pass the map URL or number. `/vibe-plan` reads the map and all linked closed tickets. It first fetches each linked decision's question and final answer: `## Question` and `## Answer` in local Markdown, or the issue body/question and final resolution comment or note in hosted trackers. It follows raw research, comments, attachments, or prototype artifacts only when the final answer references them or the spec requires evidence. The map is an index, not a storehouse. Its Destination and Decisions-so-far plus linked decisions form the handoff input, leaving nothing left to interview.
+지도는 열린 티켓이 없고 **Not yet specified**가 비었을 때 끝난다. `/vibe-plan`의 **spec** 단계로 인계한다. 로컬 Markdown이면 정리된 `map.md` 경로를 넘긴다. `/vibe-plan`은 부모 `.agents/plans/<effort>/` 디렉터리를 재사용해 Stage 2에서 그곳에 `spec.md`를 쓰고, Stage 3에서 같은 디렉터리의 `issues/` 아래에 구현 티켓을 쓴다. GitHub, GitLab, 또는 다른 호스트형 트래커면 지도 URL이나 번호를 넘긴다. `/vibe-plan`은 지도와 링크된 모든 닫힌 티켓을 읽는다. 먼저 각 링크된 결정의 질문과 최종 답을 불러온다: 로컬 Markdown이면 `## Question`과 `## Answer`이고, 호스트형 트래커는 이슈 질문/본문과 최종 해결 댓글 또는 노트를 사용한다. 최종 답이 그것을 참조하거나 명세가 그 증거가 필요할 때만 원시 조사, 댓글, 첨부, 프로토타입 아티팩트를 따른다. 지도는 저장소가 아니라 색인이다. 그 Destination과 Decisions-so-far 더하기 링크된 결정들이 인계 입력이므로, 인터뷰할 것이 남지 않는다.
 
-Going straight to `/vibe-implement` skips that synthesis and discards linked details. Use that shortcut only when the effort has truly reduced to a single ticket's worth of work.
+곧장 `/vibe-implement`로 가는 것은 그 종합을 건너뛰고 링크된 세부사항을 버린다. 그 지름길은 노력이 진짜로 작아졌을 때 — 티켓 하나 분량의 작업 —만 쓴다.
 
-### When a Session Fills Up Mid-Ticket
+### 세션이 티켓 도중에 가득 차면
 
-That is a different exit: the ticket is not resolved, but space has run out. Leave the ticket in the **claimed** state, ask the user to run `/vibe-handoff`, and continue in a new session. Never post a half-baked answer as a resolution comment.
+그건 다른 출구다: 티켓이 해결된 게 아니라 공간이 다 된 것이다. 티켓을 **점유** 상태로 두고, 사용자에게 `/vibe-handoff` 실행을 요청한 뒤 새 세션에서 이어간다. 반쪽짜리 답을 해결 댓글로 올리지 않는다.
 
-## Reference by Name
+## 이름으로 참조
 
-Every map and ticket has a **name**. On hosted trackers, the name is the issue title. In local Markdown, the map is `map.md` and the decision record filename/path is its identity. Refer to them by name in all human-readable contexts — narrative prose and the map's Decisions-so-far. Never refer to them by bare id, number, or slug alone. Hosted ids/URLs and local paths may still be used within names or links.
+모든 지도와 티켓에는 **이름**이 있다. 호스트형 트래커에서 이름은 이슈 제목이다. 로컬 Markdown에서 지도는 `map.md`이고 결정 기록의 파일명/경로가 그 정체성이다. 사람이 읽는 모든 것 — 서술과 지도의 Decisions-so-far —에서 그 이름으로 참조한다. 절대 bare id, 번호, slug로 하지 않는다. 호스트형 id나 URL과 로컬 경로는 이름이나 링크 안에서 여전히 사용할 수 있다.
 
-## The Map
+## 지도
 
-On a hosted tracker, the map is a single issue labeled `상태:초안` and `유형:계획`, and its tickets are child issues. In local Markdown, the canonical map is `.agents/plans/<effort>/map.md`, and its tickets are typed decision records under `research/`, `interviews/`, `prototypes/`, or `tasks/`.
+호스트형 트래커에서 지도는 `상태:초안`과 `유형:계획` 라벨이 붙은 단일 이슈이고, 그 티켓은 자식 이슈다. 로컬 Markdown에서 정식 지도는 `.agents/plans/<effort>/map.md`이고, 그 티켓은 `research/`, `interviews/`, `prototypes/`, 또는 `tasks/` 아래의 유형별 결정 기록이다.
 
-The map is an **index**, not a storehouse. It lists decisions made and points to the tickets containing their details. A decision lives in exactly one place — its ticket — so the map summarizes and links without duplicating decisions.
+지도는 저장소가 아니라 **색인**이다. 내린 결정을 나열하고 그 세부사항을 담은 티켓을 가리킨다. 결정은 정확히 한 곳 — 그 티켓 —에 살므로, 지도는 결정을 되풀이하지 않고 요약하고 링크만 한다.
 
-`상태:초안` and hosted triage statuses share the same status axis and are therefore **mutually exclusive**. `유형:계획` is on a separate type axis, so the map carries it together with `상태:초안`. A hosted map and its decision issues never carry triage statuses. Local maps have no hosted labels. Local Markdown decision records use a separate `Status: open` → `claimed` → `open`/`resolved` lifecycle. Triage statuses apply again only when the map finishes and `/vibe-plan` posts implementation tickets.
+`상태:초안`과 호스트형 트리아지 상태는 같은 상태 축이므로 **상호 배타적**이다. `유형:계획`은 별도 유형 축이므로 지도에서 `상태:초안`과 함께 쓴다. 호스트형 지도와 그 결정 이슈는 절대 트리아지 상태를 지니지 않는다. 로컬 지도는 호스트형 라벨이 없다. 로컬 Markdown 결정 기록은 별도의 `Status: open` → `claimed` → `open`/`resolved` 수명주기를 쓴다. 지도가 끝나고 `/vibe-plan`이 구현 티켓을 게시할 때만 트리아지 상태가 다시 적용된다.
 
-**Where the map, child tickets, blocking, and frontier queries physically live depends on the tracker.** Read [Configuration Documents and Defaults](../vibe-init/references/defaults.md). Without configuration, use the local Markdown tracker's map, record, blocking, and status rules without initialization. When configured, follow that tracker's wayfinding operations.
+**지도, 그 자식 티켓, 차단, 프런티어 쿼리가 물리적으로 어디에 있는지는 트래커마다 다르다.** [설정 문서와 기본값](../vibe-init/references/defaults.md)을 읽는다. 설정이 없으면 초기화 없이 로컬 Markdown 트래커의 지도·기록·차단·상태 규칙을 사용한다. 설정이 있으면 해당 트래커 문서의 경로 탐색 작업 규칙을 따른다.
 
-### Map Body
+### 지도 본문
 
-A low-resolution view of the entire map, loaded once per session. Open tickets are **not listed** — they are open child issues found via query.
+세션당 한 번 불러오는 저해상도의 지도 전체. 열린 티켓은 **나열되지 않는다** — 그것들은 쿼리로 찾는 열린 자식 이슈다.
 
 ```markdown
 ## Destination
 
-<What reaching the end of this map looks like — the spec, decision, or change this effort seeks. One or two lines. Every session aligns to this before picking a ticket.>
+<이 지도의 끝에 도달하는 것이 어떤 모습인지 — 이 노력이 찾아가는 명세, 결정, 또는 변경. 한두 줄. 모든 세션이 티켓을 고르기 전에 이것에 방향을 잡는다.>
 
 ## Notes
 
-<Domain; skills all sessions should reference; evergreen preferences for this effort>
+<도메인; 모든 세션이 참조해야 할 스킬; 이 노력의 상시 선호>
 
 ## Decisions so far
 
-<!-- Index — one line per closed ticket: enough to assess relevance, expanding the link leads to full details in the ticket -->
+<!-- 색인 — 닫힌 티켓마다 한 줄: 관련성을 판단하기에 충분하고, 링크를 확대하면 티켓이 담은 세부사항 -->
 
-- [<closed ticket title>](link) — <one-line summary of answer>
+- [<닫힌 티켓 제목>](link) — <답의 한 줄 요약>
 
 ## Not yet specified
 
-<!-- See "Fog of War": in-scope fog that cannot yet be turned into tickets. Graduates as the frontier advances -->
+<!-- "전쟁의 안개 (fog of war)" 참조: 아직 티켓으로 만들 수 없는 범위 안의 안개. 프런티어가 전진하면 졸업한다 -->
 
 ## Out of scope
 
-<!-- See "Out of scope": work excluded beyond the destination. Closed, never graduates -->
+<!-- "범위 밖 (Out of scope)" 참조: 목적지 너머로 제외된 작업. 닫힘, 결코 졸업하지 않음 -->
 ```
 
-### Tickets
+### 티켓
 
-Each ticket is a child decision item of the map. Hosted trackers represent them through the host's **native child-issue relationship** with tracker ids. A `Parent map` line, task list, or link in the body does not replace that relationship when the host supports child issues. Missing relationship support in a high-level tool does not mean the host lacks the feature: use the lower-level API or CLI allowed by the tracker document, then read the relationship back immediately. If the write or verification cannot be performed, do not report charting as complete; report the created-but-unlinked issue ids and the blocked operation. Local Markdown stores them as typed decision records whose path is their identity. The body is a question, sized for a single 100K token agent session:
+각 티켓은 지도의 자식 결정 항목이다. 호스트형 트래커는 트래커 id를 가진 **네이티브 자식 이슈 관계**로 표현한다. 본문의 `Parent map`, 작업 목록, 또는 링크는 호스트가 자식 관계를 지원할 때 그 관계를 대신하지 못한다. 고수준 도구에 관계 쓰기 기능이 없는 것은 호스트가 기능을 지원하지 않는 것이 아니다. 트래커 문서가 허용하는 저수준 API나 CLI로 관계를 만들고 곧바로 다시 읽어 확인한다. 쓰기나 확인을 수행할 수 없으면 차팅 완료로 보고하지 말고, 만들어졌지만 연결되지 않은 이슈 id와 막힌 연산을 알린다. 로컬 Markdown은 경로가 정체성인 유형별 결정 기록으로 저장한다. 본문은 질문이고, 100K 토큰 에이전트 세션 하나 분량이다:
 
 ```markdown
 ## Question
 
-<The decision or investigation this ticket resolves>
+<이 티켓이 해결하는 결정 또는 조사>
 ```
 
-Hosted tickets carry a single `유형:` label — `유형:조사`, `유형:프로토타입`, `유형:인터뷰`, or `유형:작업`. Local Markdown records have a matching `Type:` line (see [Ticket Types](#ticket-types)). Resolve strings from `docs/agents/triage-labels.md`; never invent English stand-ins such as `type:research`.
+호스트형 티켓은 `유형:` 라벨 하나를 지닌다 — `유형:조사`, `유형:프로토타입`, `유형:인터뷰`, 또는 `유형:작업`. 로컬 Markdown 기록은 일치하는 `Type:` 줄을 가진다([티켓 유형](#티켓-유형) 참조). 문자열은 `docs/agents/triage-labels.md`에서 푼다. `type:research` 같은 영어 대역을 만들지 않는다.
 
-Before starting work, a session **claims** the ticket so concurrent sessions skip it. Use the configured tracker's claim operation: hosted trackers assign the ticket to the acting developer. Local Markdown initializes unclaimed records with `Status: open`, updates to `Status: claimed` before work, and returns to `Status: open` after successful charting save. The final answer updates local records to `Status: resolved`. Incomplete handoffs or failed saves remain `claimed`. Local Markdown never uses an `Assignee:` field.
+작업 전에 세션은 티켓을 **점유**해 동시 세션이 건너뛰게 한다. 설정된 트래커의 점유 연산을 사용한다: 호스트형 트래커는 티켓을 주도하는 개발자에게 할당한다. 로컬 Markdown은 미점유 기록을 `Status: open`으로 시작하고, 작업 전 `Status: claimed`로 바꾸고, 성공적인 차팅 저장 뒤 `Status: open`으로 되돌린다. 최종 답은 로컬 기록을 `Status: resolved`로 바꾼다. 미완료 인계나 실패한 저장은 `claimed`로 남는다. 로컬 Markdown은 절대 `Assignee:` 필드를 쓰지 않는다.
 
-Blocking uses the tracker's **native** dependency relations — essential because it renders the frontier *visually* in the tracker UI so humans can see what is ready without opening the map. Only trackers without native blocking fall back to body conventions. A ticket is **unblocked** when all tickets blocking it are closed. The **frontier** consists of open, unblocked, unclaimed children — the edge of what is known.
+차단은 트래커의 **네이티브** 의존성 관계를 사용한다 — 프런티어를 트래커 자체 UI에 _시각적으로_ 렌더해 사람이 지도를 열지 않고도 가져갈 수 있는 것을 볼 수 있게 하므로 필수다. 네이티브 차단이 없는 트래커만 본문 관례로 대체한다. 티켓은 그것을 차단하는 모든 티켓이 닫혔을 때 **차단 해제**다. **프런티어**는 열려 있고, 차단 해제되고, 미점유인 자식들 — 알려진 것의 가장자리다.
 
-Questions remain in the ticket body. Research persistence follows [RESEARCH.md](RESEARCH.md).
-Research persistence varies by tracker: local Markdown places each research ticket and its full findings in `.agents/plans/<effort>/research/<ticket-stem>.md`. Interviews, prototypes, and task records reside under `.agents/plans/<effort>/interviews/<ticket-stem>.md`, `.agents/plans/<effort>/prototypes/<ticket-stem>.md`, and `.agents/plans/<effort>/tasks/<ticket-stem>.md`. `.agents/plans/<effort>/issues/` is reserved for implementation tickets posted by `/vibe-plan`. Hosted trackers place full findings in ticket comments or notes, or linked persistent snippets, wiki pages, attachments, or equivalents. No tracker creates research-only branches.
+질문은 티켓 본문에 그대로 있다. 조사 저장은 [RESEARCH.md](RESEARCH.md)를 따른다.
+조사 저장은 트래커마다 다르다: 로컬 Markdown은 각 조사 티켓과 전체 결과를 `.agents/plans/<effort>/research/<ticket-stem>.md`에 둔다. 인터뷰, 프로토타입, 작업 기록은 `.agents/plans/<effort>/interviews/<ticket-stem>.md`, `.agents/plans/<effort>/prototypes/<ticket-stem>.md`, `.agents/plans/<effort>/tasks/<ticket-stem>.md` 아래에 있다. `.agents/plans/<effort>/issues/`는 `/vibe-plan`이 게시하는 구현 티켓을 위해 예약된다. 호스트형 트래커는 전체 결과를 티켓의 댓글이나 노트, 또는 링크된 영구 스니펫, 위키 페이지, 첨부, 또는 그에 준하는 것에 둔다. 어떤 트래커도 조사 전용 브랜치를 만들지 않는다.
 
-## Ticket Types
+## 티켓 유형
 
-Every ticket is either **HITL** — human in the loop, working *with* a human who speaks for themselves — or **AFK**, driven by the agent alone. On AFK research tickets, only background research is delegated: subagents may inspect documentation, public or read-only APIs, and local resources, but must not write files, publish artifacts or branches, modify maps or tickets, use credentials, or cause **external side effects**. The calling session receives findings with primary source citations and stores them under [RESEARCH.md](RESEARCH.md). HITL tickets resolve only through real-time exchange. The agent never speaks on behalf of the human (a grilling agent answering its own questions violates this).
+모든 티켓은 **HITL** — 사람이 루프 안에 있고, 스스로 말하는 사람과 *함께* 일하는 — 또는 에이전트 단독으로 구동하는 **AFK** 둘 중 하나다. AFK 조사 티켓에서는 백그라운드 조사만 위임된다: 그 서브에이전트는 문서, 공개 또는 읽기 전용 API, 로컬 자원을 검사할 수 있지만, 파일을 쓰거나, 아티팩트나 브랜치를 게시하거나, 지도나 티켓을 수정하거나, 자격증명을 사용하거나, **외부 부작용**을 일으켜서는 안 된다. 호출 세션은 1차 출처 인용과 함께 결과를 받아 [RESEARCH.md](RESEARCH.md) 아래에 저장한다. HITL 티켓은 실시간 교환을 통해서만 해결된다. 에이전트는 결코 사람 쪽을 대신하지 않는다(자신의 질문에 스스로 답하는 grilling 에이전트는 이것을 어긴 것이다).
 
-- **Research** (AFK Research): Read-only subagent returns findings with primary source citations and open unknowns; calling session saves them under [RESEARCH.md](RESEARCH.md). Used when knowledge outside the current working directory is needed.
-- **Prototype** (HITL): Builds a cheap, rough, concrete artifact — an outline, rough draft, stub, or UI/logic code — to raise discussion fidelity for feedback. Place all artifacts under `.agents/prototype/<name>/`. Do not modify or import production source/modules, do not use real credentials or alter real data, and do not edit project-level manifests, task runners, routes, configs, or shared components. Resolved by building throwaway code — [PROTOTYPE.md](PROTOTYPE.md) for choosing branches, [PROTOTYPE-LOGIC.md](PROTOTYPE-LOGIC.md) for state/logic questions, [PROTOTYPE-UI.md](PROTOTYPE-UI.md) for "what should it look like". Link prototype as an asset. Used when "what should it look like" or "how should it behave" is the central question.
-- **Grilling** (HITL): Load the `vibe-grilling` and `vibe-modeling` skills separately for dialogue, one question at a time. The default case.
-- **Task** (HITL): Manual work that must occur before a *decision* can be made — not something to decide, prototype, or research, but blocking discussion until completed. Signing up for a service, provisioning access, or migrating data are human-involved external side effects, never AFK tasks. Provide read-only findings and a precise target-specific human checklist before requesting approval. Resolve only after authorized tasks finish. Record resulting facts needed for future tickets, recording only credential types and secure vault references.
+- **조사** (AFK 조사): 읽기 전용 서브에이전트가 1차 출처 인용과 남은 미확인 사항을 돌려주고, 호출 세션이 [RESEARCH.md](RESEARCH.md) 아래에 저장한다. 현재 작업 디렉터리 밖의 지식이 필요할 때 쓴다.
+- **프로토타입** (HITL): 반응할 수 있게 저렴하고 거칠고 구체적인 산출물 — 개요, 거친 초안, 스텁, 또는 UI/로직 코드 —을 만들어 논의의 충실도를 높인다. 모든 산출물을 `.agents/prototype/<name>/` 아래에 둔다. 프로덕션 소스/모듈을 수정하거나 가져오지 않고, 실제 인증을 사용하거나 실제 데이터를 변경하지 않고, 프로젝트 수준 매니페스트, 작업 실행기, 라우트, 설정, 공유 컴포넌트를 편집하지 않아야 한다. 일회용 코드를 만들어 해결한다 — 분기를 고르려 [PROTOTYPE.md](PROTOTYPE.md), 상태/로직 질문은 [PROTOTYPE-LOGIC.md](PROTOTYPE-LOGIC.md), "어떤 모양이어야 할까"는 [PROTOTYPE-UI.md](PROTOTYPE-UI.md). 프로토타입을 자산으로 링크한다. "어떤 모양이어야 할까" 또는 "어떻게 행동해야 할까"가 핵심 질문일 때 쓴다.
+- **그릴링** (HITL): `vibe-grilling`과 `vibe-modeling` 스킬을 각각 로드해 한 번에 질문 하나씩 대화한다. 기본 경우다.
+- **작업** (HITL): *결정*을 내리기 전에 일어나야 할 수동 작업 — 결정, 프로토타입, 조사할 게 아니지만 그것이 끝날 때까지 논의가 막혀 있는. 서비스 가입, 접근 권한 프로비저닝, 데이터 이동은 사람 참여 외부 부작용이지 결코 AFK 작업이 아니다. 승인 전에 읽기 전용 결과와 정확하고 대상별 사람용 체크리스트를 제공한다. 권한을 받은 작업이 완료된 뒤에만 해결한다. 나중 티켓에 필요한 결과 사실을 기록하되, 자격증명은 종류와 안전한 보관소 참조만 기록한다.
 
-### Human-Involved External Side Effects
+### 사람 참여 외부 부작용
 
-**Account creation, permission changes, data movement, and credential usage** are distinct categories of human-involved **external side effects**, and are always HITL regardless of ticket type. Maps, plans, prior approvals, or broad "feel free to proceed" statements never grant blanket authority.
+**계정 생성, 권한 변경, 데이터 이동, 자격증명 사용**은 개별 종류의 사람 참여 **외부 부작용**이며, 티켓 유형과 무관하게 항상 HITL이다. 지도, 계획, 사전 승인, 또는 포괄적인 "진행해도 좋다"가 결코 일반적 권한을 부여하지 않는다.
 
-Before requesting approval, complete only permitted read-only research and return results alongside a numbered, target-specific checklist for human execution. Preview immediately before executing **each** category:
+승인을 요청하기 전에, 허용된 읽기 전용 조사만 마치고 그 결과를 사람이 따를 수 있는 번호가 있는 대상별 체크리스트와 함께 돌려준다. **각** 종류를 실행하기 직전에 미리 보여 준다:
 
-- Target;
-- Exact action;
-- Expected impact and scope; and
-- Reversibility, including rollback or recovery paths.
+- 대상;
+- 정확한 동작;
+- 예상 영향과 범위; 그리고
+- 되돌림 가능성, 롤백 또는 복구 경로 포함.
 
-Request and obtain separate affirmative approval explicitly naming that category before the first action. Approval for one category never authorizes another. If the target, exact action, or scope changes, preview again and re-request. Declines, ambiguities, or non-responses constitute absence of approval: retain local Markdown records in `Status: claimed` to keep them off the frontier. Leave hosted tracker issues open, assigned, and blocked. Do not append `## Answer`, post resolution comments/notes, set `Status: resolved`, close issues, update **Decisions so far**, or trigger external side effects.
+첫 동작 전에 그 종류를 명명하는 별도의 긍정 승인을 요청하고 받는다. 한 종류의 승인은 결코 다른 종류를 권한 부여하지 않는다. 대상, 정확한 동작, 또는 범위가 바뀌면 다시 미리 보여 주고 다시 묻는다. 거절, 모호함, 또는 무응답은 승인 없음이다: 로컬 Markdown이면 기록을 `Status: claimed`로 유지해 프런티어에서 빠지게 한다. 호스트형 트래커면 이슈를 열려 있고, 할당되고, 차단된 채로 둔다. `## Answer`를 추가하거나, 해결 댓글이나 노트를 올리거나, `Status: resolved`로 설정하거나, 이슈를 닫거나, **Decisions so far**를 갱신하거나, 어떤 외부 부작용도 일으키지 않는다.
 
-Never record raw credential values in maps, tickets, comments, resolution text, command/output logs, or research artifacts. Retain only credential types and secure vault references. Credential usage still requires its own just-in-time approval.
+자격증명 값을 지도, 티켓, 댓글, 해결 텍스트, 명령이나 출력 로그, 조사 아티팩트에 기록하지 않는다. 자격증명 종류와 안전한 보관소 참조만 유지한다. 자격증명 사용은 여전히 자체적인 just-in-time 승인이 필요하다.
 
-## Fog of War
+## 전쟁의 안개 (fog of war)
 
-Maps are *deliberately* incomplete: do not design what cannot yet be seen. Beyond live tickets lies the **fog of war** — a dim view of decisions and research known to be coming but not yet pin-downable because they depend on open questions. Resolving a ticket clears the fog before it, graduating what can now be specified into new tickets — one by one until the path to the destination is clear and no tickets remain.
+지도는 _의도적으로_ 불완전하다: 아직 볼 수 없는 것은 설계하지 않는다. 살아 있는 티켓 너머에는 **fog of war**가 있다 — 올 것을 알지만 아직 고정할 수 없는 결정과 조사의 어슴푸레한 전망. 열린 질문에 달려 있기 때문이다. 티켓을 해결하면 그 앞의 안개가 걷히며, 이제 명세화할 수 있는 것을 새 티켓으로 졸업시킨다 — 한 번에 하나씩, 목적지까지 길이 트이고 티켓이 남지 않을 때까지.
 
-The map's **Not yet specified** section is where that dim view is captured: suspected questions, areas to revisit later. It is the undiscovered frontier toward the destination — everything here is in scope but not yet crisp enough to become a ticket. Write as loosely or thoroughly as visibility permits. It also serves as wayfinding signposts for collaborators reading where the effort is headed.
+지도의 **Not yet specified** 섹션이 그 어슴푸레한 전망을 적는 곳이다: 의심되는 질문, 나중에 다시 볼 영역. 목적지를 향한 미발견 프런티어다 — 여기의 모든 것은 범위 안이지만 티켓으로 만들기엔 충분히 또렷하지 않다. 전망이 허용하는 대로 느슨하게 또는 충분히 쓴다. 노력이 어디로 향하는지 읽는 협력자를 위한 이정표 역할도 한다.
 
-**Fog or Ticket?** The test is whether you can state the exact question right now — *not* whether you can answer it right now.
+**안개인가 티켓인가?** 시험은 지금 질문을 정확히 말할 수 있는지이다 — 지금 답할 수 있는지가 _아니다_.
 
-- **If the question is already crisp, it is a ticket** — even if blocked and unable to act immediately.
-- **If it cannot yet be stated with such clarity, it is Not yet specified.** Do not slice fog into ticket-sized pieces in advance. It is coarser than tickets; a single chunk may graduate into multiple tickets or none at all once the frontier reaches it.
+- **질문이 이미 또렷하면 티켓** — 차단되어 당장 행동할 수 없더라도.
+- **아직 그렇게 또렷하게 말할 수 없으면 Not yet specified.** 안개를 티켓 크기 조각으로 미리 자르지 마라. 티켓보다 거칠고, 한 조각이 여러 티켓으로 졸업하거나 아예 안 할 수도 있다. 프런티어가 도달하면.
 
-**Not yet specified** excludes what is already decided (Decisions so far), already live tickets, and out of scope (next section).
+**Not yet specified**는 이미 결정된 것(Decisions so far), 이미 살아 있는 티켓, 범위 밖(다음 섹션)을 제외한다.
 
-## Out of Scope
+## 범위 밖 (Out of scope)
 
-Fog gathers only toward the destination. Because the destination pins the scope, work beyond it is **out of scope** — it is not fog, and does not belong in **Not yet specified**. The map has its own **Out of scope** section: work consciously excluded from *this* effort. What belongs here is determined by scope, not clarity.
+안개는 오직 목적지를 향해만 모인다. 목적지가 범위를 고정하므로, 그 너머의 작업은 **out of scope**이다 — 안개가 아니며, **Not yet specified**에 속하지 않는다. 지도는 자체 **Out of scope** 섹션을 가진다: _이_ 노력에서 의식적으로 제외한 작업. 여기에 두는 것은 날카로움이 아니라 범위다.
 
-Out of scope work never graduates — the frontier stops at the destination — so it returns only if the destination is redrawn, and even then as a new effort rather than a resumption.
+범위 밖 작업은 결코 졸업하지 않는다 — 프런티어는 목적지에서 멈춘다 — 그러므로 목적지가 다시 그려질 때만 돌아오며, 그때도 재개가 아니라 새 노력으로.
 
-Marking something out of scope is a scope-defining act, not a step along the path. If an existing ticket turns out to lie beyond the destination — mistakenly scoped during charting, or revealed by a resolution — **close it** (closed tickets are unambiguously off the frontier) and add a line to the **Out of scope** section: summary, why it is out of scope, and a link to the closed ticket. It is omitted from **Decisions so far** (which records the actual path walked) — scope boundaries are not steps on that path.
+무언가를 범위 밖으로 정하는 것은 경로의 단계가 아니라 범위 정의 행위다. 이미 존재하는 티켓이 목적지 너머에 있음이 드러나면 — 설계 중 범위에 잘못 들어갔거나, 해결로 인해 드러났거나 — **닫는다**(닫힌 티켓은 모호함 없이 프런티어 밖이다) 그리고 **Out of scope** 섹션에 한 줄을 남긴다: 요약과 왜 범위 밖인지, 닫힌 티켓을 링크. 실제 걸어간 경로를 기록하는 **Decisions so far**에서는 빠진다 — 범위 경계는 그 경로의 단계가 아니다.
 
-## Visualizing Ticket Decomposition
+## 티켓 분해 시각화
 
-When presenting a proposed ticket decomposition during map charting or expansion, include a dependency diagram in the conversation rather than listing tickets alone. Use Mermaid when supported; otherwise use a text diagram.
+지도 설계나 확장 중 티켓 분해안을 사용자에게 보여줄 때는 목록만 나열하지 말고, 대화에 의존 관계 도식을 함께 표시한다. Mermaid를 지원하면 Mermaid 도식을 사용하고, 지원하지 않으면 텍스트 도식으로 보여준다.
 
-- Label each node with the ticket name and type, and direct arrows from prerequisite tickets to the downstream tickets they block. Place tickets that can proceed in parallel at the same stage.
-- Distinguish the frontier from blocked or claimed tickets. Explicitly mark tickets and relationships not yet created as proposals, and depict saved tickets using the current tracker state.
-- Show **Not yet specified** separately from tickets. Do not split unspecified areas into tickets or invent dependencies to fill the visualization.
+- 각 노드에는 티켓 이름과 유형을 표시하고, 화살표는 선행 티켓에서 그 티켓이 차단하는 후속 티켓으로 연결한다. 병렬로 진행할 수 있는 티켓은 같은 단계에 배치한다.
+- 프런티어와 차단되거나 점유된 티켓을 구분한다. 아직 생성하지 않은 티켓과 관계는 제안임을 명시하고, 저장된 티켓은 현재 트래커 상태를 기준으로 표시한다.
+- **Not yet specified**는 티켓과 분리해 표시하며, 시각화를 채우려고 미확정 영역을 티켓으로 분해하거나 의존성을 만들어 내지 않는다.
 
-This diagram is explanatory and does not replace the tracker's child or blocking relationships. Preserve the rule that open tickets are not listed in the map body.
+이 도식은 설명용이며 트래커의 자식 관계나 차단 관계를 대신하지 않는다. 열린 티켓을 지도 본문에 나열하지 않는 규칙은 유지한다.
 
-## Invocation
+## 호출
 
-Two modes. By default, a work session claims and resolves a single ticket. Research persistence during charting follows [RESEARCH.md](RESEARCH.md). It is a handoff record, not a resolution, and does not count against that limit. An explicit user request may continue the same charting invocation into parallel work across multiple **named, unblocked HITL** tickets. Only those named tickets join the exception; all claims, human exchanges, approvals, resolutions, and map updates still follow their standard rules.
+두 모드. 기본적으로 작업 세션은 티켓 하나를 점유하고 해결한다. 차팅 중 조사 저장은 [RESEARCH.md](RESEARCH.md)를 따른다. 그것은 인계 기록이지 해결이 아니며, 그 한도에 포함되지 않는다. 명시적 사용자 요청은 같은 차팅 호출을 여러 **이름 지정된, 차단 해제된 HITL** 티켓의 병렬 작업으로 계속할 수 있다. 그 이름 지정된 티켓만 예외에 합류하며, 모든 점유, 사람 교환, 승인, 해결, 지도 갱신은 여전히 자기 정상 규칙을 따른다.
 
-### Charting a Map
+### 지도 설계
 
-User invokes with a loose idea.
+사용자가 느슨한 아이디어로 호출한다.
 
-1. **Name the Destination.** Load the `vibe-grilling` and `vibe-modeling` skills separately and run a session to pin down what this map seeks — a spec, a decision, or a change. Because destination pins scope, it is established first.
-2. **Chart the Frontier.** Grilling again, this time **breadth-first**: fanning out across the full space rather than drilling into any single thread, identifying open decisions and immediate first steps. **If this reveals no fog** — the path to the destination is already clear, and the entire journey fits in one session — a map is unnecessary. Stop and ask the user how they wish to proceed.
-3. **Create the Map**: Hosted trackers create a map issue with `상태:초안` and `유형:계획`. Local Markdown writes `.agents/plans/<effort>/map.md` without hosted labels. Populate Destination and Notes, leave Decisions-so-far empty, and sketch fog in **Not yet specified**.
-4. **Create Tickets for what can be specified now** as child tickets of the map — hosted trackers add the native child relationship in a second step requiring ids, then read the map's child list back and verify every id. An issue with only a body link or `Parent map` line is not a child ticket. If the host supports relationships but the current tool cannot write or verify them, do not treat a text fallback as success. Report any created-but-unlinked issue ids and the blocked operation, then stop. Local Markdown writes typed records in matching `research/`, `interviews/`, `prototypes/`, or `tasks/` directories. Linking organizes them into frontier and blocked items. Everything not yet specifiable remains in the fog — the **Not yet specified** section.
-5. **Launch Read-Only Research Subagents.** Temporarily claim each `research` ticket before dispatch, launch AFK research in parallel, await all returns, and ensure the calling session saves each result under [RESEARCH.md](RESEARCH.md) before exit.
-6. **Honor Explicit Parallel Work Requests.** If the user asks to spend waiting time on an interview or another named unblocked HITL ticket, switch that ticket to **advancing the map** and claim it before work. Multiple named HITL lanes may interleave, but each asks one question at a time, waits for the user's own answer, and never answers on the user's behalf. Do not infer this exception from idle time or add unnamed tickets.
-7. **Wrap Up Charting.** Do not resolve research tickets during charting. After successful saving, hosted research issues remain open with session claim released, and local Markdown research records remain `Status: open`. Tickets lacking saved findings remain claimed for explicit handoff.
+1. **목적지 이름 붙이기.** `vibe-grilling`과 `vibe-modeling` 스킬을 각각 로드해 세션을 실행하고, 이 지도가 무엇을 찾아가는지 — 명세, 결정, 변경 — 핀한다. 목적지가 범위를 고정하므로, 가장 먼저 정해진다.
+2. **프런티어 설계.** 다시 그릴링, 이번에는 **폭 우선**: 어느 한 스레드 깊이가 아니라 전체 공간으로 펼치며, 열린 결정과 지금 당장 취할 수 있는 첫걸음을 떠올린다. **이것이 안개를 드러내지 않으면** — 목적지까지 길이 이미 트였고, 전체 여정이 한 세션에 담을 만큼 작으면 — 지도가 필요 없다. 멈추고 사용자에게 어떻게 진행할지 묻는다.
+3. **지도 만들기**: 호스트형 트래커는 `상태:초안`과 `유형:계획`으로 지도 이슈를 만든다. 로컬 Markdown은 호스트형 라벨 없이 `.agents/plans/<effort>/map.md`를 쓴다. Destination과 Notes를 채우고, Decisions-so-far는 비우고, 안개를 **Not yet specified**에 스케치한다.
+4. **지금 명세화할 수 있는 티켓 만들기**를 지도의 자식 티켓으로 — 호스트형 트래커는 id가 필요한 둘째 단계에서 네이티브 자식 관계를 연결하고, 지도에서 자식 목록을 다시 읽어 각 id가 보이는지 확인한다. 본문 링크나 `Parent map` 줄만 추가한 이슈는 자식 티켓이 아니다. 호스트가 관계를 지원하지만 현재 도구로 쓰거나 확인할 수 없으면 대체 표현으로 성공 처리하지 않는다. 이미 만든 연결되지 않은 이슈 id와 실패한 연산을 보고하고 멈춘다. 로컬 Markdown은 일치하는 `research/`, `interviews/`, `prototypes/`, 또는 `tasks/` 디렉터리에 유형별 기록을 쓴다. 연결은 그것들을 프런티어와 차단된 것으로 정렬한다. 아직 명세화할 수 없는 모든 것은 안개 — **Not yet specified** 섹션 —에 남는다.
+5. **읽기 전용 조사 서브에이전트 발사.** 디스패치 전 각 `research` 티켓을 임시 점유하고, AFK 조사를 병렬로 시작하고, 모든 반환을 기다리고, 호출 세션이 각 결과를 종료 전 [RESEARCH.md](RESEARCH.md) 아래에 저장하게 한다.
+6. **명시적 병렬 작업 요청 존중.** 사용자가 대기 시간을 인터뷰나 다른 이름 지정된 차단 해제 HITL 티켓에 쓰라고 하면, 그 티켓을 **지도 진행**으로 전환하고 작업 전 점유한다. 여러 이름 지정된 HITL 레인이 교차될 수 있지만, 각각은 한 번에 질문 하나를 하고, 사용자 자신의 답을 기다리며, 결코 사용자를 대신해 답하지 않는다. 이 예외를 유휴 시간에서 추론하거나 이름 없는 티켓을 추가하지 마라.
+7. **차팅 마무리.** 차팅 중 조사 티켓을 해결하지 않는다. 성공적인 저장 뒤, 호스트형 조사 이슈는 세션 점유가 해제된 채 열려 있고, 로컬 Markdown 조사 기록은 `Status: open`이다. 저장된 결과가 없는 티켓은 명시적 인계를 위해 점유 상태로 남는다.
 
-### Advancing the Map
+### 지도 진행
 
-User invokes with map path, URL, or number. Ticket is **optional** — if omitted, pick the next decision, not the user.
+사용자가 지도 경로, URL, 또는 번호로 호출한다. 티켓은 **선택**이다 — 없으면 사용자가 아니라 다음 결정을 고른다.
 
-1. **Load Map** — low-resolution view, not all ticket bodies.
-2. **Pick a Ticket.** If the user named one, use it; otherwise take the first frontier ticket in order. Read claim state before altering. Continue claims owned by this session or transferred via explicit handoff. Do not infer staleness from age, silence, or attached findings; never hijack another owner's claim. Reclaim only when the user or current owner explicitly states the previous session was abandoned. Re-read the ticket immediately to verify no newer owner or activity before updating the claim once. Ownerless local `Status: claimed` is stale only upon the same explicit instruction. Otherwise pick another frontier ticket or leave it alone.
-3. **Claim Before Substantive Work**, then load full ticket body, comments, and attachments. If research, check canonical local notes or hosted comments/artifacts before re-running. If missing or unavailable, check all configured persistent locations under [RESEARCH.md](RESEARCH.md) first. Load and apply skills named in `## Notes`, and ask the user to run any that are user-invoked. If the ticket will trigger external side effects, return read-only findings and a precise human checklist first, following [Human-Involved External Side Effects](#human-involved-external-side-effects) for all categories. When in doubt, load the `vibe-grilling` and `vibe-modeling` skills separately.
-4. **Record Resolution** only when the answer is complete and the ticket requires no external side effects, or all mandatory categories have been independently approved and completed. Research notes or pointers are not resolutions. Research follows [RESEARCH.md](RESEARCH.md): local Markdown adds `## Answer` and sets `Status: resolved`. Hosted trackers post a final resolution comment or note and close the issue. For other ticket types, local Markdown adds `## Answer` and sets `Status: resolved`. Hosted trackers post an answer comment and close the issue. Then add only the linked record or ticket title and a one-line gist to **Decisions so far**. If approval is declined, ambiguous, or absent, local Markdown keeps the record in `Status: claimed` to drop from the frontier. Hosted trackers leave the issue open, assigned, and blocked. Do not add `## Answer`, post resolution comments/notes, set `Status: resolved`, close the issue, update **Decisions so far**, or cause external side effects.
-5. **Add newly emerged tickets** (create then link); graduate fog that the answer makes specifiable, deleting graduated chunks from **Not yet specified** so they live only as new tickets. If the answer reveals any ticket — this one or another — lies beyond the destination, **mark it out of scope** instead of resolving along the path. Update or delete tickets if decisions invalidate other parts of the map.
+1. **지도**를 불러온다 — 저해상도 뷰, 모든 티켓 본문이 아니다.
+2. 티켓 고르기. 사용자가 이름을 지정했으면 그것을 쓰고, 아니면 순서대로 첫 프런티어 티켓을 잡는다. 바꾸기 전에 점유 상태를 읽는다. 이 세션이 소유하거나 명시적 인계로 이전된 점유를 이어간다. 나이, 침묵, 첨부된 결과로 오래됨을 추론하지 않고, 결코 다른 소유자의 점유를 슬쩍 빼앗지 않는다. 사용자나 현재 소유자가 이전 세션을 포기했다고 명시할 때만 되찾는다. 즉시 티켓을 다시 읽어 더 새 소유자나 활동이 없음을 확인한 뒤 점유를 한 번 바꾼다. 소유자 없는 로컬 `Status: claimed`는 같은 명시적 지시에서만 오래된 것이다. 그렇지 않으면 다른 프런티어 티켓을 고르거나 그대로 둔다.
+3. **실질적 작업 전 점유**, 그런 뒤 티켓의 전체 본문, 댓글, 첨부를 불러온다. 조사면, 다시 실행하기 전에 정식 로컬 노트 또는 호스트형 댓글/아티팩트를 검사한다. 없거나 사용할 수 없으면, [RESEARCH.md](RESEARCH.md) 아래에서 설정된 모든 영구 위치를 먼저 검사한다. `## Notes`에 이름 지정된 스킬은 로드해 적용하고, 사용자 전용 스킬이면 사용자에게 실행을 요청한다. 티켓이 외부 부작용을 일으킬 것이면, 먼저 읽기 전용 결과와 정확한 사람용 체크리스트를 돌려주고, 모든 종류에 대해 [사람 참여 외부 부작용](#사람-참여-외부-부작용)을 따른다. 의심스러우면 `vibe-grilling`과 `vibe-modeling` 스킬을 각각 로드해 적용한다.
+4. 답이 완전하고 티켓이 외부 부작용을 요구하지 않거나, 모든 필수 종류가 독립적으로 승인되고 완료되었을 때만 해결을 기록한다. 조사 기록이나 포인터는 해결이 아니다. 조사는 [RESEARCH.md](RESEARCH.md)를 따른다: 로컬 Markdown은 `## Answer`를 추가하고 `Status: resolved`로 설정한다. 호스트형 트래커는 최종 해결 댓글이나 노트를 올리고 이슈를 닫는다. 다른 티켓 유형은, 로컬 Markdown이 `## Answer`를 추가하고 `Status: resolved`로 설정한다. 호스트형 트래커는 답 댓글을 올리고 이슈를 닫는다. 그런 뒤 링크된 기록이나 티켓 제목과 한 줄 gist만 **Decisions so far**에 추가한다. 승인이 거절, 모호, 또는 부재면, 로컬 Markdown은 기록을 `Status: claimed`로 유지해 프런티어에서 빠지게 한다. 호스트형 트래커는 이슈를 열려 있고, 할당되고, 차단된 채로 둔다. `## Answer`를 추가하거나, 해결 댓글이나 노트를 올리거나, `Status: resolved`로 설정하거나, 이슈를 닫거나, **Decisions so far**를 갱신하거나, 어떤 외부 부작용도 일으키지 않는다.
+5. 새로 떠오른 티켓을 추가하고(만든 뒤 연결); 답이 명세화할 수 있게 만든 안개를 졸업시키며, 졸업한 조각을 **Not yet specified**에서 지워 새 티켓으로만 살게 한다. 답이 어떤 티켓 — 이것이든 다른 것이든 —이 목적지 너머에 있음을 드러내면, 경로에서 해결하는 대신 **범위 밖으로 정한다**. 결정이 지도의 다른 부분을 무효화하면 그 티켓을 갱신하거나 삭제한다.
 
-Users may run unblocked tickets in parallel, so expect other sessions to edit the tracker concurrently.
+사용자는 차단 해제된 티켓을 병렬로 실행할 수 있으므로, 다른 세션이 트래커를 동시에 편집할 것으로 예상한다.

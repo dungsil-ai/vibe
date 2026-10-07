@@ -1,15 +1,15 @@
 ---
 name: vibe-modeling
-description: Defines domain terms and records significant architectural decisions for the project. Use when discussing codebase terminology, when writing or editing a glossary or an ADR, or when other skills need to update the domain model.
+description: 프로젝트의 도메인 용어를 정의하고 중요한 아키텍처 결정을 기록한다. 사용자가 코드베이스 용어를 논의하거나 용어집 또는 ADR을 작성·수정할 때, 그리고 다른 스킬이 도메인 모델을 갱신해야 할 때 사용한다.
 ---
 
-# Vibe Modeling
+# 바이브 모델링
 
-Use this skill when the domain model changes. Read the glossary before altering terms. Use concrete examples for non-obvious relationships. Record agreed terms immediately. Propose ADRs only for decisions meeting ADR criteria. Do not use this skill merely to read `CONTEXT.md`.
+도메인 모델이 바뀔 때 이 스킬을 쓴다. 용어를 바꾸기 전에 용어집을 읽는다. 분명하지 않은 관계에는 구체 사례를 쓴다. 합의된 용어는 즉시 기록한다. ADR 조건을 만족하는 결정에만 ADR을 제안한다. `CONTEXT.md`를 읽기만 하려고 이 스킬을 쓰지 않는다.
 
-## File Structure
+## 파일 구조
 
-Most repositories maintain a single context:
+대부분의 저장소는 컨텍스트 하나를 둔다:
 
 ```
 /
@@ -21,62 +21,62 @@ Most repositories maintain a single context:
 └── src/
 ```
 
-If `CONTEXT-MAP.md` exists at root, the repository contains multiple contexts. The map lists each context and its location:
+루트에 `CONTEXT-MAP.md`가 있으면 저장소에 컨텍스트가 여럿이다. 지도는 각 컨텍스트와 위치를 적는다:
 
 ```
 /
 ├── CONTEXT-MAP.md
 ├── docs/
-│   └── adr/                          ← System-wide decisions
+│   └── adr/                          ← 시스템 전체 결정
 ├── src/
 │   ├── ordering/
 │   │   ├── CONTEXT.md
-│   │   └── docs/adr/                 ← Context-specific decisions
+│   │   └── docs/adr/                 ← 컨텍스트별 결정
 │   └── billing/
 │       ├── CONTEXT.md
 │       └── docs/adr/
 ```
 
-Create files only when there is content. If `CONTEXT.md` is missing, create it after agreeing on the first term. If `docs/adr/` is missing, create it only when the first ADR is needed.
+내용이 있을 때만 파일을 만든다. `CONTEXT.md`가 없으면 첫 용어를 합의한 뒤에 만든다. `docs/adr/`이 없으면 첫 ADR이 필요할 때만 만든다.
 
-## During a Session
+## 세션 중
 
-### Use Direct Language
+### 직접 언어를 쓴다
 
-- Use short, literal sentences for all questions, explanations, and records. Avoid idioms, metaphors, or culturally dependent expressions.
-- In `CONTEXT.md`, write every canonical term in `Korean (English)` order. Write Korean first. Write definitions in Korean.
-- Use CEFR B1-or-lower vocabulary in Korean terms, definitions, questions, explanations, and records. Apply the CEFR A1–A2 standard only to English names, not Korean.
-- All general English names must use everyday CEFR A1–A2 English words. This is required.
-- Use an English technical term only when it is clearly used in Korea as the name of that domain. This is the only exception to the English-name rule.
+- 모든 질문, 설명, 기록에 짧고 문자 그대로의 문장을 쓴다. 관용구, 은유, 문화 의존 표현을 쓰지 않는다.
+- `CONTEXT.md`에서 모든 정규 용어는 `한국어 (English)`로 쓴다. 한국어를 먼저 쓴다. 정의는 한국어로 쓴다.
+- 한국어 용어, 정의, 질문, 설명, 기록에는 CEFR B1 이하 어휘를 반드시 쓴다. CEFR A1–A2 기준은 영어 이름에만 적용하며 한국어에는 적용하지 않는다.
+- 모든 일반 영어 이름에는 CEFR A1–A2 일상 단어를 반드시 쓴다. 이는 필수다.
+- 한국에서 해당 도메인 이름으로 분명히 쓰는 영어 전문용어일 때만 영어 전문용어를 쓴다. 이것이 영어 이름 규칙의 유일한 예외다.
 
-### Compare Against Glossary
+### 용어집과 비교한다
 
-If the user uses a term or meaning conflicting with `CONTEXT.md`, surface the conflict immediately. Ask: "`CONTEXT.md`는 `취소 (Cancel)`를 X로 정의한다. X와 Y 중 어느 뜻인가?"
+사용자가 `CONTEXT.md`와 충돌하는 용어나 뜻을 쓰면, 즉시 충돌을 밝힌다. 묻는다: "`CONTEXT.md`는 `취소 (Cancel)`를 X로 정의한다. X와 Y 중 어느 뜻인가?"
 
-### Clarify Ambiguous Language
+### 분명하지 않은 언어를 정확히 한다
 
-If the user uses a term with multiple meanings, propose a single precise canonical term. Ask: "`고객 (Customer)`와 `사용자 (User)` 중 어느 뜻인가? 둘은 다른 개념이다."
+사용자가 뜻이 둘 이상인 용어를 쓰면, 정확한 정규 용어 하나를 제안한다. 묻는다: "`고객 (Customer)`와 `사용자 (User)` 중 어느 뜻인가? 둘은 다른 개념이다."
 
-### Use Concrete Examples
+### 구체 사례를 쓴다
 
-Use concrete examples when discussing domain relationships. Check edge cases around conceptual boundaries. Ask the user which concept each case falls under.
+도메인 관계를 논의할 때 구체 사례를 쓴다. 개념 사이의 경계와 관련된 가장자리 사례를 점검한다. 각 사례가 어느 개념에 들어가는지 사용자에게 말해달라고 한다.
 
-### Compare with Code
+### 코드와 비교한다
 
-When the user describes how something works, compare their description with the code. Highlight differences: "코드는 `주문 (Order)` 전체를 취소한다. 당신은 주문의 일부를 취소할 수 있다고 했다. 어느 동작이 맞는가?"
+사용자가 무언가가 어떻게 동작하는지 말하면, 그 말을 코드와 비교한다. 다르면 차이를 밝힌다: "코드는 `주문 (Order)` 전체를 취소한다. 당신은 주문의 일부를 취소할 수 있다고 했다. 어느 동작이 맞는가?"
 
-### Update CONTEXT.md Immediately
+### CONTEXT.md를 즉시 갱신한다
 
-Update `CONTEXT.md` immediately once a term is agreed upon. Do not defer recording. Use the format in [CONTEXT-FORMAT.md](CONTEXT-FORMAT.md).
+용어가 합의되면 `CONTEXT.md`를 즉시 갱신한다. 기록을 미루지 않는다. [CONTEXT-FORMAT.md](CONTEXT-FORMAT.md)의 형식을 쓴다.
 
-Keep only glossary terms in `CONTEXT.md`. Exclude implementation details, specs, working notes, and design decisions.
+`CONTEXT.md`에는 용어집 용어만 둔다. 구현 내용, 명세, 현재 작업 메모, 설계 결정은 빼야 한다.
 
-### Propose ADRs Only When Warranted
+### 필요할 때만 ADR을 제안한다
 
-Do not create ADRs automatically. Propose an ADR only when all three conditions are true:
+ADR을 자동으로 만들지 않는다. 다음 세 조건이 모두 참일 때만 ADR을 제안한다:
 
-1. **Hard to change** — Significant cost to reverse the decision later.
-2. **Non-obvious from code alone** — Future readers cannot deduce the reasoning from code alone.
-3. **Evaluated real alternatives** — Real alternatives were evaluated and one was chosen for specific reasons.
+1. **바꾸기 어려움** — 나중에 결정을 바꾸는 비용이 의미 있다.
+2. **이유가 코드만 보고는 알기 어려움** — 미래의 독자가 코드만 보고는 이유를 알 수 없다.
+3. **실제 선택지 비교** — 실제 선택지를 비교했고, 구체적 이유로 하나를 골랐다.
 
-If any condition is missing, do not propose an ADR. Use the format in [ADR-FORMAT.md](ADR-FORMAT.md).
+조건 하나가 없으면 ADR을 제안하지 않는다. [ADR-FORMAT.md](ADR-FORMAT.md)의 형식을 쓴다.

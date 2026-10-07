@@ -1,7 +1,7 @@
 interface:
-  display_name: "Vibe Hoego"
-  short_description: "Derive agent-environment improvements from session records"
-  default_prompt: "Use $vibe-hoego to look back at this session and propose agent-environment improvements."
+  display_name: "바이브 회고"
+  short_description: "세션 기록에서 에이전트 환경 개선 후보 도출"
+  default_prompt: "$vibe-hoego로 이번 세션을 되돌아보고 에이전트 환경 개선 후보를 제안해 줘."
 
 policy:
   allow_implicit_invocation: false

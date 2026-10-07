@@ -1,47 +1,47 @@
-# ADR Format
+# ADR 형식
 
-ADRs live in `docs/adr/` and are numbered sequentially: `0001-slug.md`, `0002-slug.md`, and so on.
+ADR은 `docs/adr/`에 보관하고 차례로 번호를 매긴다: `0001-slug.md`, `0002-slug.md`, 그다음 번호.
 
-Create `docs/adr/` only when the first ADR is needed.
+첫 ADR이 필요할 때만 `docs/adr/` 디렉터리를 만든다.
 
-## Template
+## 템플릿
 
 ```md
-# {Short Decision Title}
+# {짧은 결정 제목}
 
-{1–3 sentences: Context, decision, and rationale.}
+{1–3문장: 문맥, 결정, 이유.}
 ```
 
-An ADR can be written in a single paragraph. Record the decision and its rationale. No further structure is required.
+ADR은 한 문단으로 쓸 수 있다. 결정과 그 이유를 기록한다. 다른 구성은 필요하지 않다.
 
-## Optional Structure
+## 추가 구성
 
-Add structure only when adding valuable information. Most ADRs need no additional structure:
+유용한 정보를 더할 때만 구성을 넣는다. 대부분 ADR은 추가 구성이 필요 없다.
 
-- **Status** frontmatter (`proposed | accepted | deprecated | superseded by ADR-NNNN`) — used when revisiting decisions
-- **Considered Alternatives** — used when rejected options must be remembered
-- **Consequences** — used when impacts on other parts of the system need documenting
+- **상태** frontmatter (`proposed | accepted | deprecated | superseded by ADR-NNNN`) — 결정을 다시 검토할 때 쓴다
+- **검토한 선택** — 기각한 선택을 기억해야 할 때 쓴다
+- **결과** — 시스템의 다른 부분에 미치는 영향을 적어야 할 때 쓴다
 
-## Numbering
+## 번호 매기기
 
-Find the highest existing integer in `docs/adr/` and add 1.
+`docs/adr/`에서 가장 큰 기존 번호를 찾아 1을 더한다.
 
-## When to Propose an ADR
+## ADR을 제안할 때
 
-Do not create ADRs automatically. Propose an ADR only when all three conditions are met:
+ADR을 자동으로 만들지 않는다. 다음 세 조건이 모두 참일 때만 ADR을 제안한다:
 
-1. **Hard to change** — Significant cost to reverse the decision later.
-2. **Non-obvious from code alone** — Future readers cannot deduce reasoning from code alone.
-3. **Evaluated real alternatives** — Real alternatives were evaluated and one was chosen for concrete reasons.
+1. **바꾸기 어려움** — 나중에 결정을 바꾸는 비용이 의미 있다.
+2. **이유가 코드만 보고는 알기 어려움** — 미래의 독자가 코드만 보고는 이유를 알 수 없다.
+3. **실제 선택지 비교** — 실제 선택지를 비교했고, 구체적 이유로 하나를 골랐다.
 
-Do not propose ADRs for easy-to-change decisions, decisions whose reasons are obvious from code, or when real alternatives were not evaluated.
+바꾸기 쉬운 결정에는 ADR을 제안하지 않는다. 이유가 코드에 드러나면 ADR을 제안하지 않는다. 실제 다른 선택지를 비교하지 않았으면 ADR을 제안하지 않는다.
 
-### Decisions Meeting These Conditions
+### 이 조건을 만족하는 결정
 
-- **Architectural decisions.** "Use a monorepo." "Use events for write model, Postgres for read model."
-- **Cross-context integration patterns.** "Ordering and Billing use domain events instead of synchronous HTTP."
-- **Technology choices taking ~3 months to change.** Database, message bus, auth provider, deployment target. Do not record every library; record choices that take months to replace.
-- **Boundary and scope decisions.** "Customer data belongs to Customer context; other contexts reference by ID only." State what contexts own and do not own.
-- **Intentional deviations from standard expectations.** "We use raw SQL instead of an ORM because of X." Record when a reasonable reader would expect a different choice.
-- **Constraints invisible in code.** "Regulatory requirements prohibit AWS." "Partner API contract requires response times under 200ms."
-- **Rejected alternatives when reasons are non-obvious.** If GraphQL was evaluated and REST was chosen for specific reasons, record the reasoning so future readers understand why.
+- **아키텍처 결정.** "모노레포를 쓴다." "쓰기 모델은 이벤트를 쓰고, 읽기 모델은 Postgres에 둔다."
+- **컨텍스트 간 통합 패턴.** "주문과 청구는 동기 HTTP 대신 도메인 이벤트를 쓴다."
+- **바꾸는 데 약 석 달이 걸리는 기술 선택.** 데이터베이스, 메시지 버스, 인증 제공자, 배포 대상. 모든 라이브러리를 기록하지 않는다. 바꾸는 데 약 석 달이 걸리는 선택만 기록한다.
+- **경계와 범위 결정.** "고객 데이터는 고객 (Customer) 컨텍스트에 속한다. 다른 컨텍스트는 그 ID만 쓴다." 컨텍스트가 가지는 것과 가지지 않는 것을 함께 적는다.
+- **일반 기대와 다른 의도적 선택.** "우리는 ORM 대신 수동 SQL을 쓴다. 이유는 X다." 합리적 독자가 다른 선택을 기대할 때 그 선택을 기록한다. 선택이 의도적임을 밝히고 이유를 적는다.
+- **코드에 보이지 않는 제약.** "규정 요건 때문에 AWS를 쓸 수 없다." "파트너 API 계약 때문에 응답 시간은 200ms 이하여야 한다."
+- **이유가 분명하지 않을 때 기각한 다른 선택.** GraphQL을 검토했고 구체적 이유로 REST를 골랐다면, 그 이유를 기록한다. 그렇지 않으면 미래의 독자가 왜 기각했는지 모른 채 GraphQL을 제안할 수 있다.

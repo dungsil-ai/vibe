@@ -1,85 +1,84 @@
-# Logic Prototypes
+# 로직 프로토타입
 
-A small interactive terminal app allowing users to pilot state models directly. Use when the question is about **business logic, state transitions, or data shapes** — things that look reasonable on paper but feel wrong once pushed through concrete test cases.
+사용자가 상태 모델을 직접 조종할 수 있게 해 주는 작은 대화형 터미널 앱. 질문이 **비즈니스 로직, 상태 전이, 데이터 형태**에 관한 것일 때 쓴다. 종이 위에서는 합리적으로 보이지만 실제 사례로 밀어봐야만 잘못됐다는 게 느껴지는 종류다.
 
-Place all artifacts in `.agents/prototype/<name>/`: pure logic, TUI, README with run command, dependency manifests and lockfiles, fixtures, and persistence scratch. The prototype may inspect production source in read-only mode for context, but must not import production modules or modify production source, root manifests, task runners, production configs, databases, auth, routes, or shared components. Use prototype-local dependencies, in-memory or local scratch data, and stubs instead.
+모든 산출물은 `.agents/prototype/<name>/`에 둔다: 순수 로직, TUI, README와 실행 명령, 의존성 매니페스트와 락파일, fixture, 영속성 스크래치. 프로토타입은 맥락을 위해 프로덕션 소스를 읽기 전용으로 검사할 수 있지만, 프로덕션 모듈을 가져오거나 프로덕션 소스, 루트 매니페스트나 작업 실행기, 프로덕션 설정, 데이터베이스, 인증, 라우트, 공유 컴포넌트를 수정해서는 안 된다. 대신 프로토타입 로컬 의존성, 메모리 또는 로컬 스크래치 데이터, 대용품을 사용한다.
 
-## When This Shape Fits
+## 이 형태가 맞는 경우
 
-- "Not sure this state machine handles the edge case where Y follows X."
-- "Can this data model actually represent cases where...?"
-- "Want to get a feel for what the API should look like before writing code."
-- Any case where the user wants to **press buttons and observe state changes**.
+- "이 상태 기계가 X 다음 Y인 경계 사례를 처리하는지 확신이 안 서."
+- "이 데이터 모델이 …인 사례를 실제로 표현할 수 있는지."
+- "API가 어떤 모양이어야 할지 감을 잡고 싶다, 코드를 쓰기 전에."
+- 사용자가 **버튼을 누르고 상태 변화를 보**고 싶은 모든 경우.
 
-If the question is "what should this look like", that is the wrong branch. Use [PROTOTYPE-UI.md](PROTOTYPE-UI.md).
+질문이 "이건 어떤 모양이어야 할까"이면 잘못된 분기다. [PROTOTYPE-UI.md](PROTOTYPE-UI.md)를 쓴다.
 
-## Process
+## 과정
 
-### 1. State the Question
+### 1. 질문 명시
 
-Before writing code, state the state model and question being prototyped in a single paragraph — in `.agents/prototype/<name>/README.md` or a top-level comment in prototype-local files. A logic prototype answering the wrong question is pure waste. Make the question explicit so it can be verified later whether the user is watching now or returning AFK.
+코드를 쓰기 전에, 어떤 상태 모델과 어떤 질문을 프로토타입하는지 적는다. 한 단락으로, `.agents/prototype/<name>/README.md` 또는 프로토타입 로컬 파일 맨 위 주석에. 잘못된 질문에 답하는 로직 프로토타입은 순수 낭비다. 사용자가 지금 보고 있든 AFK로 돌아오든 나중에 확인할 수 있도록 질문을 명시적으로 만든다.
 
-### 2. Choose Language
+### 2. 언어 고르기
+실용적일 때 호스트 프로젝트의 언어와 런타임을 재사용한다. 프로젝트에 명확한 런타임이 없으면(예: 문서 저장소) 묻는다.
 
-Reuse the host project's language and runtime when pragmatic. If the project lacks a clear runtime (e.g. documentation repo), ask.
+모든 의존성 매니페스트와 락파일을 `.agents/prototype/<name>/` 안에 둔다. 루트 매니페스트나 작업 실행기를 수정하거나, 프로토타입만을 위해 새 런타임을 추가하지 않는다.
 
-Place all dependency manifests and lockfiles inside `.agents/prototype/<name>/`. Do not modify root manifests or task runners, or introduce new runtimes solely for a prototype.
+### 3. 로직을 이식 가능한 모듈로 격리
 
-### 3. Isolate Logic into Portable Modules
+실제 로직 — 질문에 답하는 부분 — 을 `.agents/prototype/<name>/` 안의 작고 순수한 인터페이스 뒤에 둔다. 별도 후속 프로덕션 구현을 위한 참고 자료로 읽을 수 있어야 한다. 그 주위의 TUI는 일회용이다. 로직 모듈과 TUI는 분리되어야 한다.
 
-Place the core logic — the part answering the question — behind a small, pure interface in `.agents/prototype/<name>/`. It should be readable as reference material for a separate follow-up production implementation. The surrounding TUI is throwaway. Logic modules and TUI must remain separated.
+올바른 형태는 질문에 따라 다르다:
 
-The right shape depends on the question:
+- **순수 리듀서** — `(state, action) => state`. 동작이 이산 이벤트이고 상태가 단일 값일 때 좋다.
+- **상태 기계** — 명시적 상태와 전이. "지금 당장 어떤 동작이 합법인지"가 질문의 일부일 때 좋다.
+- **평범한 데이터 타입 위의 작은 순수 함수 집합.** 암묵적 현재 상태가 없고 변환만 있을 때 좋다.
+- **로직이 진행 중인 내부 상태를 실제로 소유할 때** 명확한 메서드 표면을 가진 클래스나 모듈.
 
-- **Pure reducer** — `(state, action) => state`. Great when actions are discrete events and state is a single value.
-- **State machine** — Explicit states and transitions. Great when "what actions are legal right now" is part of the question.
-- **Small set of pure functions over plain data types.** Great when there is no implicit current state and only transformations exist.
-- **Class or module with clean method surface** when logic genuinely owns ongoing internal state.
+TUI에 연결하기 쉬운 형태가 아니라, 질문에 가장 잘 맞는 형태를 고른다. 순수하게 유지한다: I/O, 터미널 코드, 제어 흐름을 위한 `console.log`, 프로덕션 모듈 가져오기, 실제 인증·데이터·데이터베이스·설정 변경이 없다. 프로토타입 로컬 TUI가 프로토타입 로컬 로직을 가져와 호출한다. 반대 방향은 없다.
 
-Choose the shape that best fits the question, not what is easiest to wire to a TUI. Keep it pure: no I/O, terminal codes, `console.log` for control flow, production module imports, or real auth/data/database/config mutations. The prototype-local TUI imports and calls prototype-local logic. Never the reverse.
+이것이 프로토타입을 자기 수명 너머까지 유용하게 만든다: 검증된 리듀서/기계/함수 집합은 결정과 후속 프로덕션 구현을 위한 참조를 기록한다. 프로토타입을 해결하는 동안 프로덕션 소스로 들어올리거나, 복사하거나, 합치지 않는다.
 
-This makes the prototype useful beyond its own lifespan: verified reducers/machines/functions record decisions and provide references for subsequent production implementations. Do not lift, copy, or merge into production source while resolving the prototype.
+### 4. 상태를 드러내는 최소 TUI 만들기
 
-### 4. Build Minimal State-Exposing TUI
+TUI를 로직 옆 `.agents/prototype/<name>/`에 둔다. 프로토타입 로컬 의존성, fixture, 스크래치 데이터, 대용품만 사용할 수 있다.
 
-Place the TUI alongside logic in `.agents/prototype/<name>/`. Use only prototype-local dependencies, fixtures, scratch data, and stubs.
+**경량 TUI**로 만든다 — 매 틱마다 화면을 지우고(`console.clear()` / `print("\033[2J\033[H")` / 그에 준하는 것) 전체 프레임을 다시 렌더한다. 사용자는 늘어나는 스크롤백이 아니라 하나의 안정된 뷰를 봐야 한다.
 
-Make it a **lightweight TUI** — clear the screen on each tick (`console.clear()` / `print("\033[2J\033[H")` / equivalent) and re-render the entire frame. Users should see a single stable view rather than an expanding scrollback.
+각 프레임은 두 부분이고, 순서는 다음과 같다:
 
-Each frame consists of two parts in this order:
+1. **현재 상태**, pretty-print되고 diff하기 쉽게(필드마다 한 줄, 또는 형식화된 JSON). 필드 이름이나 섹션 헤더는 **bold**, 덜 중요한 맥락(시간, ID, 파생값)은 **dim**. 네이티브 ANSI 이스케이프 코드로 충분하다 — `\x1b[1m` bold, `\x1b[2m` dim, `\x1b[0m` reset. 이미 프로젝트에 있는 게 아니면 스타일링 라이브러리를 끌어올 필요는 없다.
+2. **키보드 단축키**, 하단에 나열: `[a] 사용자 추가  [d] 사용자 삭제  [t] 시계 진행  [q] 종료`. 키는 bold, 설명은 dim, 또는 반대로 — 읽기 깔끔한 대로.
 
-1. **Current state**, pretty-printed and easy to diff (one line per field, or formatted JSON). Field names or section headers in **bold**, less important context (time, IDs, derived values) in **dim**. Native ANSI escape codes suffice — `\x1b[1m` bold, `\x1b[2m` dim, `\x1b[0m` reset. No need to pull in styling libraries unless already in the project.
-2. **Keyboard shortcuts** listed at the bottom: `[a] Add User  [d] Delete User  [t] Tick Clock  [q] Quit`. Keys bold, descriptions dim, or vice versa — whichever reads cleanly.
+동작:
 
-Lifecycle:
+1. **상태 초기화** — 메모리 객체/구조체 하나, 또는 영속성 자체가 질문일 때 명확히 폐기 가능한 프로토타입 로컬 스크래치 데이터. 시작 시 첫 프레임 렌더.
+2. **한 번에 한 키 입력(또는 한 줄)** 을 읽어 로컬 순수 인터페이스로 보내고, 상태를 결과로 교체한다.
+3. **매 동작 후 전체 프레임 다시 렌더** — 추가가 아니라 교체.
+4. **종료까지 반복.**
 
-1. **Initialize state** — A single memory object/struct, or explicitly disposable prototype-local scratch data when persistence itself is the question. Render first frame at startup.
-2. **Read one keystroke (or line) at a time**, pass to local pure interface, and replace state with the result.
-3. **Re-render full frame after every action** — replace, not append.
-4. **Repeat until quit.**
+전체 프레임이 한 화면에 들어야 한다.
 
-The full frame must fit on one screen.
+자유 조작과 별도로, 질문을 확인할 **안내 시나리오**를 제공한다. 정상 동작, 까다로운 경계 사례, 금지되어야 할 동작 중 질문에 필요한 사례를 고른다. 각 시나리오에는 확인할 상황과 순서대로 실행할 동작을 짧게 설명한다. 시나리오를 시작하거나 다시 시작하면 프로토타입 로컬 상태를 정해진 초기 상태로 복원한다. 각 단계는 자유 조작과 같은 순수 로직 인터페이스를 호출하고, 다음 단계는 사용자의 입력으로 진행한다. 현재 상태 영역에 선택한 시나리오와 진행 단계를 표시하고, 단축키에 선택·진행·재시작을 추가한다. 자유 조작도 유지하며, 금지 동작은 로직의 거부 결과를 보여주고 우회하지 않는다. HTML이나 별도 프레임워크는 추가하지 않는다.
 
-Alongside free play, provide **guided scenarios** that answer the question. Select relevant happy paths, tricky edge cases, and actions that should be illegal. Briefly explain each situation and its ordered actions. Starting or restarting a scenario resets prototype-local state to a known initial state. Each step calls the same pure logic interface as free play and advances on user input. Show the selected scenario and progress within the current-state area, and add selection, advance, and restart shortcuts. Retain free play; display the logic's rejection of illegal actions rather than bypassing it. Do not add HTML or a separate framework.
+### 5. 로컬 명령 하나로 실행 가능하게
 
-### 5. Runnable via a Single Local Command
+`.agents/prototype/<name>/README.md`에 정확히 복사/붙여넣기 명령 하나를 문서화한다. 로컬 코드와, 사용되면 로컬 매니페스트와 의존성에서 프로토타입을 시작해야 한다 — 예: `pnpm --dir .agents/prototype/<name> start`.
 
-Document exactly one copy/paste command in `.agents/prototype/<name>/README.md`. It must launch the prototype from local code and, if used, local manifests and dependencies — e.g. `pnpm --dir .agents/prototype/<name> start`.
+실용적일 때 호스트 런타임을 재사용하되, 루트 task-runner 스크립트를 추가하거나 루트 매니페스트를 편집하지 않는다. 명령 한 번 인계는 프로토타입 로컬에 머문다.
 
-Reuse host runtimes where pragmatic, but do not add root task-runner scripts or edit root manifests. The single-command handoff stays prototype-local.
+### 6. 인계
 
-### 6. Hand Off
+사용자에게 그 정확한 프로토타입 로컬 실행 명령을 준다. 사용자가 직접 조종한다. 흥미로운 순간은 "잠깐, 그건 가능하면 안 되는데" 또는 "어라, X가 저렇게 될 줄 알았는데"라고 말할 때다. 그게 *아이디어*의 버그이고, 그게 요점이다. 새 동작을 추가하고 싶으면 추가한다. 프로토타입은 진화한다.
 
-Give the user that exact prototype-local run command. The user drives directly. The valuable moment is when they say "Wait, that shouldn't be possible" or "Huh, I expected X to happen like that". That is a bug in the *idea*, and that is the whole point. Add new actions if desired. Prototypes evolve.
+### 7. 답과 프로토타입 캡처
 
-### 7. Capture Answer and Prototype
+프로토타입이 질문에 답했으면, [PROTOTYPE.md](PROTOTYPE.md)가 설명하는 대로 답과 프로토타입을 캡처한다: 판결과 질문을 티켓의 해결 댓글에 기록하고, 프로토타입 티켓을 닫고, 프로토타입을 1차 출처로 보존한다. 검증된 로직은 별도 후속 프로덕션 구현을 위한 결정/참조이지, 프로토타입 해결 중에 프로덕션으로 들어올릴 코드가 아니다.
 
-Once the prototype has answered the question, capture answer and prototype as described in [PROTOTYPE.md](PROTOTYPE.md): record verdict and question in the ticket's resolution comment, close the prototype ticket, and preserve the prototype as a primary source. Verified logic serves as a decision/reference for a separate follow-up production implementation, not code to lift into production during prototype resolution.
+## 안티패턴
 
-## Anti-Patterns
-
-- **Do not add tests.** A prototype requiring tests is no longer a prototype.
-- **Do not connect to production services.** Do not use or mutate production databases, configs, auth, or data. Use memory storage unless persistence is the question, in which case use only clearly disposable scratch files/stores under `.agents/prototype/<name>/`.
-- **Do not generalize.** No "what if we support X later". Prototypes answer one question.
-- **Do not mix logic and TUI.** If reducers/machines reference `console.log`, prompts, terminal escape codes, or production modules, they are no longer portable. Keep the TUI as a thin shell over pure prototype-local modules.
-- **Do not ship the TUI shell or lift its logic into production.** The shell is optimized for hands-on terminal piloting. Verified logic provides evidence for a subsequent, separate production implementation.
+- **테스트를 추가하지 마라.** 테스트가 필요한 프로토타입은 더 이상 프로토타입이 아니다.
+- **프로덕션 서비스에 연결하지 마라.** 프로덕션 데이터베이스, 설정, 인증, 데이터 변경을 사용하거나 바꾸지 마라. 영속성이 질문이 아니면 메모리 저장소를 사용하고, 그렇다면 `.agents/prototype/<name>/` 아래 명확히 폐기 가능한 스크래치 파일이나 저장소만 사용한다.
+- **일반화하지 마라.** "나중에 X도 지원하면 어때" 같은 건 없다. 프로토타입은 한 질문에 답한다.
+- **로직과 TUI를 섞지 마라.** 리듀서/상태 기계가 `console.log`, 프롬프트, 터미널 이스케이프 코드, 프로덕션 모듈을 참조하면 더 이상 이식 가능하지 않다. TUI를 순수 프로토타입 로컬 모듈 위의 얇은 셸로 유지한다.
+- **TUI 셸을 배포하거나 그 로직을 프로덕션으로 들어올리지 마라.** 셸은 터미널에서 손으로 조종하는 데 최적화되어 있다. 검증된 로직은 후속 별도 프로덕션 구현을 위한 증거다.

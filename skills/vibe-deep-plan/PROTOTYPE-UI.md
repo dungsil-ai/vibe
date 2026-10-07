@@ -1,103 +1,103 @@
-# UI Prototypes
+# UI 프로토타입
 
-Build **multiple radically different UI variants** within a **standalone prototype app** under `.agents/prototype/<name>/`, switchable via a bottom floating bar. The user flips through variants in the browser to pick one (or take pieces from each) and discard the rest.
+`.agents/prototype/<name>/` 아래 **독립 프로토타입 앱** 안에서, 하단 플로팅 바로 전환할 수 있는 **근본적으로 다른 UI 변형 여럿**을 만든다. 사용자가 브라우저에서 변형을 넘기며 하나를 고르거나(또는 각각에서 부분을 가져오고) 나머지는 버린다.
 
-If the question is about logic/state rather than "what should it look like", that is the wrong branch. Use [PROTOTYPE-LOGIC.md](PROTOTYPE-LOGIC.md).
+질문이 "어떤 모양이어야 할까"가 아니라 로직/상태에 관한 것이면 잘못된 분기다. [PROTOTYPE-LOGIC.md](PROTOTYPE-LOGIC.md)를 쓴다.
 
-## Table of Contents
+## 목차
 
-- When This Shape Fits
-- Prototypes are Always Standalone Apps
-- Recreate Real Context Without Importing
-- Process — State Question, Scaffold, Copy Context, Generate Variants, Wire, Build Switcher Bar, Hand Off, Capture
-- Anti-Patterns
+- 이 형태가 맞는 경우
+- 프로토타입은 항상 독립 앱
+- 가져오지 않고 실제 맥락 재현
+- 과정 — 질문 명시, 스캐폴드, 맥락 복사, 변형 생성, 연결, 전환 바 만들기, 인계, 캡처
+- 안티패턴
 
-## When This Shape Fits
+## 이 형태가 맞는 경우
 
-- "What should this page look like?"
-- "Want to see a few options for this dashboard before committing."
-- "Let's try a different layout for the settings screen."
-- Any case where the user would otherwise spend the day comparing three vague mockups in their head.
+- "이 페이지는 어떤 모양이어야 할까?"
+- "확정하기 전에 이 대시보드의 몇 가지 안을 보고 싶다."
+- "설정 화면의 레이아웃을 다르게 해 보자."
+- 사용자가 머릿속에서 세 가지 모호한 목업을 비교하며 하루를 보낼 모든 경우.
 
-## Prototypes are Always Standalone Apps
+## 프로토타입은 항상 독립 앱
 
-There are no sub-variants. Whether the question is about a brand-new screen or one section of an existing `/settings` page, variants live in a prototype-local app with its own entrypoint under `.agents/prototype/<name>/`. **Never mount anything on production routes.**
+하위 형태는 없다. 질문이 완전히 새로운 화면에 관한 것이든 기존 `/settings` 페이지의 한 섹션에 관한 것이든, 변형은 `.agents/prototype/<name>/` 아래 자체 진입점을 가진 프로토타입 로컬 앱에 존재한다. **프로덕션 라우트에 아무것도 마운트하지 않는다.**
 
-The perennial temptation is rendering variants on the actual page because variants judged in a vacuum always look fine. The intuition is right; the mechanics are wrong. Hosting on actual routes buys fidelity with production diffs — host pages, data layers, shared components, and build configs get edited for something destined for the trash. Isolation buys the same fidelity differently: **copy the parts of real context that alter judgment into the prototype**.
+오래된 유혹은 변형을 실제 페이지에 렌더하는 것이다. 진공에서 판단한 변형은 항상 괜찮아 보이기 때문이다. 그 직감은 맞고 기계는 틀리다: 실제 라우트에서 호스팅하면 프로덕션 diff로 충실도를 산다 — 호스트 페이지, 데이터 레이어, 공유 컴포넌트, 빌드 설정이 휴지통으로 갈 무언가를 위해 편집된다. 격리는 같은 충실도를 다른 방식으로 산다: **판단을 바꾸는 실제 맥락의 부분을 프로토타입으로 복사**한다.
 
-### Strong Boundaries
+### 강한 경계
 
-- **Everything under `.agents/prototype/<name>/`** — variant source, switcher bar, fixtures, copied shell components, styles, dependency manifests, run commands.
-- **Never import from production source.** No `@/components/…`, no `../../src/…`, no real types, hooks, or API clients. If a variant needs a real sidebar, copy the file to the prototype directory and trim it.
-- **No real auth, data, or mutations.** Fixtures and in-memory state only. Interfaces that perform writes call local stubs logging what they would have done.
-- **Do not edit production routes, shared components, build configs, or manifests** — root `package.json`, lockfiles, `vite.config`, `next.config`, `tsconfig`, `Makefile`/`justfile`, CI configs, route manifests. Leave all untouched.
+- **모든 것은 `.agents/prototype/<name>/` 아래** — 변형 소스, 전환 바, fixture, 복사한 셸 컴포넌트, 스타일, 의존성 매니페스트, 실행 명령.
+- **프로덕션 소스에서 가져오지 않는다.** `@/components/…`도, `../../src/…`도, 실제 타입, 훅, API 클라이언트도 안 된다. 변형에 실제 사이드바가 필요하면 파일을 프로토타입 디렉터리로 복사하고 다듬는다.
+- **실제 인증, 데이터, 변경 없음.** fixture와 메모리 상태만. 쓰기를 하는 인터페이스는 무엇을 했을지 기록하는 로컬 스텁을 호출한다.
+- **프로덕션 라우트, 공유 컴포넌트, 빌드 설정, 매니페스트를 편집하지 않는다** — 루트 `package.json`, 락파일, `vite.config`, `next.config`, `tsconfig`, `Makefile`/`justfile`, CI 설정, 라우트 매니페스트. 모두 그대로 둔다.
 
-Run two scoped isolation checks instead of requiring a clean repository:
+깨끗한 저장소를 요구하는 대신 두 가지 범위 격리 검사를 실행한다:
 
-- **Production boundary** — Compare `git status --short` captured before scaffolding with the same command afterward. Ignore preexisting unrelated work. Verify zero production changes introduced by the prototype. Any prototype-related modification outside `.agents/prototype/<name>/` violates boundaries.
-- **Prototype contents** — If `.agents/prototype/<name>/` is ignored, list files with `git ls-files --others --ignored --exclude-standard .agents/prototype/<name>/`; otherwise verify tracked/untracked prototype diffs are confined to that path. Either way, confirm variants, switcher bar, fixtures, manifests, and README reside under `.agents/prototype/<name>/`.
+- **프로덕션 경계** — 스캐폴드 전에 캡처한 `git status --short`와 이후의 같은 명령을 비교한다. 무관한 기존 작업은 무시한다. 프로토타입이 만든 프로덕션 변경이 없는지 확인한다. `.agents/prototype/<name>/` 밖의 프로토타입 관련 변경은 경계 위반이다.
+- **프로토타입 내용** — `.agents/prototype/<name>/`이 무시되면 `git ls-files --others --ignored --exclude-standard .agents/prototype/<name>/`로 파일을 나열하고, 아니면 추적/미추적 프로토타입 diff가 그 경로에 국한되는지 확인한다. 어느 쪽이든 변형, 전환 바, fixture, 매니페스트, README가 `.agents/prototype/<name>/` 아래 있는지 확인한다.
 
-This is also why production build gates are unnecessary. Prototypes have no path into production bundles, so there is nothing to hide behind environment checks — isolation *itself* is the guard.
+이것이 프로덕션 빌드 게이트를 작성할 필요가 없는 이유이기도 하다. 프로토타입은 프로덕션 번들로 갈 경로가 없으므로 환경 검사 뒤에 숨길 것이 없다 — 격리 *자체*가 가드다.
 
-PROTOTYPE.md's rule "follow project routing conventions" applies **inside** the prototype app. Route however the prototype's own entrypoint routes. Do not add to the project's route tree.
+PROTOTYPE.md의 "프로젝트 라우팅 규칙 따르기"는 프로토타입 앱 **안에서** 적용된다. 프로토타입 자체 진입점이 라우팅하는 대로 라우팅한다. 프로젝트의 라우트 트리에 추가하지 않는다.
 
-## Recreate Real Context Without Importing
+## 가져오지 않고 실제 맥락 재현
 
-Fidelity is the whole reason to care about context, so do not skip it — recreate it locally. Copy only what changes judgment:
+충실도가 맥락을 신경 쓰는 전체 이유이므로 건너뛰지 않는다 — 로컬로 재현한다. 판단을 바꾸는 것만 복사한다:
 
-- **Shell** — Headers, sidebars, page chrome at actual size, so each variant is evaluated in the space it will actually occupy. Copy real components and trim them, or stub with fixed-size blocks carrying proper labels and widths.
-- **Density** — Real row counts, real string lengths, real worst cases: 40-character workspace names, empty states, accounts with 47 notification toggles. Three rows of happy-path fixtures make every layout look good and teach nothing.
-- **Data shape** — Mirror actual payload/props shapes in local fixture modules, re-typing fields inline. Copy shapes; do not import types.
-- **Styling system** — Recreate the project's actual system (Tailwind config values, shadcn tokens, MUI theme, standard CSS variables) by copying relevant tokens into the prototype. Approximate without importing.
+- **셸** — 헤더, 사이드바, 페이지 크롬을 실제 크기로. 각 변형이 실제로 얻을 공간에서 판단되도록. 실제 컴포넌트를 복사해 다듬거나, 올바른 레이블과 너비를 가진 고정 크기 블록으로 스텁한다.
+- **밀도** — 실제 행 수, 실제 문자열 길이, 실제 최악의 사례: 40자 작업공간 이름, 빈 상태, 알림 토글이 47개인 계정. 세 행의 happy-path fixture는 모든 레이아웃을 좋아 보이게 하고 아무것도 가르치지 않는다.
+- **데이터 형태** — 실제 페이로드/props 형태를 로컬 fixture 모듈에 반영하고, 필드를 인라인으로 다시 타이핑한다. 형태를 복사한다. 타입을 가져오지 않는다.
+- **스타일링 시스템** — 프로젝트의 실제 시스템(Tailwind 설정 값, shadcn 토큰, MUI 테마, 일반 CSS 변수)을 관련 토큰을 프로토타입으로 복사해 재현한다. 가져오지 않고 근사한다.
 
-Copy just enough for variants to disagree meaningfully, then stop. Re-architecting the app is not the goal.
+변형이 의미 있는 방식으로 의견이 갈릴 만큼만 복사하고 멈춘다. 앱을 다시 짜는 것은 목표가 아니다.
 
-**Concrete Example — A Section of an Existing Page.** For "what structure should the notification section in /settings have": the prototype app renders a *local copy* of the settings shell — same nav, same page header, same surrounding section stack — varying only the notification section, fed by fixtures mirroring the real preference payload including long labels and empty groups. Evaluation carries the exact same sharpness as on the actual route. `/settings` itself is never opened.
+**실제 예시 — 기존 페이지의 한 섹션.** "/settings의 알림 섹션은 어떤 구조여야 할까"에 대해: 프로토타입 앱은 설정 셸의 *로컬 복사본*을 렌더한다 — 같은 내비, 같은 페이지 헤더, 같은 주변 섹션 스택 — 오직 알림 섹션만 변형별로 바꾸고, 실제 환경설정 페이로드를 긴 레이블과 빈 그룹까지 포함해 반영하는 fixture로 공급한다. 판단은 실제 라우트에서와 정확히 같은 날카로움을 가진다. `/settings` 자체는 열지 않는다.
 
-## Process
+## 과정
 
-### 1. State the Question and Pick N
+### 1. 질문 명시와 N 고르기
 
-Default is **3 variants**. Beyond 5, they become noise rather than fundamentally different approaches — stop there.
+기본값은 **3 변형**. 5를 넘으면 근본적으로 다른 것이 아니라 노이즈가 되기 시작한다 — 거기까지만.
 
-Write the plan in one line at the top of the prototype's README:
+계획을 한 줄로 프로토타입의 README 맨 위에 적는다:
 
-> "Three structurally different proposals for the /settings notifications section, switchable via `?variant=` in `.agents/prototype/settings-notifications/`."
+> "/settings 알림 섹션의 구조적으로 다른 세 가지 안, `.agents/prototype/settings-notifications/`에서 `?variant=`로 전환."
 
-Works whether the user is present to push back or not.
+이것은 사용자가 반론하러 왔든 아니든 작동한다.
 
-### 2. Scaffold Prototype App
+### 2. 프로토타입 앱 스캐폴드
 
-- Make `.agents/prototype/<name>/` its own **entrypoint** — cheapest option in project framework: small Vite app, standalone framework app, or a single HTML file with a script.
-- Reuse project framework and package manager so variants look right, but declare dependencies in the **prototype's own manifest**. Do not add dependencies or scripts to root manifests.
-- **Single run command**, documented in the prototype's README and executable from the prototype directory — e.g. `cd .agents/prototype/<name> && pnpm dev`, or `bun run index.tsx`. Run metadata stays prototype-local. Do not touch project task runners.
-- Leave repository ignore policies untouched. If `.agents/prototype/<name>/` is ignored, force-add that path only on the throwaway branch (Step 8).
+- `.agents/prototype/<name>/`을 자체 **진입점**으로 만든다 — 프로젝트 프레임워크에서 가장 싼 것: 작은 Vite 앱, 독립 프레임워크 앱, 또는 HTML 파일 하나와 스크립트 하나.
+- 변형이 올바로 보이도록 프로젝트의 프레임워크와 패키지 매니저를 재사용하되, 의존성은 **프로토타입 자체 매니페스트**에 선언한다. 루트 매니페스트에 의존성이나 스크립트를 추가하지 않는다.
+- **실행 명령 하나**, 프로토타입의 README에 문서화하고 프로토타입 디렉터리에서 실행 가능한 — 예: `cd .agents/prototype/<name> && pnpm dev`, 또는 `bun run index.tsx`. 실행 메타데이터는 프로토타입 로컬에 머문다. 프로젝트의 작업 실행기는 건드리지 않는다.
+- 저장소의 기존 무시 정책은 그대로 둔다. `.agents/prototype/<name>/`이 무시되면 (8단계에서) 일회용 브랜치에서만 그 경로를 force-add한다.
 
-### 3. Copy Context
+### 3. 맥락 복사
 
-Build the local shell, fixtures, and style tokens described in [Recreate Real Context](#recreate-real-context-without-importing) before authoring variants. Doing so afterward leads to variants designed in a vacuum and retrofitted later.
+[실제 맥락 재현](#가져오지-않고-실제-맥락-재현)에서 설명한 로컬 셸, fixture, 스타일 토큰을 변형을 작성하기 전에 만든다. 그 뒤에 하면 변형이 진공에서 설계된 뒤 나중에 맞춰진다.
 
-### 4. Author Radically Different Variants
+### 4. 근본적으로 다른 변형 생성
 
-Write each variant. For each:
+각 변형을 작성한다. 각각에 대해:
 
-- Screen purpose and accessible fixture data.
-- Project component library/styling system, as recreated locally (TailwindCSS, shadcn, MUI, plain CSS, whatever is used).
-- Distinct exported component names, e.g. `VariantA`, `VariantB`, `VariantC`.
+- 화면의 목적과 접근 가능한 fixture 데이터.
+- 프로젝트의 컴포넌트 라이브러리/스타일링 시스템, 로컬로 재현한 대로(TailwindCSS, shadcn, MUI, 일반 CSS, 무엇이든).
+- 명확한 내보낸 컴포넌트 이름, 예: `VariantA`, `VariantB`, `VariantC`.
 
-Variants must be **structurally different** — distinct layouts, distinct information hierarchies, distinct primary interactions, not merely different colors. Three slightly adjusted card grids are wallpaper, not a UI prototype. If two drafts turn out too similar, redo one with an explicit "do not use card grids" constraint.
+변형은 **구조적으로 달라야** 한다 — 다른 레이아웃, 다른 정보 계층, 다른 주요 인터페이스, 단순히 다른 색이 아니다. 살짝 조정한 카드 그리드 세 개는 UI 프로토타입이 아니라 배경화면이다. 두 초안이 너무 비슷하게 나오면, 하나를 명시적 "카드 그리드 사용 안 함" 지시로 다시 한다.
 
-### 5. Wire Up
+### 5. 연결
 
-A single switcher bar sits at the prototype app entrypoint:
+전환 바 하나가 프로토타입 앱의 진입점에 있다:
 
 ```tsx
-// Pseudocode — adapt to project framework
-import { fixture } from './fixtures';        // Local fixture, not real loader/query
+// 의사코드 — 프로젝트 프레임워크에 맞춰 적용
+import { fixture } from './fixtures';        // 로컬 fixture, 실제 로더/쿼리가 아님
 
 const variant = searchParams.get('variant') ?? 'A';
 return (
-  <PrototypeShell>                            {/* Local copy of real chrome */}
+  <PrototypeShell>                            {/* 실제 크롬의 로컬 복사본 */}
     {variant === 'A' && <VariantA {...fixture} />}
     {variant === 'B' && <VariantB {...fixture} />}
     {variant === 'C' && <VariantC {...fixture} />}
@@ -106,49 +106,49 @@ return (
 );
 ```
 
-Data originates from the fixture module above the switcher bar. Only the rendered subtree changes across variants.
+데이터는 전환 바 위의 fixture 모듈에서 온다. 변형별로 바뀌는 것은 렌더된 서브트리뿐이다.
 
-### 6. Build Floating Switcher Bar
+### 6. 플로팅 전환 바 만들기
 
-A small fixed-position bar centered at bottom screen, three parts:
+화면 하단 중앙의 작은 고정 위치 바, 세 부분:
 
-- **Left arrow** — Cycle to previous variant (wraps around).
-- **Variant label** — Displays current variant key, plus exported name if variant provides one. E.g. `B — Sidebar Layout`.
-- **Right arrow** — Cycle forward (wraps around).
+- **왼쪽 화살표** — 이전 변형으로 순환(끝에서 처음으로 감김).
+- **변형 레이블** — 현재 변형 키를 표시하고, 변형이 이름을 내보내면 그 이름도. 예: `B — 사이드바 레이아웃`.
+- **오른쪽 화살표** — 앞으로 순환(끝에서 처음으로 감김).
 
-Behavior:
+동작:
 
-- Clicking arrows updates `?variant=` URL search params, making variants **shareable and refresh-stable**. Use what the prototype app provides — framework routers (`router.replace`, `navigate`) or `history.replaceState` with re-render in plain HTML prototypes.
-- Keyboard: `←` and `→` arrow keys cycle variants. Do not intercept arrow keys when focus is inside `<input>`, `<textarea>`, or `[contenteditable]`.
-- Visually distinct from the page (e.g. high-contrast pill, subtle shadow) making it obvious it is not part of the design under review.
+- 화살표를 클릭하면 `?variant=` URL 검색 매개변수를 갱신해 변형을 **공유 가능하고 새로고침 안정**으로 만든다. 프로토타입 앱이 가진 것을 사용 — 프레임워크 라우터(`router.replace`, `navigate`) 또는 일반 HTML 프로토타입이면 `history.replaceState`와 다시 렌더.
+- 키보드: `←`와 `→` 화살표 키도 순환. `<input>`, `<textarea>`, `[contenteditable]`에 포커스가 있을 때는 화살표 키를 가로채지 않는다.
+- 페이지와 시각적으로 구별되게(예: 고대비 알약, 미세한 그림자) 평가 중인 디자인의 일부가 아님이 명백하게.
 
-The switcher bar is a prototype-local component — inside `.agents/prototype/<name>/` beside variants, not in the project's shared UI folder.
+전환 바는 프로토타입 로컬 컴포넌트다 — 변형 옆 `.agents/prototype/<name>/`에 있지, 프로젝트의 공유 UI 폴더에 있지 않다.
 
-### 7. Hand Off
+### 7. 인계
 
-Provide run command, URL, and `?variant=` keys. This is the ticket's HITL half: the user flips through when available, and the ticket resolves only through that exchange — never pick a winner on the user's behalf.
+실행 명령, URL, `?variant=` 키를 드러낸다. 이것이 티켓의 HITL 절반이다: 사용자가 시간 날 때마다 넘기며, 티켓은 오직 그 교환을 통해서만 해결된다 — 사용자를 대신해 승자를 고르지 않는다.
 
-Valuable feedback is often **"We want B's header with C's sidebar"** — that combination is their real design. Build it as an additional variant and hand off again.
+흥미로운 피드백은 보통 **"B의 헤더와 C의 사이드바를 원한다"**이다 — 그게 그들이 원하는 실제 디자이다. 추가 변형으로 만들고 다시 인계한다.
 
-### 8. Capture Verdict — Implementation is a Follow-up Ticket
+### 8. 판결 캡처 — 구현은 후속 티켓
 
-When a variant wins, capture the answer — which variant, why, requested combinations — and capture the prototype as described in [PROTOTYPE.md](PROTOTYPE.md): all variants and switcher bar go to a **throwaway branch** as a primary source. Leave repository ignore policies untouched; force-add `.agents/prototype/<name>/` on that throwaway branch only if the path is ignored. Leave a context pointer to that branch on the ticket. Post the verdict as a resolution comment, close the ticket, and add a one-line gist to the map's **Decisions so far**.
+변형이 이기면, 답을 캡처한다 — 어떤 변형, 왜, 사용자가 요청한 조합 — 그리고 [PROTOTYPE.md](PROTOTYPE.md)가 설명하는 대로 프로토타입을 캡처한다: 변형 전체와 전환 바는 1차 출처로 **일회용 브랜치**로 간다. 저장소의 기존 무시 정책은 그대로 두고, 경로가 무시될 때만 그 일회용 브랜치에서 `.agents/prototype/<name>/`을 force-add한다. 티켓에 그 브랜치로의 맥락 포인터를 남긴다. 판결을 해결 댓글로 올리고, 티켓을 닫고, 한 줄 gist를 지도의 **Decisions so far**에 추가한다.
 
-**Do not fold the winner into production code here.** This ticket resolves a *decision*. Building it is separate work — a follow-up task ticket, or `/vibe-plan` output after the map finishes. Therefore, the verdict must capture what that follow-up needs:
+**여기서 승자를 프로덕션 코드에 접지 마라.** 이 티켓은 *결정*을 해결한다. 그것을 짓는 건 별도 작업이다 — 후속 작업 티켓, 또는 지도가 끝난 뒤 `/vibe-plan`의 산출물. 그러므로 판결은 그 후속 작업에 필요한 것을 담아야 한다:
 
-- Which variant won, and meaningful structural decisions within it (information hierarchy, primary interactions, layout).
-- Elements borrowed from losing variants.
-- What the production version actually needs to wire up — real routes, real components, real data sources and auth — everything untouched by the prototype.
+- 어떤 변형이 이겼는지, 그 안에서 의미 있는 구조적 결정(정보 계층, 주요 인터페이스, 레이아웃).
+- 진 변형에서 빌려온 부분.
+- 프로덕션 버전이 실제로 연결해야 하는 것 — 실제 라우트, 실제 컴포넌트, 실제 데이터 소스와 인증 — 프로토타입이 건드리지 않은 것 전부.
 
-Main branch retains only the recorded decision. No variant code, switcher bar, or prototype directory.
+main 브랜치는 기록된 결정만 가진다. 변형 코드, 전환 바, 프로토타입 디렉터리는 없다.
 
-## Anti-Patterns
+## 안티패턴
 
-- **Variants differing only in color or copy.** That is tweaking, not prototyping. Real variants take differing stances on structure.
-- **Importing "just this one component" from production source.** A single import links throwaway code to the real tree and pulls in providers, types, and configs. Copy the file to the prototype directory and trim it.
-- **Mounting variants on actual routes**, or hiding behind feature flags / environment checks in production code. The prototype has its own entrypoint. That is the whole point.
-- **Touching root manifests, build configs, or task runners** to run the prototype. Declare needed dependencies or scripts in the prototype's own manifest.
-- **Thin fixtures.** Three clean rows make every layout shine. Unless real density and ugly edge cases are recreated, the prototype answers nothing.
-- **Sharing too much code across variants.** A shared shell is fine — that is copied context. A shared `<Layout>` defeats the point: each variant must remain free to discard layouts.
-- **Connecting variants to real data, auth, or mutations.** Fixtures and logging stubs only. The question is "what should it look like", not "does the backend work".
-- **Directly promoting prototype code to production.** Variant code was written under prototype constraints (no tests, minimal error handling, mock data). Follow-up tickets rewrite it properly.
+- **색이나 문구만 다른 변형.** 그건 프로토타입이 아니라 조정이다. 진짜 변형은 구조에 대해 의견이 갈린다.
+- **"이 컴포넌트 하나만" 프로덕션 소스에서 가져오기.** 가져오기 하나가 일회용 코드를 실제 트리에 연결하고 그 프로바이더, 타입, 설정을 끌고 온다. 파일을 프로토타입 디렉터리로 복사하고 다듬는다.
+- **실제 라우트에 변형 마운팅**, 또는 피처 플래그나 프로덕션 코드의 환경 검사 뒤에 두기. 프로토타입은 자체 진입점을 가진다. 그게 요점이다.
+- **프로토타입을 실행하려고** 루트 매니페스트, 빌드 설정, 작업 실행기 건드리기. 의존성이나 스크립트가 필요하면 프로토타입 자체 매니페스트에 선언한다.
+- **얇은 fixture.** 세 깔끔한 행은 모든 레이아웃을 돋보이게 한다. 실제 밀도와 추한 사례를 재현하지 않으면 프로토타입은 아무것도 답하지 않는다.
+- **변형 간 코드 너무 많이 공유.** 공유 셸은 괜찮다 — 그건 복사한 맥락이다. 공유 `<Layout>`은 요점을 무너뜨린다: 각 변형은 레이아웃을 버릴 자유가 있어야 한다.
+- **변형을 실제 데이터, 인증, 변경에 연결.** fixture와 로깅 스텁만. 질문은 "어떤 모양이어야 할까"지 "백엔드가 작동하나"가 아니다.
+- **프로토타입을 프로덕션으로 직접 승격.** 변형 코드는 프로토타입 제약(테스트 없음, 최소 에러 처리, 가짜 데이터) 아래 작성되었다. 후속 티켓이 제대로 다시 작성한다.
