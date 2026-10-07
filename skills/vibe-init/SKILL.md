@@ -44,12 +44,12 @@ disable-model-invocation: true
 
 **A절 — 이슈 트래커.**
 
-> 설명: "이슈 트래커"는 이 저장소의 이슈가 사는 곳이다. `vibe-plan`과 `vibe-review` 같은 스킬은 여기서 읽고 쓴다 — `gh issue create`를 호출할지, `.agents/plans/` 아래 마크다운 파일을 작성할지, 또는 사용자가 설명하는 다른 워크플로를 따를지 알아야 한다. 이 저장소에서 실제로 작업을 추적하는 곳을 고른다.
+> 설명: "이슈 트래커"는 이 저장소의 이슈가 사는 곳이다. `vibe-plan`과 `vibe-review` 같은 스킬은 여기서 읽고 쓴다 — `gg issue create`를 호출할지, `.agents/plans/` 아래 마크다운 파일을 작성할지, 또는 사용자가 설명하는 다른 워크플로를 따를지 알아야 한다. 이 저장소에서 실제로 작업을 추적하는 곳을 고른다.
 
 기본 태도: 이 스킬들은 GitHub에 맞춰 설계되었다. `git remote`가 GitHub을 가리키면 그것을 제안한다. `git remote`가 GitLab(`gitlab.com` 또는 자체 호스트)을 가리키면 GitLab을 제안한다. 그 밖의 경우(또는 사용자가 원하면) 다음을 제시한다:
 
-- **GitHub** — 이슈가 저장소의 GitHub Issues에 산다(`gh` CLI 사용)
-- **GitLab** — 이슈가 저장소의 GitLab Issues에 산다([`glab`](https://gitlab.com/gitlab-org/cli) CLI 사용)
+- **GitHub** — 이슈가 저장소의 GitHub Issues에 산다(`gg` CLI 사용)
+- **GitLab** — 이슈가 저장소의 GitLab Issues에 산다(`gg` CLI 사용)
 - **로컬 마크다운** — 이슈가 이 저장소의 `.agents/plans/<feature>/` 아래 파일로 산다(개인 프로젝트나 리모트 없는 저장소에 적합)
 - **기타**(Jira, Linear 등) — 사용자에게 워크플로를 한 단락으로 설명해 달라고 한다. 스킬이 자유 형식 글로 기록한다
 
