@@ -108,7 +108,7 @@ def iter_sentences(block):
 
 
 def load_word_list(path):
-    """Read word-list.md and return the set of approved word forms."""
+    """Read ste-word-list.md and return the set of approved word forms."""
     approved = set()
     line_re = re.compile(r"^([A-Z][A-Z' -]*[A-Z])\s+\((\w+(?:, \w+)*)\)(?:\s+\[(.*)\])?")
     for line in Path(path).read_text(encoding="utf-8").splitlines():
@@ -258,7 +258,7 @@ def main():
     ap.add_argument("--mode", choices=["procedural", "descriptive", "mixed"],
                     default="mixed", help="text type (default: mixed)")
     ap.add_argument("--word-list", default=None,
-                    help="path to word-list.md (default: ../references/word-list.md)")
+                    help="path to ste-word-list.md (default: ../references/ste-word-list.md)")
     ap.add_argument("--no-vocab", action="store_true",
                     help="do not check words against the approved word list")
     args = ap.parse_args()
@@ -267,7 +267,7 @@ def main():
     if not args.no_vocab:
         wl = args.word_list
         if wl is None:
-            default = Path(__file__).resolve().parent.parent / "references" / "word-list.md"
+            default = Path(__file__).resolve().parent.parent / "references" / "ste-word-list.md"
             wl = default if default.exists() else None
         if wl:
             approved = load_word_list(wl)

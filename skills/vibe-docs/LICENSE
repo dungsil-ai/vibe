@@ -23,21 +23,22 @@ SOFTWARE.
 ---
 
 The files below come from https://github.com/0xpili/simplified-technical-english
-(commit 1e148d670cba46685ad2b4c3f2354a637a7fdbbe). The file references/english.md
+(commit 1e148d670cba46685ad2b4c3f2354a637a7fdbbe). The file references/ste.md
 gives the text of the SKILL.md file of that repository in Korean.
 
 - NOTICE.md
-- references/writing-rules.md
-- references/word-list.md
-- references/substitutions.md
-- examples/before-after.md
+- references/ste-writing-rules.md (from references/writing-rules.md)
+- references/ste-word-list.md (from references/word-list.md)
+- references/ste-substitutions.md (from references/substitutions.md)
+- examples/ste-before-after.md (from examples/before-after.md)
 - scripts/ste_check.py
 
-We wrote the instructions in references/writing-rules.md, references/word-list.md,
-references/substitutions.md, and examples/before-after.md again in Korean.
+We changed the file names and the paths between the files.
+We wrote the instructions in references/ste-writing-rules.md, references/ste-word-list.md,
+references/ste-substitutions.md, and examples/ste-before-after.md again in Korean.
 The approved words, the replacement words, and the English examples did not change.
 
-The license below applies to these files and to references/english.md.
+The license below applies to these files and to references/ste.md.
 
 MIT License
 
@@ -62,7 +63,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 NOTE: This license applies to the text of this skill and to its scripts.
-The word list in references/word-list.md shows words from the ASD-STE100
+The word list in references/ste-word-list.md shows words from the ASD-STE100
 dictionary, which is the property of ASD. Refer to NOTICE.md.
 
 ---
@@ -97,8 +98,8 @@ SOFTWARE.
 The files below come from https://github.com/beamonic/ste-ko
 (commit fd351fe1ec427b9d97292099b568767def9cb427).
 
-- references/ste-ko-spec.md (from SPEC.md)
-- references/ste-ko-dictionary.md (from dictionary.md)
+- references/ste-ko-writing-rules.md (from SPEC.md)
+- references/ste-ko-substitutions.md (from dictionary.md)
 - references/ste-ko-tasks.md (from tasks.md)
 - scripts/ste_ko_check.py (from scripts/lint.py)
 
