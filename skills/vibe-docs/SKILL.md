@@ -15,7 +15,7 @@ description: 명확한 한국어와 영어 문서, 코드 주석, 저장소 글�
 - 이슈 제목, 본문, 댓글
 - PR 제목, 본문, 리뷰, 댓글
 
-저장소의 템플릿, 제목 형식, 커밋 접두사, 주석 기호와 `@param`, `TODO` 같은 주석 태그 등 구조 규칙은 그대로 지킨다. 다만 문장은 아래 `상황별 참고 파일`에서 고른 언어별 참고 파일을 따른다. 이 범위에서는 `references/korean.md`에 옮긴 원문이 코드 주석과 커밋 메시지를 적용 대상에서 빼는 규칙보다 이 절이 우선한다.
+저장소의 템플릿, 제목 형식, 커밋 접두사, 주석 기호와 `@param`, `TODO` 같은 주석 태그 등 구조 규칙은 그대로 지킨다. 다만 문장은 아래 `상황별 참고 파일`에서 고른 언어별 참고 파일을 따른다.
 
 Javadoc, KDoc처럼 문서화 주석을 다루는 다른 스킬을 함께 쓸 때 두 스킬의 규칙이 충돌하면 그 스킬의 규칙을 따른다.
 
@@ -27,7 +27,7 @@ Javadoc, KDoc처럼 문서화 주석을 다루는 다른 스킬을 함께 쓸 �
 
 1. 한국어나 영어 결과물의 초안을 쓰기 **전에** 이 파일을 읽고, 아래 `상황별 참고 파일`에서 이번 결과물에 해당하는 파일을 모두 읽는다.
 2. 제목, 본문, 목록, 댓글을 포함한 첫 초안부터 이 파일의 규칙과 읽은 참고 파일의 규칙을 적용한다.
-3. 최종 초안을 만든 뒤, 실제 저장·커밋·게시·전송 직전에 같은 규칙으로 다시 검토한다. 이때 한국어 글은 `references/ste-ko.md`의 `검사` 절을 따르고, 영어 글은 `references/ste.md`의 6단계 검사를 실행한다.
+3. 최종 초안을 만든 뒤, 실제 저장·커밋·게시·전송 직전에 같은 규칙으로 다시 검토한다. 이때 한국어 글은 `references/korean.md`의 `검사` 절을 따르고, 영어 글은 `references/english.md`의 6단계 검사를 실행한다.
 4. 검토를 통과한 최종본만 실제 명령에 넣는다.
 
 초안을 쓴 뒤에 이 스킬을 읽었다면 이미 쓴 글을 적용된 것으로 보지 않고, 처음부터 다시 검토한다. 초안을 쓰기 전에 이 스킬을 읽었더라도 게시 직전 검토를 생략할 수 없다. 여러 이슈나 댓글을 한 번에 만들 때에는 모든 제목과 본문을 각각 검토한다. 참고 파일의 지침을 요약문으로 바꾸지 않는다.
@@ -57,16 +57,15 @@ Javadoc, KDoc처럼 문서화 주석을 다루는 다른 스킬을 함께 쓸 �
 
 | 상황 | 파일 | 사용 방법 |
 | --- | --- | --- |
-| 한국어 문장을 쓰거나 검토한다. | `references/korean.md` | 요약하지 않고 전체를 읽는다. |
-| 한국어 문장을 쓰거나 검토한다. | `references/ste-ko.md` | `references/korean.md`와 함께 전체를 읽는다. |
-| 한국어 표현이 STE-KO 비승인 어휘인지 확인하거나 바꾼다. | `references/ste-ko-substitutions.md` | 해당 절을 읽는다. |
-| 한국어 문서 전체를 다시 쓰거나, `references/ste-ko.md`만으로 규칙을 판단할 수 없다. | `references/ste-ko-writing-rules.md` | 규칙 번호로 해당 절을 찾아 읽는다. |
-| 템플릿이 없는 저장소에서 이슈나 업무 항목을 한국어로 쓴다. | `references/ste-ko-tasks.md` | 전체를 읽는다. |
-| 한국어 글의 최종본을 검사한다. | `scripts/ste_ko_check.py` | 읽지 않고, `references/ste-ko.md`의 `검사` 절에 있는 명령으로 실행한다. |
-| 영어 문장을 쓰거나 검토한다. | `references/ste.md` | 전체를 읽는다. |
+| 한국어 문장을 쓰거나 검토한다. | `references/korean.md` | 전체를 읽는다. |
+| 한국어 표현이 비승인 표현인지 확인하거나 대체어로 바꾼다. | `references/korean/substitutions.md` | 해당 절을 읽는다. |
+| 한국어 문서 전체를 다시 쓰거나, `references/korean.md`만으로 규칙을 판단할 수 없다. | `references/korean/writing-rules.md` | 규칙 번호로 해당 절을 찾아 읽는다. |
+| 템플릿이 없는 저장소에서 트래커 항목을 한국어로 쓴다. | `references/korean/tasks.md` | 전체를 읽는다. |
+| 한국어 글의 최종본을 검사한다. | `scripts/korean/check.py` | 읽지 않고, `references/korean.md`의 `검사` 절에 있는 명령으로 실행한다. |
+| 영어 문장을 쓰거나 검토한다. | `references/english.md` | 전체를 읽는다. |
 | 이슈, PR, 리뷰, 댓글, 커밋 메시지를 쓰거나 검토한다. 언어는 상관없다. | `references/repo-writing.md` | 언어별 참고 파일과 함께 전체를 읽는다. |
-| 영어 단어가 승인 단어인지 확인한다. | `references/ste-word-list.md` | 전체를 읽지 않고 대문자 표제어를 검색한다. |
-| 승인되지 않은 영어 단어를 바꾸거나, 기술 이름·기술 동사인지 판단한다. | `references/ste-substitutions.md` | 해당 부분을 읽는다. |
-| 영어 문서 전체를 다시 쓰거나, `references/ste.md`만으로 규칙을 판단할 수 없다. | `references/ste-writing-rules.md` | 목차에서 해당 절을 찾아 읽는다. |
-| 영어 글을 STE로 고친 예시가 필요하다. | `examples/ste-before-after.md` | 해당 예시를 읽는다. |
-| 영어 글의 최종본을 검사한다. | `scripts/ste_check.py` | 읽지 않고, `references/ste.md` 6단계의 명령으로 실행한다. |
+| 영어 단어가 승인 단어인지 확인한다. | `references/english/word-list.md` | 전체를 읽지 않고 대문자 표제어를 검색한다. |
+| 승인되지 않은 영어 단어를 대체어로 바꾸거나, 기술 이름·기술 동사인지 판단한다. | `references/english/substitutions.md` | 해당 부분을 읽는다. |
+| 영어 문서 전체를 다시 쓰거나, `references/english.md`만으로 규칙을 판단할 수 없다. | `references/english/writing-rules.md` | 목차에서 해당 절을 찾아 읽는다. |
+| 영어 글을 STE로 고친 예시가 필요하다. | `references/english/before-after.md` | 해당 예시를 읽는다. |
+| 영어 글의 최종본을 검사한다. | `scripts/english/check.py` | 읽지 않고, `references/english.md` 6단계의 명령으로 실행한다. |

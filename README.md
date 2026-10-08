@@ -16,11 +16,11 @@ pnpm dlx skills add dungsil-ai/vibe -g -y --skill *
 ## 출처
 
 `vibe-docs`는 한국어와 영어 문서, 코드 주석, 커밋 메시지, 이슈와 PR을 작성하고 검토합니다. 
-`fluent-korean`의 전체 지침과 `sepia`의 저장소 글쓰기 규범, 모델별 문체 습관 표, `ste-ko`의 한국어 통제 언어 규칙과 검사 스크립트, `simplified-technical-english`의 영어 작성 규칙과 검사 스크립트는 `vibe-docs` 안에 직접 포함되어 있으므로 외부 문서를 읽지 않아도 됩니다.
+`vibe-docs`에 필요한 지침은 모두 스킬 안에 들어 있으므로 외부 문서를 읽지 않아도 됩니다. 한국어 지침은 `fluent-korean`의 지침을 `ste-ko`의 한국어 통제 언어 규칙에 맞춰 다시 썼습니다. 영어 지침은 `simplified-technical-english`의 작성 규칙을 옮겼습니다. 두 규칙의 검사 스크립트와 `sepia`의 저장소 글쓰기 규범, 모델별 문체 습관 표도 함께 들어 있습니다.
 
 | 스킬 | 출처 |
 | --- | --- |
-| [vibe-docs](skills/vibe-docs) | [snflkd/fluent-korean](https://github.com/snflkd/fluent-korean)의 코딩 버전 (MIT), [Nanako0129/sepia](https://github.com/Nanako0129/sepia)의 저장소 글쓰기 규범과 모델별 문체 습관 표 (MIT), [beamonic/ste-ko](https://github.com/beamonic/ste-ko)의 한국어 통제 언어 규칙, 어휘 대응표, 검사 스크립트 (MIT), [0xpili/simplified-technical-english](https://github.com/0xpili/simplified-technical-english)의 ASD-STE100 영어 작성 규칙, 참고 파일, 검사 스크립트 (MIT) |
+| [vibe-docs](skills/vibe-docs) | [snflkd/fluent-korean](https://github.com/snflkd/fluent-korean)의 코딩 버전을 STE-KO에 맞춰 다시 쓴 한국어 지침 (MIT), [Nanako0129/sepia](https://github.com/Nanako0129/sepia)의 저장소 글쓰기 규범과 모델별 문체 습관 표 (MIT), [beamonic/ste-ko](https://github.com/beamonic/ste-ko)의 한국어 통제 언어 규칙, 어휘 대응표, 검사 스크립트 (MIT), [0xpili/simplified-technical-english](https://github.com/0xpili/simplified-technical-english)의 ASD-STE100 영어 작성 규칙, 참고 파일, 검사 스크립트 (MIT) |
 | [vibe-init](skills/vibe-init) | [mattpocock/skills](https://github.com/mattpocock/skills/)의 `setup-matt-pocock-skills` (MIT) |
 | [vibe-goal](skills/vibe-goal) | 이 프로젝트에서 추가 |
 | [vibe-plan](skills/vibe-plan) | [mattpocock/skills](https://github.com/mattpocock/skills/)의 `grill-with-docs`, `to-spec`, `to-tickets`, `triage`와 [shadcn/improve](https://github.com/shadcn/improve)의 실행 계획 작성·관리 흐름 (MIT) |

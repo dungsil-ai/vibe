@@ -1,6 +1,6 @@
 # 영어 작성 규칙
 
-영어 글은 ASD-STE100 Simplified Technical English(STE) 규칙으로 쓴다. STE는 기술 문서를 위한 통제 언어이며, 영어에 익숙하지 않은 독자도 뜻을 분명하게 이해하도록 문장 형태와 어휘를 제한한다. 이 파일에는 STE 규칙 가운데 가장 중요한 규칙을 담았다. 전체 규칙은 `references/ste-writing-rules.md`에, 승인 단어는 `references/ste-word-list.md`에 있다. 이 파일에 적은 경로는 모두 이 스킬 디렉터리를 기준으로 한다.
+영어 글은 ASD-STE100 Simplified Technical English(STE) 규칙으로 쓴다. STE는 기술 문서를 위한 통제 언어이며, 영어에 익숙하지 않은 독자도 뜻을 분명하게 이해하도록 문장 형태와 어휘를 제한한다. 이 파일에는 STE 규칙 가운데 가장 중요한 규칙을 담았다. 전체 규칙은 `references/english/writing-rules.md`에, 승인 단어는 `references/english/word-list.md`에 있다. 이 파일에 적은 경로는 모두 이 스킬 디렉터리를 기준으로 한다.
 
 ## 적용 기준
 
@@ -43,7 +43,7 @@
 
 ## 4단계: 단어 규칙
 
-- 단어는 `references/ste-word-list.md`의 승인 단어, 기술 이름, 기술 동사만 쓴다.
+- 단어는 `references/english/word-list.md`의 승인 단어, 기술 이름, 기술 동사만 쓴다.
 - 기술 이름은 부품, 도구, 재료, 시스템, 문서의 공식 이름이나 그 분야의 용어다. 예: `engine`, `firewall`, `torque wrench`, `SKILL.md`
 - 승인 단어는 목록에 적힌 품사로만 쓴다. `test`는 명사이므로 `test the system`이 아니라 `do a test`로 쓴다.
 - 글 전체에서 한 대상에는 한 이름만 쓰고, 같은 대상을 다른 이름으로 바꿔 부르지 않는다.
@@ -51,7 +51,7 @@
 - 구동사를 만들지 않는다. `put out the fire`가 아니라 `extinguish the fire`로 쓴다.
 - 막연한 단어 대신 구체적인 수량, 이름, 동작을 쓴다.
 - 철자는 미국 영어를 따른다.
-- 자주 쓰이는 대체어는 `references/ste-substitutions.md`에 있다.
+- 자주 쓰이는 대체어는 `references/english/substitutions.md`에 있다.
 
 ## 5단계: 안전 지시
 
@@ -63,10 +63,10 @@
 
 영어 글을 쓴 뒤에는 아래 순서로 검사한다.
 
-1. 스크립트를 실행할 수 있으면 아래 명령을 실행한다. `scripts/ste_check.py`는 이 스킬 디렉터리를 기준으로 한 경로다.
+1. 스크립트를 실행할 수 있으면 아래 명령을 실행한다. `scripts/english/check.py`는 이 스킬 디렉터리를 기준으로 한 경로다.
 
    ```bash
-   python3 scripts/ste_check.py --mode <procedural|descriptive|mixed> <file>
+   python3 scripts/english/check.py --mode <procedural|descriptive|mixed> <file>
    ```
 
    절차 글과 설명 글이 함께 있는 글은 `mixed`로 검사한다. 커밋 메시지나 PR 본문처럼 파일이 아닌 글은 UTF-8 임시 파일로 저장해서 검사한다. 코드 주석은 주석 기호(`//`, `#`, `/*`, `*`)와 주석 태그를 뺀 문장만 임시 파일로 옮겨서 검사한다. 스크립트는 `#`로 시작하는 문단을 제목으로 보고 건너뛰기 때문이다.
@@ -85,4 +85,4 @@
 - 문단마다 문장 수를 세고, 6문장을 넘는 문단을 나눈다.
 - 승인되지 않았고 기술 이름도 아닌 단어를 찾아 바꾼다.
 
-스크립트는 모든 오류를 찾지 못하고, 단어가 승인된 뜻으로 쓰였는지도 판단하지 못한다. 따라서 스크립트를 실행한 뒤에도 쓴 단어를 `references/ste-word-list.md`와 비교한다. 스크립트가 `CHECK`로 나열한 단어는 기술 이름이나 기술 동사인지 확인하고, 둘 다 아니면 대체어로 바꾼다.
+스크립트는 모든 오류를 찾지 못하고, 단어가 승인된 뜻으로 쓰였는지도 판단하지 못한다. 따라서 스크립트를 실행한 뒤에도 쓴 단어를 `references/english/word-list.md`와 비교한다. 스크립트가 `CHECK`로 나열한 단어는 기술 이름이나 기술 동사인지 확인하고, 둘 다 아니면 대체어로 바꾼다.

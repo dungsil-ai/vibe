@@ -6,7 +6,7 @@ The specification ASD-STE100, Simplified Technical English, is the property of
 ASD (AeroSpace and Defence Industries Association of Europe), Brussels, Belgium.
 ASD-STE100 is a registered trade mark of ASD.
 
-The word list in `references/ste-word-list.md` shows words from the ASD-STE100
+The word list in `references/english/word-list.md` shows words from the ASD-STE100
 dictionary (Issue 7, 2017). The list shows only the words, their parts of
 speech, and their forms. The list does not show the approved meanings, the
 definitions, or the examples of the dictionary.
@@ -24,8 +24,8 @@ ASD-STE100, use the official specification and an approved process.
 
 ## License
 
-The text of the STE files in this skill (references/ste.md,
-references/ste-writing-rules.md, references/ste-substitutions.md,
-examples/ste-before-after.md, scripts/ste_check.py, and this notice) is available
-under the MIT license. The rules in references/ste-writing-rules.md are a summary.
-They are not the official text of the specification.
+The text of the STE files in this skill (references/english.md,
+references/english/writing-rules.md, references/english/substitutions.md,
+references/english/before-after.md, scripts/english/check.py, and this notice)
+is available under the MIT license. The rules in references/english/writing-rules.md
+are a summary. They are not the official text of the specification.

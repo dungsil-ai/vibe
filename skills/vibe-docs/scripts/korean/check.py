@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """STE-KO 검사기. 기계로 셀 수 있는 규칙만 본다.
 
-  python3 scripts/ste_ko_check.py README.md --surface 문서
-  python3 scripts/ste_ko_check.py 'copy/**/*.md' --surface UI
-  python3 scripts/ste_ko_check.py --self-test
+  python3 scripts/korean/check.py README.md --surface 문서
+  python3 scripts/korean/check.py 'copy/**/*.md' --surface UI
+  python3 scripts/korean/check.py --self-test
 
 의존성 없음. 위반이 있으면 종료 코드 1을 낸다.
 """
@@ -13,7 +13,7 @@ import re
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 
 # 10.2 표면별 상한
 SURFACES = {
@@ -56,7 +56,7 @@ def stem_pattern(stem, open_ended=True):
     return r"(?<![가-힣])" + body + tail
 
 
-# 3.2 이중피동 — ste-ko-substitutions.md B절과 같은 목록이다. --no-vocab 에서도 `필수` 규칙은 잡는다.
+# 3.2 이중피동 — references/korean/substitutions.md B절과 같은 목록이다. --no-vocab 에서도 `필수` 규칙은 잡는다.
 DOUBLE_PASSIVE = re.compile("|".join(
     stem_pattern(s) for s in (
         "되어지", "보여지", "불려지", "쓰여지", "읽혀지", "잊혀지", "나뉘어지",
@@ -72,12 +72,12 @@ ECHO_OPEN = re.compile(r"^(좋은 질문|정확한 지적|말씀하신|말씀해
 
 
 def load_dictionary(path=None):
-    """references/ste-ko-substitutions.md 비승인 어간을 정규식으로 컴파일한다.
+    """references/korean/substitutions.md 비승인 어간을 정규식으로 컴파일한다.
 
     어간 표기 규칙 — `-`로 끝나면 활용형 전체, `다`로 끝나는 기본형도 활용형 전체,
     표시가 없으면 그 형태 그대로다.
     """
-    path = Path(path) if path else ROOT / "references" / "ste-ko-substitutions.md"
+    path = Path(path) if path else ROOT / "references" / "korean" / "substitutions.md"
     if not path.exists():
         return []
     out = []
@@ -214,7 +214,7 @@ def main():
     ap = argparse.ArgumentParser(description="STE-KO 검사기")
     ap.add_argument("paths", nargs="*", help="검사할 마크다운 파일")
     ap.add_argument("--surface", default="문서", choices=list(SURFACES), help="적용 표면 (기본 문서)")
-    ap.add_argument("--dictionary", help="ste-ko-substitutions.md 경로")
+    ap.add_argument("--dictionary", help="substitutions.md 경로")
     ap.add_argument("--no-vocab", action="store_true", help="1.3 비승인 어휘 검사를 끈다")
     ap.add_argument("--self-test", action="store_true")
     a = ap.parse_args()

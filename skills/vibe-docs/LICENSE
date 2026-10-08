@@ -23,22 +23,23 @@ SOFTWARE.
 ---
 
 The files below come from https://github.com/0xpili/simplified-technical-english
-(commit 1e148d670cba46685ad2b4c3f2354a637a7fdbbe). The file references/ste.md
+(commit 1e148d670cba46685ad2b4c3f2354a637a7fdbbe). The file references/english.md
 gives the text of the SKILL.md file of that repository in Korean.
 
 - NOTICE.md
-- references/ste-writing-rules.md (from references/writing-rules.md)
-- references/ste-word-list.md (from references/word-list.md)
-- references/ste-substitutions.md (from references/substitutions.md)
-- examples/ste-before-after.md (from examples/before-after.md)
-- scripts/ste_check.py
+- references/english/writing-rules.md (from references/writing-rules.md)
+- references/english/word-list.md (from references/word-list.md)
+- references/english/substitutions.md (from references/substitutions.md)
+- references/english/before-after.md (from examples/before-after.md)
+- scripts/english/check.py (from scripts/ste_check.py)
 
-We changed the file names and the paths between the files.
-We wrote the instructions in references/ste-writing-rules.md, references/ste-word-list.md,
-references/ste-substitutions.md, and examples/ste-before-after.md again in Korean.
+We changed the file paths and the paths between the files.
+We wrote the instructions in references/english/writing-rules.md,
+references/english/word-list.md, references/english/substitutions.md, and
+references/english/before-after.md again in Korean.
 The approved words, the replacement words, and the English examples did not change.
 
-The license below applies to these files and to references/ste.md.
+The license below applies to these files and to references/english.md.
 
 MIT License
 
@@ -63,7 +64,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 NOTE: This license applies to the text of this skill and to its scripts.
-The word list in references/ste-word-list.md shows words from the ASD-STE100
+The word list in references/english/word-list.md shows words from the ASD-STE100
 dictionary, which is the property of ASD. Refer to NOTICE.md.
 
 ---
@@ -98,15 +99,15 @@ SOFTWARE.
 The files below come from https://github.com/beamonic/ste-ko
 (commit fd351fe1ec427b9d97292099b568767def9cb427).
 
-- references/ste-ko-writing-rules.md (from SPEC.md)
-- references/ste-ko-substitutions.md (from dictionary.md)
-- references/ste-ko-tasks.md (from tasks.md)
-- scripts/ste_ko_check.py (from scripts/lint.py)
+- references/korean/writing-rules.md (from SPEC.md)
+- references/korean/substitutions.md (from dictionary.md)
+- references/korean/tasks.md (from tasks.md)
+- scripts/korean/check.py (from scripts/lint.py)
 
-We changed the file names and the links between the files.
-The file references/ste-ko.md comes from skills/ste-ko/SKILL.md of that
-repository. We changed it for this skill.
-The license below applies to these files.
+We changed the file paths and the links between the files.
+The STE-KO rules in references/korean.md come from skills/ste-ko/SKILL.md of
+that repository. We wrote them again for this skill.
+The license below applies to these files and to the STE-KO rules in references/korean.md.
 
 MIT License
 
