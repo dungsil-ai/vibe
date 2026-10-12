@@ -4,37 +4,37 @@
     {
       "id": "agents-md-only-even-with-claude-md",
       "prompt": "이 저장소에는 CLAUDE.md만 있고 AGENTS.md는 없어. 스킬 설정을 스캐폴드해줘.",
-      "expected_output": "CLAUDE.md를 수정하지 않고 새 AGENTS.md를 생성해 ## Agent skills 블록을 기록한다.",
+      "expected_output": "`CLAUDE.md`를 수정하지 않고 새 `AGENTS.md`를 생성해 ## Agent skills 블록을 기록한다.",
       "assertions": [
-        "출력은 AGENTS.md에 설정 블록을 기록하고, 파일이 없으면 생성한다.",
-        "CLAUDE.md가 유일한 기존 지시 파일이더라도 출력은 절대 CLAUDE.md를 편집하지 않는다.",
-        "출력은 사용자에게 AGENTS.md와 CLAUDE.md 중 하나를 고르라고 요청하지 않는다."
+        "출력은 `AGENTS.md`에 설정 블록을 기록하고, 파일이 없으면 생성한다.",
+        "`CLAUDE.md`가 유일한 기존 지시 파일이더라도 출력은 절대 `CLAUDE.md`를 편집하지 않는다.",
+        "출력은 사용자에게 `AGENTS.md`와 `CLAUDE.md` 중 하나를 고르라고 요청하지 않는다."
       ]
     },
     {
       "id": "local-tracker-under-agents-plans",
       "prompt": "리모트가 없는 개인 프로젝트라 로컬 마크다운 이슈 트래커로 설정해줘.",
-      "expected_output": "docs/agents/issue-tracker.md가 .agents/plans/<feature>/ 아래 파일 규칙을 기술하며, .scratch/나 .agents/scratch/ 경로는 어디에도 등장하지 않는다.",
+      "expected_output": "`docs/agents/issue-tracker.md`가 `.agents/plans/<feature>/` 아래 파일 규칙을 기술하며, `.scratch/`나 `.agents/scratch/` 경로는 어디에도 등장하지 않는다.",
       "assertions": [
-        "출력은 로컬 마크다운 이슈를 .agents/plans/ 아래에 두며, .scratch/나 .agents/scratch/는 절대 사용하지 않는다.",
-        "출력은 디렉터리당 하나의 기능을 spec.md와 issues/<NN>-<slug>.md 규칙으로 기록한다.",
-        "출력은 트래커 선택을 docs/agents/issue-tracker.md에 기록하고 AGENTS.md에 요약한다."
+        "출력은 로컬 마크다운 이슈를 `.agents/plans/` 아래에 두며, `.scratch/`나 `.agents/scratch/`는 절대 사용하지 않는다.",
+        "출력은 디렉터리당 하나의 기능을 `spec.md`와 `issues/<NN>-<slug>.md` 규칙으로 기록한다.",
+        "출력은 트래커 선택을 `docs/agents/issue-tracker.md`에 기록하고 `AGENTS.md`에 요약한다."
       ]
     },
     {
       "id": "korean-default-triage-labels",
       "prompt": "vibe-plan 스킬이 설치되어 있어. 라벨 어휘를 기본값으로 설정해줘.",
-      "expected_output": "다섯 트리아지 역할을 상태: 접두사가 붙은 한국어 라벨(상태:분류필요, 상태:정보필요, 상태:에이전트작업, 상태:사람작업, 상태:처리안함)에 매핑하고, 계획 역할을 `유형:계획`에 매핑한 docs/agents/triage-labels.md를 작성한다.",
+      "expected_output": "다섯 트리아지 역할을 상태: 접두사가 붙은 한국어 라벨(상태:분류필요, 상태:정보필요, 상태:에이전트작업, 상태:사람작업, 상태:처리안함)에 매핑하고, 계획 역할을 `유형:계획`에 매핑한 `docs/agents/triage-labels.md`를 작성한다.",
       "assertions": [
-        "출력은 기본적으로 다섯 정규 트리아지 역할을 상태: 접두사가 붙은 한국어 라벨 문자열에 매핑하고, 호스트형 명세/계획 이슈용 정규 plan 역할을 `유형:계획`에 매핑한다.",
-        "출력은 정규 역할 이름을 보존하여 역할별로 재정의를 기록할 수 있게 한다.",
+        "출력은 다섯 정규 트리아지 역할을 상태: 접두사가 붙은 한국어 라벨 문자열에 기본값으로 매핑한다. 호스트형 명세 이슈와 계획 이슈에는 정규 plan 역할을 `유형:계획`에 매핑한다.",
+        "출력은 정규 역할 이름을 보존한다. 출력은 역할별 재정의를 기록할 수 있다.",
         "출력은 vibe-plan과 vibe-deep-plan이 둘 다 설치되지 않았을 때만 triage-labels 파일을 건너뛴다."
       ]
     },
     {
       "id": "deep-plan-default-labels-include-plan-type",
       "prompt": "vibe-deep-plan 스킬만 설치되어 있어. 계획 라벨 어휘를 기본값으로 설정해줘.",
-      "expected_output": "docs/agents/triage-labels.md에 결정 맵용 `상태:초안`과 `유형:계획`, 그리고 결정 티켓용 `유형:조사`, `유형:프로토타입`, `유형:인터뷰`, `유형:작업`을 기록한다.",
+      "expected_output": "`docs/agents/triage-labels.md`에 결정 맵용 `상태:초안`과 `유형:계획`, 그리고 결정 티켓용 `유형:조사`, `유형:프로토타입`, `유형:인터뷰`, `유형:작업`을 기록한다.",
       "assertions": [
         "출력은 결정 맵에 정규 map 역할의 `상태:초안`과 정규 plan 역할의 `유형:계획`을 함께 매핑한다.",
         "출력은 네 결정 티켓 역할을 각각 `유형:조사`, `유형:프로토타입`, `유형:인터뷰`, `유형:작업`에 매핑한다.",
@@ -44,71 +44,71 @@
     {
       "id": "in-place-block-update",
       "prompt": "AGENTS.md에 이미 ## Agent skills 섹션이 있는데 이슈 트래커를 GitHub으로 바꾸고 싶어.",
-      "expected_output": "기존 ## Agent skills 블록을 제자리에서 갱신하고 주변 사용자 작성 섹션은 건드리지 않는다.",
+      "expected_output": "기존 ## Agent skills 블록을 제자리에서 갱신하고 주변에 사용자가 쓴 섹션은 건드리지 않는다.",
       "assertions": [
         "출력은 중복 블록을 추가하는 대신 기존 ## Agent skills 블록을 제자리에서 갱신한다.",
-        "출력은 무관한 AGENTS.md 섹션은 그대로 둔다.",
-        "출력은 새 트래커 선택에 맞게 docs/agents/issue-tracker.md를 다시 작성한다."
+        "출력은 무관한 `AGENTS.md` 섹션은 그대로 둔다.",
+        "출력은 새 트래커 선택에 맞게 `docs/agents/issue-tracker.md`를 다시 작성한다."
       ]
     },
     {
       "id": "commit-before-remote",
       "prompt": "GitHub 저장소를 vibe-init으로 설정해줘. local 설정 문서를 만든 뒤 필요한 한국어 label도 GitHub에 만들어줘. 시작 전부터 src/app.ts에는 내 변경이 있어.",
-      "expected_output": "시작 상태를 기록하고 local 설정 문서를 작성한 뒤, 이번 실행의 정확한 설정 파일만 stage하고 커밋 SHA를 확인한다. 기존 src/app.ts 변경은 커밋에 넣지 않는다. 현재 브랜치를 일반 push하고 remote SHA를 확인한 뒤에만 GitHub label을 만든다.",
+      "expected_output": "시작 상태를 기록하고 local 설정 문서를 작성한 뒤, 이번 실행의 정확한 설정 파일만 stage하고 commit SHA를 확인한다. 기존 `src/app.ts` 변경은 commit에 넣지 않는다. 현재 branch를 일반 push하고 remote SHA를 확인한 뒤에만 GitHub label을 만든다.",
       "assertions": [
         "출력은 편집 전에 git status로 기존 변경 경로를 기록하고, 이번 실행의 설정 파일만 정확한 경로로 stage한다.",
-        "출력은 git add .을 쓰지 않고 기존 src/app.ts 변경을 staged diff나 commit에 섞지 않는다.",
-        "출력은 local 설정 commit 뒤 현재 브랜치를 force 없이 push하고, remote branch에 commit SHA가 반영되었는지 확인한다.",
+        "출력은 git add .을 쓰지 않고 기존 `src/app.ts` 변경을 staged diff나 commit에 섞지 않는다.",
+        "출력은 local 설정 commit 뒤 현재 branch를 force 없이 push한다. 그다음 remote branch에 그 commit SHA가 있는지 확인한다.",
         "출력은 commit, push 또는 remote SHA 확인이 실패하면 GitHub label 생성이나 다른 원격 변경 전에 멈춘다."
       ]
     },
     {
       "id": "korean-writing-rule-preserves-domain-terms",
       "prompt": "GitHub 저장소를 설정해줘. CONTEXT.md에서 `Generation-safe Session`을 도메인 용어로 확정했어. 한국어 이슈를 만들 때도 이 표기를 유지해야 해.",
-      "expected_output": "AGENTS.md와 docs/agents/issue-tracker.md가 한국어 초안 전에 설치된 vibe-docs 스킬을 읽도록 안내하고, `Generation-safe Session`처럼 확정된 도메인 용어를 번역·일반화·중립화하지 않도록 기록한다.",
+      "expected_output": "`AGENTS.md`와 `docs/agents/issue-tracker.md`가 한국어 초안을 쓰기 전에 설치된 vibe-docs 스킬을 읽도록 안내하고, `Generation-safe Session`처럼 확정된 도메인 용어를 번역·일반화·중립화하지 않도록 기록한다.",
       "assertions": [
-        "출력은 AGENTS.md의 ## Agent skills 블록에 한국어 초안 전 vibe-docs 적용 규칙을 기록한다.",
-        "출력은 docs/agents/issue-tracker.md에도 한국어 이슈와 댓글의 초안 전 vibe-docs 적용 규칙을 기록한다.",
-        "출력은 CONTEXT.md, ADR, docs/agents에 확정된 도메인 용어의 원래 표기를 유지하며 번역, 일반화 또는 중립화하지 않는다고 기록한다.",
+        "출력은 `AGENTS.md`의 ## Agent skills 블록에 한국어 초안을 쓰기 전에 `vibe-docs` 스킬을 읽고 따르라는 규칙을 기록한다.",
+        "출력은 `docs/agents/issue-tracker.md`에도 규칙을 기록한다. 이 규칙은 한국어 이슈와 댓글을 쓰기 전에 `vibe-docs` 스킬을 읽고 따르라고 안내한다.",
+        "출력은 `CONTEXT.md`, 아키텍처 결정 기록(ADR), `docs/agents`에 확정된 도메인 용어를 원래 표기로 유지한다. 용어를 번역, 일반화 또는 중립화하지 않는다.",
         "출력은 다른 개별 스킬 파일을 편집하지 않는다."
       ]
     },
     {
       "id": "github-tracker-auto-close-rules",
       "prompt": "GitHub 이슈 트래커로 설정해줘. /vibe-implement가 PR을 게시하면 merge 시 구현 티켓이 닫히게 하고 싶어.",
-      "expected_output": "docs/agents/issue-tracker.md가 GitHub 템플릿을 담아 자동 close 참조 규칙 — 자격 조건, `Closes #N` / cross-repo 전체 참조 문법, closing keyword를 PR 본문에만 두기, 게시 뒤 본문 직접 scan + 본문 target 검증(목록은 PR 본문 keyword와 UI Development 패널 수동 link를 함께 반영)과 PR title 검사와 total commit 수 확인 후 250 이하일 때만의 모든 page commit message 검사, 250 초과 hard stop(history 축소 후 전체 재검증), 폴백, 부모 이슈 제외, 사람의 UI Merge가 close 승인 — 을 포함한다.",
+      "expected_output": "`docs/agents/issue-tracker.md`가 GitHub 템플릿에 자동 close 참조 규칙을 담는다. 규칙은 자격 조건, 같은 저장소의 `Closes #N` 문법, 다른 저장소의 전체 참조 문법을 정한다. closing keyword는 PR 본문에만 둔다.\n\n게시 뒤에는 본문을 직접 scan하고 본문 target을 검증한다. 검증 목록에는 PR 본문 keyword와 UI Development 패널의 수동 link를 함께 반영한다. PR title을 검사하고 전체 commit 수를 확인한다. commit 수가 250 이하일 때만 모든 page의 commit message를 검사한다. 250 초과 hard stop은 history를 줄인 뒤 전체를 다시 검증한다.\n\n폴백 규칙과 부모 이슈 제외 규칙도 포함한다. 사람이 UI에서 `Merge`를 누르는 일을 close 승인으로 본다.",
       "assertions": [
-        "출력은 closing keyword를 자격 조건(호스팅 트래커, PR base = default branch, merge로 acceptance가 끝나는 구현 티켓 정확히 하나)이 모두 참일 때만 쓰도록 규정한다.",
+        "출력은 closing keyword를 자격 조건(호스팅 트래커, PR base = default branch, 머지로 인수가 끝나는 구현 티켓 정확히 하나)이 모두 참일 때만 쓰도록 규정한다.",
         "출력은 같은 저장소 `Closes #N`과 다른 저장소 `Closes <owner>/<repo>#N`을 구분해 적는다.",
-        "출력은 closing keyword를 PR 본문에만 두라고 하고, 게시 뒤 `gg pr view <PR> --json baseRefName,closingIssuesReferences`로 base가 default branch 이름과 정확히 같고 closing 이슈 목록의 길이가 정확히 1이며 그 항목이 의도한 티켓인지 검증하라고 한다. 게시 뒤 `gg pr view <PR> --json body --jq .body`로 PR 본문 전체를 직접 scan해 base나 link 상태와 무관하게 closing keyword+이슈 참조 조합이 의도한 한 줄 말고 0인지 확인하라고 한다 — base가 default branch가 아니면 keyword가 무시되어 `closingIssuesReferences`가 비므로 본문 잔여물이 그 목록에 보이지 않고, 나중에 default branch로 retarget되면 그 잔여물이 발동해 이슈를 닫는다고 적는다. 본문 직접 scan은 본문 잔여물을, `closingIssuesReferences`는 본문 연결 closing 참조 + UI Development 패널 수동 link를 낸다 — 본문 scan이 0인데 목록이 비어 있지 않으면 남은 항목은 수동 link이므로 UI에서 unlink해야 한다고 적는다. 수동 link는 merge 때 닫히고 본문 편집으로는 지워지지 않는다고 적는다.",
-        "출력은 PR title에 closing keyword를 넣지 말라고 하고, 게시 뒤 `gg pr view <PR> --json title`로 title에 closing keyword와 이슈 참조가 함께 없는지 확인하라고 한다 — squash merge는 PR title을 merge commit subject로 쓰지만 title의 keyword는 `closingIssuesReferences`에 나타나지 않아 본문 검증만으로는 잡히지 않는다.",
-        "출력은 게시 뒤 `gg api 'repos/{owner}/{repo}/pulls/<PR>' --jq .commits`로 전체 commit 수를 확인하고, 250 이하일 때만 `gg api --paginate 'repos/{owner}/{repo}/pulls/<PR>/commits?per_page=100' --jq '.[].commit.message'`로 모든 commit message를 마지막 page까지 검사하라고 한다. commit 수가 250을 넘으면 REST pull-commits endpoint가 250개까지만 주므로 완전 검증이 불가능해 native 자동 close를 쓰지 않는다고 적는다 — 이때는 수동 close 폴백도 쓰지 않고 아래 hard stop 절로 간다고 적는다. 걸리면 title·본문·commit message를 고쳐 push한 뒤 `gg api 'repos/{owner}/{repo}/pulls/<PR>' --jq .commits`로 전체 commit 수를 가장 먼저 다시 확인해, 250을 넘으면 commit message 검사를 계속하지 않고 바로 250 초과 hard stop 절로 가고, 250 이하면 count → 본문 직접 scan + 본문 target 검증(수동 link 포함) → title 검사 → 전체 commit message 검사 순서로 네 검증을 처음부터 다시 실행하거나, 고칠 수 없으면 commit 수 ≤ 250일 때에만 자동 close를 쓰지 않고 수동 close 폴백으로 safe stop하라고 한다.",
-        "출력은 전체 commit 수 확인이 첫 게시에만 쓰이는 게 아니라고 하고, PR title·본문·commit message를 고쳐 다시 push한 모든 경로에서 `gg api 'repos/{owner}/{repo}/pulls/<PR>' --jq .commits`로 commit 수를 가장 먼저 다시 확인하라고 한다 — rewrite는 commit 수를 바꾸므로 push 전 수치는 믿을 수 없고 250 이하였던 PR이 rewrite로 250을 넘을 수 있다. 250을 넘으면 전체 commit message 검사를 계속하지 않고 바로 250 초과 hard stop 절로 간다고 한다. 250 이하면 count → 본문 직접 scan + 본문 target 검증(수동 link 포함) → title 검사 → 전체 commit message 검사 순서로 전체 검증을 처음부터 다시 실행하라고 한다. hard stop에서 history를 squash/rewrite/split으로 250 이하로 만든 뒤 `--force-with-lease`로 push하고 나서도 review와 모든 검증을 count 확인부터 다시 실행하며, squash/rewrite가 오히려 수를 늘렸거나 여전히 250을 넘으면 전체 commit message 검사로 가지 않고 history 축소부터 다시 하라고 한다.",
+        "출력은 closing keyword를 PR 본문에만 두라고 하고, 게시 뒤 `gg pr view <PR> --json baseRefName,closingIssuesReferences`로 base와 closing 이슈 목록을 검증하라고 한다. 검증을 통과하려면 base가 default branch 이름과 정확히 같고, closing 이슈 목록의 길이가 정확히 1이며, 그 항목이 의도한 티켓이어야 한다. 게시 뒤 `gg pr view <PR> --json body --jq .body`로 PR 본문 전체를 직접 scan하라고 적는다. base나 link 상태와 무관하게 closing keyword와 이슈 참조의 조합은 의도한 한 줄 외에 0이어야 한다. base가 default branch가 아니면 keyword가 무시되어 `closingIssuesReferences`가 비므로, 본문 잔여물이 그 목록에 보이지 않는다고 적는다. 나중에 default branch로 retarget하면 본문에 남은 keyword가 이슈를 닫는다고 적는다. 본문 직접 scan은 본문 잔여물을 찾는다. `closingIssuesReferences`는 본문의 closing 참조와 UI Development 패널의 수동 link를 보여 준다. 본문 scan이 0인데 목록이 비어 있지 않으면, 남은 항목은 수동 link이므로 UI에서 unlink해야 한다고 적는다. 수동 link가 걸린 이슈는 머지할 때 닫히고, 그 link는 본문 편집으로 지워지지 않는다고 적는다.",
+        "출력은 PR title에 closing keyword를 넣지 말라고 하고, 게시 뒤 `gg pr view <PR> --json title`로 title에 closing keyword와 이슈 참조가 함께 없는지 확인하라고 한다. squash merge는 PR title을 merge commit subject로 쓴다. 그러나 title의 keyword는 `closingIssuesReferences`에 나타나지 않는다. 그래서 본문 검증만으로는 이 keyword를 발견하지 못한다.",
+        "출력은 게시 뒤 `gg api 'repos/{owner}/{repo}/pulls/<PR>' --jq .commits`로 전체 commit 수를 확인하라고 한다. 250 이하일 때만 `gg api --paginate 'repos/{owner}/{repo}/pulls/<PR>/commits?per_page=100' --jq '.[].commit.message'`로 모든 commit message를 마지막 page까지 검사하라고 한다. commit 수가 250을 넘으면 REST pull-commits endpoint가 250개까지만 주므로 완전 검증이 불가능하다고 적는다. 그래서 native 자동 close를 쓰지 않는다고 적는다. 이때는 수동 close 폴백도 쓰지 않고 아래 hard stop 절을 따른다고 한다. 검사에서 위반이 나오면 title, 본문, commit message를 고쳐 push하고, `gg api 'repos/{owner}/{repo}/pulls/<PR>' --jq .commits`로 전체 commit 수를 가장 먼저 다시 확인하라고 한다. 250을 넘으면 commit message 검사를 계속하지 않고 바로 250 초과 hard stop 절을 따른다. 250 이하이면 네 검증을 처음부터 다시 실행한다. 순서는 commit 수 확인, 본문 직접 scan과 본문 target 검증(수동 link 포함), title 검사, 전체 commit message 검사다. 고칠 수 없으면 commit 수 ≤ 250일 때에만 자동 close를 쓰지 않고 수동 close 폴백을 따라 안전하게 멈추라고 한다.",
+        "출력은 전체 commit 수 확인을 첫 게시에만 하지 않고 모든 재게시에도 한다고 적는다. PR title, 본문, commit message를 고쳐 다시 push한 모든 경로에서 `gg api 'repos/{owner}/{repo}/pulls/<PR>' --jq .commits`로 commit 수를 가장 먼저 다시 확인하라고 한다. rewrite는 commit 수를 바꾸므로 push 전 수치는 믿을 수 없다. 250 이하였던 PR이 rewrite로 250을 넘을 수 있다. 250을 넘으면 전체 commit message 검사를 계속하지 않고 바로 250 초과 hard stop 절을 따른다고 한다. 250 이하이면 전체 검증을 처음부터 다시 실행하라고 한다. 순서는 commit 수 확인, 본문 직접 scan과 본문 target 검증(수동 link 포함), title 검사, 전체 commit message 검사다. hard stop에서 history를 squash, rewrite, split 중 하나로 250 이하로 만든다. 그다음 원격 브랜치 기록을 덮어써 복구하지 못할 수 있음을 사용자에게 먼저 알리고, `--force-with-lease`로 push한다고 한다. push 뒤에도 리뷰와 모든 검증을 commit 수 확인부터 다시 실행한다. squash나 rewrite가 오히려 수를 늘렸거나 여전히 250을 넘으면 전체 commit message 검사를 시작하지 않고 history 축소부터 다시 하라고 한다.",
 
-        "출력은 이슈가 정확히 하나만 닫히는 조건을 PR 전체 commit 수 ≤ 250, `closingIssuesReferences` = 1(그 항목이 의도한 티켓), PR title의 closing keyword+이슈 참조 = 0, 모든 commit message의 closing keyword+이슈 참조 = 0 네 가지로 함께 적는다.",
-        "출력은 부모 명세 이슈를 closing target으로 금지하고 `Part of #<parent>`만 쓰라고 한다.",
-        "출력은 조건이 안 맞는 PR(non-default base, 게시 뒤 retarget, merge 없는 close, 대상이 하나가 아님, 검증 명령이 기대와 다른 목록, 안전하게 고칠 수 없는 title·commit keyword, Development 패널 수동 link를 UI에서 unlink할 수 없음)에서 자동 close를 쓰지 않고, 수동 close 폴백은 commit 수 ≤ 250일 때만 적용하며, 폴백으로 가기 전에 (1) 본문 직접 scan(`gg pr view <PR> --json body --jq .body`) closing keyword+이슈 참조 = 0, (2) `closingIssuesReferences` = 0, (3) PR title closing keyword+이슈 참조 = 0, (4) 모든 commit message closing keyword+이슈 참조 = 0 — 넷이 모두 0일 때만 폴백으로 가라고 한다. commit 수가 250을 초과하면 (4)를 확인할 수 없어 이 zero proof는 성립하지 않는다고 적는다. 또 전체 commit 수가 250을 넘으면 완전 검증이 불가능하므로 native 자동 close와 manual fallback 모두 진행하지 않고, 제거할 수 있는 잔여물을 제거한 뒤 직접 확인 가능한 두 검증(본문 직접 scan과 `closingIssuesReferences`)으로 남은 잔여물을 다시 scan·기록하라고 한다 — 0을 요구하는 게 아니라 잔여물이 남아 있어도 hard stop은 진행되며, UI에서 unlink할 수 없는 Development 패널 수동 link는 남을 수 있다 — 그리고 merge handoff를 hard stop하며 — PR을 완료로 반환하지 않고 merge를 요청하지 않으며 fallback 완료로 표시하지 않는다 — history를 squash/rewrite/split해 전체 commit 수를 250 이하로 만든 뒤 `--force-with-lease` push하고, review와 모든 검증을 처음부터 다시 실행해 전부 통과하기 전에는 반환하거나 merge하지 않는다고 적는다.",
-        "출력은 사람이 GitHub UI에서 **Merge**를 누르는 것이 close 승인이고 리뷰 통과는 승인이 아니라고 적으며, 사람이 UI에서 merge title이나 merge message를 편집해 다른 closing keyword를 넣으면 게시 뒤 검증 다음이라 검사에 잡히지 않는다는 점을 PR을 넘길 때 함께 알리라고 한다.",
-        "출력은 PR 본문의 closing 줄을 non-closing으로 낮출 때(downgrade) keyword만 `Closes` 계열에서 `Refs`로 바꾸고 이슈 참조는 그대로 보존하라고 한다 — 같은 저장소는 `Refs #<n>`, 다른 저장소는 `Refs <owner>/<repo>#<n>`, 전체 URL은 URL 그대로. 폴백과 250 초과 hard stop의 downgrade도 모두 keyword만 바꾼다고 한다. 다른 저장소 참조를 `Refs #<n>`로 줄이면 이 저장소의 같은 번호 이슈를 가리켜 티켓 신원을 잃으므로 절대 그렇게 하지 말라고 한다.",
-        "출력은 수동 close를 대상 이슈가 있는 저장소를 명시해 실행하라고 한다 — 다른 저장소 티켓이면 `gg issue close <number> -R <owner>/<repo> --comment \"...\"`. `-R`을 빼면 `gg`가 현재 클론의 remote에서 저장소를 추론해 이 저장소의 같은 번호 이슈를 닫는다고 적는다."
+        "출력은 이슈가 정확히 하나만 닫히는 조건을 네 가지로 함께 적는다. 그 조건은 PR 전체 commit 수 ≤ 250과 `closingIssuesReferences` = 1(그 항목이 의도한 티켓)이다. 또 PR title과 모든 commit message에서 closing keyword+이슈 참조 = 0이다.",
+        "출력은 부모 명세 이슈를 closing target으로 쓰지 말고 `Part of #<parent>`만 쓰라고 한다.",
+        "출력은 조건이 맞지 않는 PR에서 자동 close를 쓰지 않는다고 적는다. 그 PR은 non-default base를 쓰거나, 게시 뒤 retarget했거나, 머지 없이 close하는 PR이다. 대상이 하나가 아니거나 검증 명령이 기대와 다른 목록을 내는 PR도 포함한다. title이나 commit keyword를 안전하게 고칠 수 없는 PR과, UI에서 unlink할 수 없는 Development 패널 수동 link가 있는 PR도 포함한다. 수동 close 폴백은 commit 수 ≤ 250일 때만 적용한다고 한다. 폴백을 쓰기 전에 아래 네 검증이 모두 성립해야 한다고 적는다. 검증 (1)은 `gg pr view <PR> --json body --jq .body`로 본문을 직접 scan한 closing keyword+이슈 참조 = 0이다. 검증 (2)에서는 `closingIssuesReferences`가 0건이어야 한다. 검증 (3)은 PR title의 closing keyword+이슈 참조 = 0이고, 검증 (4)는 모든 commit message의 closing keyword+이슈 참조 = 0이다. 네 검증이 모두 0일 때만 폴백을 쓴다고 적는다. commit 수가 250을 초과하면 (4)를 확인할 수 없어 잔여물이 0임을 증명할 수 없다고 적는다. 전체 commit 수가 250을 넘으면 완전 검증이 불가능하다. 그래서 native 자동 close와 수동 close 폴백을 모두 쓰지 않는다. 대신 제거할 수 있는 잔여물을 제거하라고 한다. 그다음 본문 직접 scan과 `closingIssuesReferences` 두 검증으로 남은 잔여물을 다시 scan해 기록하라고 한다. 이 기록은 0을 요구하지 않는다. 잔여물이 남아 있어도 hard stop한다. UI에서 unlink할 수 없는 Development 패널 수동 link는 남을 수 있다. 그다음 머지 인계를 hard stop하라고 한다. PR을 완료로 반환하지 않고, 머지를 요청하지 않으며, 폴백 완료로 표시하지 않는다. history를 squash, rewrite, split 중 하나로 처리해 전체 commit 수를 250 이하로 만든다. 그다음 원격 브랜치 기록을 덮어써 복구하지 못할 수 있음을 사용자에게 먼저 알리고, `--force-with-lease`로 push한다고 한다. push 뒤에는 리뷰와 모든 검증을 처음부터 다시 실행한다. 전부 통과하기 전에는 PR을 반환하거나 머지하지 않는다고 한다.",
+        "출력은 사람이 GitHub UI에서 **Merge**를 누르면 close를 승인한 것이라고 적는다. 리뷰 통과는 승인이 아니라고 함께 적는다. 사람이 UI에서 머지 title이나 message를 편집해 다른 closing keyword를 넣을 수 있다. 그 편집은 게시 뒤 검증 다음에 일어나므로 검사에서 발견되지 않는다. 이 점을 PR을 넘길 때 함께 알리라고 한다.",
+        "출력은 PR 본문의 closing 줄에서 닫기 효과를 없앨 때 keyword만 `Closes` 계열에서 `Refs`로 바꾸고 이슈 참조는 그대로 보존하라고 한다. 같은 저장소는 `Refs #<n>`, 다른 저장소는 `Refs <owner>/<repo>#<n>`, 전체 URL은 URL 그대로 둔다. 폴백과 250 초과 hard stop에서도 keyword만 바꾼다고 한다. 다른 저장소 참조를 `Refs #<n>`로 줄이면 참조가 이 저장소의 같은 번호 이슈를 가리키므로, 절대 그렇게 하지 말라고 한다.",
+        "출력은 수동 close를 대상 이슈가 있는 저장소를 명시해 실행하라고 한다: 다른 저장소 티켓이면 `gg issue close <number> -R <owner>/<repo> --comment \"...\"`. `-R`을 빼면 `gg`가 현재 클론의 remote에서 저장소를 추론해 이 저장소의 같은 번호 이슈를 닫는다고 적는다."
       ]
     },
     {
       "id": "gitlab-tracker-auto-close-rules",
       "prompt": "GitLab 이슈 트래커로 설정해줘. /vibe-implement가 MR을 게시하면 merge 시 구현 티켓이 닫히게 하고 싶어.",
-      "expected_output": "docs/agents/issue-tracker.md가 GitLab 템플릿을 담아 자동 close 참조 규칙 — 여섯 자격 조건(정확한 issue-closing regex 확정·기록 포함, 모르면 hard stop), `Closes #<iid>` / cross-project 전체 참조, MR 프로젝트의 default branch와 대상 이슈 프로젝트의 자동 close 설정을 따로 확인, merge를 누를 사람이 대상 이슈의 author/assignee이거나 이슈 프로젝트에서 Planner(15) 이상일 때만 이슈 close 권한 인정, 게시 뒤 `-R <target-project>` 고정 검증(설명 직접 스캔 = 의도한 match 1개 + extra 0, 제목 참조 0, 커밋 0, `gg mr issues`는 supplementary), 폴백과 `-R <issue-project>` 고정 수동 close, 부모 이슈 제외, 사람의 UI Merge가 close 승인 — 을 포함한다.",
+      "expected_output": "`docs/agents/issue-tracker.md`가 GitLab 템플릿에 자동 close 참조 규칙을 담는다. 규칙은 여섯 자격 조건을 정한다. 자격 조건에는 정확한 issue-closing regex의 확정과 기록을 포함하고, regex를 모르면 hard stop한다. 참조 문법은 `Closes #<iid>`와 cross-project 전체 참조다. MR 프로젝트의 default branch와 대상 이슈 프로젝트의 자동 close 설정은 따로 확인한다. 머지를 누를 사람이 대상 이슈의 author 또는 assignee이거나, 이슈 프로젝트에서 Planner(15) 이상일 때만 이슈 close 권한을 인정한다.\n\n게시 뒤에는 `-R <target-project>`로 고정해 검증한다. 검증 기준은 설명 직접 스캔의 의도한 match 1개와 추가 match 0, title 참조 0, commit 참조 0이다. `gg mr issues`는 보조 증거로만 쓴다. 폴백과 `-R <issue-project>`로 고정한 수동 close, 부모 이슈 제외도 포함한다. 사람이 UI에서 `Merge`를 누르는 일을 close 승인으로 본다.",
       "assertions": [
-        "출력은 closing pattern을 자격 조건 여섯(호스팅 트래커, MR 대상 브랜치 = MR이 머지될 대상 프로젝트의 default branch, 대상 이슈가 속한 프로젝트의 자동 close 켜짐, merge를 누를 사람의 이슈 close 권한이 사전 증명됨, merge로 acceptance가 끝나는 구현 티켓 정확히 하나, 이 인스턴스의 정확한 issue-closing regex 확정·기록)이 모두 참일 때만 쓰도록 규정한다.",
-        "출력은 네이티브 eligible handoff 전에 이 인스턴스의 **정확한 issue-closing regex**를 확정해 그대로 기록하도록 자격 조건에 넣는다 — GitLab.com(SaaS)은 GitLab.com의 default regex를 쓰고, self-managed 인스턴스는 instance config(Omnibus `/etc/gitlab/gitlab.rb`의 `gitlab_rails['gitlab_issue_closing_pattern']`, source 설치 `gitlab.yml`의 `issue_closing_pattern`)나 administrator에게서 받는다. 알 수 없으면 hard stop으로 closing keyword를 넣어 게시하지 않고 merge도 manual-close handoff도 진행하지 않으며, 이미 keyword를 게시했다면 그 exact regex로 직접 scan해 residual auto-close risk가 0임을 증명하기 전에는 merge나 `gg issue close`를 하지 않는다고 적는다.",
-        "출력은 default branch와 자동 close를 한 번의 조회로 합쳐 판단하지 말라고 하고, MR이 머지될 프로젝트에서 `default_branch`를 `gg api projects/<target_project_id>`로, 대상 이슈가 속한 프로젝트에서 `autoclose_referenced_issues`를 `gg api projects/<issue-project-id>`로 각각 따로 확인하라고 한다 — 이슈 프로젝트 경로는 숫자 id 또는 `%2F`로 URL encode한 namespaced path만 쓰고 raw namespaced path를 경로에 넣지 않는다고 명시한다. cross-project 참조에서는 두 프로젝트가 다르므로 MR 프로젝트의 설정으로 다른 프로젝트 이슈의 자동 close를 판단할 수 없다.",
-        "출력은 merge를 누를 사람(알려진 merge 수행자)의 이슈 close 권한을 게시 전과 게시 직후에 확인하라고 하고, 권한 규칙은 대상 이슈의 author이거나 assignee(`gg api projects/<issue-project-id>/issues/<iid> | jq '{author: .author.username, assignees: [.assignees[].username]}'`) 또는, 그것이 아니면 이슈 프로젝트에서 access level이 Planner(15) 이상(`gg api projects/<issue-project-id>/members/all/<merger-user-id> | jq '{access_level}'`)이라고 규정한다. 이슈 프로젝트 경로는 raw namespaced path를 쓰지 않고 숫자 id나 `%2F`로 URL encode한 경로만 쓴다고 명시한다. author나 assignee면 멤버십 조회가 없어도, 실패해도 자격이 있다. 어느 쪽도 증명되지 않거나 merge 수행자가 미정이면 GitLab이 close를 조용히 건너뛰므로 자동 close를 쓰지 않고 수동 close 폴백으로 가라고 한다. 권한을 확인할 수 없으면 자동 close를 쓰지 않는다.",
-        "출력은 게시할 때 `gg mr create`가 출력하는 MR URL에서 대상 프로젝트(`<group>/<project>` 경로와 `target_project_id`)와 MR IID를 기록하고, 이후 모든 `gg mr view`·`gg mr issues`·`gg mr update`에 `-R <target-project>`를 쓰라고 한다 — fork 클론에서 `-R` 없이 실행하면 `git remote -v`가 source(fork)를 골라 대상 프로젝트 대신 fork를 읽고 고친다. 게시 직후에는 `gg mr view <IID> -R <target-project>`로 `state`와 `target_branch`를 읽어 target이 그 프로젝트의 default branch와 일치하는지 확인하라고 한다.",
-        "출력은 게시 뒤 `gg api --paginate \"projects/<target_project_id>/merge_requests/<IID>/commits?per_page=100\"`로 모든 커밋 메시지를 마지막 page까지 읽고, 확정한 exact closing regex로 직접 스캔하라고 한다 — **MR 제목의 이슈 참조는 0개**(`#<iid>`, `<group>/<project>#<iid>`, 전체 이슈 URL 모두, keyword 유무와 무관 — 참조 개수만 세므로 closing pattern을 몰라도 판정된다), **MR 설명의 closing match는 의도한 티켓 하나로 정확히 1개이고 추가 closing match는 0개**, **모든 커밋 메시지의 closing match는 0개**다. 설명 스캔이 0개이거나 의도한 티켓이 아니거나 추가 match가 하나라도 있으면 자동 close를 쓰지 않고 수동 close 폴백으로 간다. 설명의 closing match 0개 요구는 폴백 제거 검증에만 해당한다.",
-        "출력은 `gg mr issues <IID> -R <target-project>`의 정확히-one 목록을 **supplementary provider evidence로만** 쓰라고 한다 — 이 목록은 permission filtering과 자격 gate(대상 브랜치 = 대상 프로젝트의 default branch **그리고** 이슈 프로젝트의 `autoclose_referenced_issues` true) 양쪽에 걸려 under-report하므로 의도한 티켓의 유일성 증거로 단독 신뢰하지 않고, gate가 꺼져 있거나 권한이 부족하면 pattern이 남아 있어도 목록이 비거나 줄어들므로 빈 목록으로 제거 완료를 주장하지 않으며, 목록 자체를 pattern 검사로 쓰지 않는다. 목록이 permission 때문에 비었는지 pattern 때문에 비었는지 알 수 없으면 폴백으로 간다.",
-        "출력은 수동 close 폴백 변환에서 MR **제목의 이슈 참조는 참조까지 통째로 제거**(`#<iid>`, `<group>/<project>#<iid>`, 전체 URL 전부 — 제목이 squash merge에서 커밋 subject가 되므로 keyword만 지우는 것으로 부족하다)하고, 설명에서는 closing keyword만(기본 계열과 이 인스턴스의 알려진 커스텀 closing keyword 모두) `Refs`로 바꾸고 원래 참조 형태(같은 프로젝트 `#<iid>`, cross-project `<group>/<project>#<iid>`, 전체 URL — 예: `Closes https://gitlab.example.com/<group>/<project>/-/issues/<iid>` → `Refs https://gitlab.example.com/<group>/<project>/-/issues/<iid>`)와 한 줄의 모든 이슈 참조를 그대로 보존하라고 한다. 제거 검증은 직접 스캔으로 하고, 설명·커밋 스캔에는 기본 keyword 패턴과 이 인스턴스의 커스텀 closing pattern을 모두 적용하되 커스텀 pattern은 조회용 API가 없으므로 instance config(Omnibus `gitlab_rails['gitlab_issue_closing_pattern']`, source `gitlab.yml`)나 administrator에게서 정확한 regex를 받아 기록해 쓰라고 한다. 커스텀 pattern을 알 수 없으면 직접 스캔을 완료로 판정하지 않고 merge 인계를 중단한다(제목의 참조 0 검사는 pattern과 무관하므로 별개로 지킨다). `gg mr issues` 빈 목록은 gate가 실제로 켜져 있었을 때만 추가 증거로 쓰라고 한다.",
-        "출력은 수동 close의 comment/close 쓰기를 MR 프로젝트가 아니라 **이슈를 소유한 프로젝트**에 고정하라고 한다 — 기록한 raw `path_with_namespace` `<issue-project>`를 `-R`로 줘서 `gg issue note <iid> -R <issue-project> --message \"...\"` 다음 `gg issue close <iid> -R <issue-project>`를 실행하고, 같은 프로젝트와 cross-project 모두 예외 없이 명시한다. `-R`은 raw path만 받으므로 숫자 id나 `%2F` encode 경로를 주지 않으며, `-R` 없이 실행하면 `git remote -v`의 클론(fork나 target)이 골라져 다른 프로젝트의 같은 번호 이슈에 댓글을 쓰거나 닫을 수 있다고 적는다.",
-        "출력은 부모 명세 이슈를 closing target으로 금지하고 `Part of #<parent iid>`만 쓰라고 하며, 기본 패턴은 `Closes #4, #6`처럼 한 줄의 참조를 모두 닫으므로 closing 줄에는 티켓 하나만 적으라고 한다.",
-        "출력은 사람이 GitLab UI에서 **Merge**를 누르는 것이 close 승인이고 리뷰 통과는 승인이 아니라고 적으며, **Merge when pipeline succeeds**를 켜면 닫힐 이슈 목록이 고정되므로 켜기 전에 위 검증을 끝내라고 한다."
+        "출력은 closing pattern을 자격 조건 여섯 가지가 모두 참일 때만 쓰도록 규정한다. 앞의 세 조건은 호스팅 트래커, MR 대상 branch = MR이 머지될 대상 프로젝트의 default branch, 대상 이슈가 속한 프로젝트의 자동 close 켜짐이다. 에이전트가 머지를 누를 사람의 이슈 close 권한을 사전에 증명해야 하고, 머지로 인수가 끝나는 구현 티켓이 정확히 하나여야 한다. 이 인스턴스의 정확한 issue-closing regex도 확정해 기록해야 한다.",
+        "출력은 자격을 갖춘 네이티브 인계 전에 이 인스턴스의 **정확한 issue-closing regex**를 확정해 그대로 기록하도록 자격 조건에 넣는다. GitLab.com(SaaS)은 GitLab.com의 default regex를 쓴다. self-managed 인스턴스는 instance config(Omnibus `/etc/gitlab/gitlab.rb`의 `gitlab_rails['gitlab_issue_closing_pattern']`, source 설치 `gitlab.yml`의 `issue_closing_pattern`)나 administrator에게서 regex를 받는다. regex를 알 수 없으면 hard stop하며, closing keyword를 넣어 게시하지 않는다. 머지도 수동 close 인계도 진행하지 않는다. 이미 keyword를 게시했다면 그 exact regex로 직접 scan한다. 남은 자동 닫기 위험이 0임을 증명하기 전에는 머지나 `gg issue close`를 하지 않는다고 적는다.",
+        "출력은 default branch와 자동 close를 한 번의 조회로 합쳐 판단하지 말라고 한다. MR이 머지될 프로젝트에서는 `default_branch`를 `gg api projects/<target_project_id>`로 확인한다. 대상 이슈가 속한 프로젝트에서는 `autoclose_referenced_issues`를 `gg api projects/<issue-project-id>`로 따로 확인한다. 이슈 프로젝트 경로는 숫자 id 또는 `%2F`로 URL encode한 namespaced path만 쓰고 raw namespaced path를 경로에 넣지 않는다고 명시한다. cross-project 참조에서는 두 프로젝트가 다르므로 MR 프로젝트의 설정으로 다른 프로젝트 이슈의 자동 close를 판단할 수 없다.",
+        "출력은 머지를 누를 사람(알려진 머지 수행자)의 이슈 close 권한을 게시 전과 게시 직후에 확인하라고 한다. 대상 이슈의 author 또는 assignee인지는 `gg api projects/<issue-project-id>/issues/<iid> | jq '{author: .author.username, assignees: [.assignees[].username]}'`로 확인한다. 이 명령의 결과에서 author와 assignees를 읽는다. 둘 다 아니면 이슈 프로젝트의 access level이 Planner(15) 이상이어야 한다. `gg api projects/<issue-project-id>/members/all/<merger-user-id> | jq '{access_level}'`에서 `access_level`을 읽는다. 이슈 프로젝트 경로는 raw namespaced path를 쓰지 않고 숫자 id나 `%2F`로 URL encode한 경로만 쓴다고 명시한다. author나 assignee면 멤버십 조회가 없어도, 실패해도 자격이 있다. 에이전트가 어느 쪽도 증명하지 못했거나 머지 수행자가 미정이면, GitLab이 close를 조용히 건너뛰므로 자동 close를 쓰지 않고 수동 close 폴백을 따르라고 한다. 권한을 확인할 수 없으면 자동 close를 쓰지 않는다.",
+        "출력은 게시 때 `gg mr create`가 출력하는 MR URL에서 대상 프로젝트와 MR IID를 기록하라고 한다. 대상 프로젝트는 `<group>/<project>` 경로와 `target_project_id`로 기록한다. 이후 모든 `gg mr view`·`gg mr issues`·`gg mr update`에 `-R <target-project>`를 쓴다. fork 클론에서 `-R` 없이 실행하면 `git remote -v`가 source(fork)를 골라 대상 프로젝트 대신 fork를 읽고 고친다. 게시 직후에는 `gg mr view <IID> -R <target-project>`로 `state`와 `target_branch`를 읽어 target이 그 프로젝트의 default branch와 일치하는지 확인하라고 한다.",
+        "출력은 게시 뒤 `gg api --paginate \"projects/<target_project_id>/merge_requests/<IID>/commits?per_page=100\"`로 모든 commit message를 마지막 page까지 읽고, 확정한 exact closing regex로 직접 스캔하라고 적는다. **MR title의 이슈 참조는 0개**여야 한다. 대상은 `#<iid>`, `<group>/<project>#<iid>`, 전체 이슈 URL이며, keyword 유무와 무관하게 참조 개수만 세므로 closing pattern을 몰라도 판정할 수 있다. **MR 설명의 closing match는 의도한 티켓 하나로 정확히 1개이고 추가 closing match는 0개**, **모든 commit message의 closing match는 0개**다. 설명 스캔이 0개이거나 의도한 티켓이 아니거나 추가 match가 하나라도 있으면 자동 close를 쓰지 않는다. 그때는 수동 close 폴백을 따른다. 설명의 closing match 0개 요구는 폴백 제거 검증에만 적용한다.",
+        "출력은 `gg mr issues <IID> -R <target-project>`에서 정확히 한 건만 나온 목록을 **provider가 낸 보조 증거로만** 쓰라고 한다. 이 목록은 permission filtering과 자격 gate의 영향을 모두 받아 실제보다 적게 보고한다. 자격 gate는 대상 branch가 대상 프로젝트의 default branch이고 이슈 프로젝트의 `autoclose_referenced_issues`가 true인 상태를 뜻한다. 그러므로 이 목록을 의도한 티켓의 유일성 증거로 단독 신뢰하지 않는다. gate가 꺼져 있거나 권한이 부족하면 pattern이 남아 있어도 목록이 비거나 줄어든다. 따라서 빈 목록으로 제거 완료를 주장하지 않고, 목록 자체를 pattern 검사로 쓰지 않는다. 목록이 permission 때문에 비었는지 pattern 때문에 비었는지 알 수 없으면 수동 close 폴백을 따른다.",
+        "출력은 수동 close 폴백 변환에서 MR **title의 이슈 참조를 참조까지 통째로 제거**하라고 한다. 제거 대상은 `#<iid>`, `<group>/<project>#<iid>`, 전체 URL 전부다. title이 squash merge에서 commit subject가 되므로 keyword만 지우면 부족하다. 설명에서는 closing keyword만 `Refs`로 바꾸라고 한다. 기본 계열과 이 인스턴스의 알려진 커스텀 closing keyword를 모두 바꾼다. 원래 참조 형태와 한 줄의 모든 이슈 참조는 그대로 보존하라고 한다. 원래 참조 형태는 같은 프로젝트 `#<iid>`, cross-project `<group>/<project>#<iid>`, 전체 URL이다. 예를 들면 `Closes https://gitlab.example.com/<group>/<project>/-/issues/<iid>`는 `Refs https://gitlab.example.com/<group>/<project>/-/issues/<iid>`가 된다. 제거 검증은 직접 스캔으로 한다. 설명과 commit 스캔에는 기본 keyword 패턴과 이 인스턴스의 커스텀 closing pattern을 모두 적용한다. 커스텀 pattern은 조회용 API가 없으므로 instance config(Omnibus `gitlab_rails['gitlab_issue_closing_pattern']`, source `gitlab.yml`)나 administrator에게서 정확한 regex를 받아 기록해 쓰라고 한다. 커스텀 pattern을 알 수 없으면 직접 스캔을 완료로 판정하지 않고 머지 인계를 중단한다. title의 참조 0 검사는 pattern과 무관하므로 별개로 지킨다. `gg mr issues` 빈 목록은 gate가 실제로 켜져 있었을 때만 추가 증거로 쓰라고 한다.",
+        "출력은 수동 close의 comment와 close 쓰기를 MR 프로젝트가 아니라 **이슈를 소유한 프로젝트**에 고정하라고 한다. 기록한 raw `path_with_namespace` `<issue-project>`를 `-R`로 줘서 `gg issue note <iid> -R <issue-project> --message \"...\"` 다음 `gg issue close <iid> -R <issue-project>`를 실행하고, 같은 프로젝트와 cross-project 모두 예외 없이 명시한다. `-R`은 raw path만 받으므로 숫자 id나 `%2F` encode 경로를 주지 않는다. `-R` 없이 실행하면 `git remote -v`의 클론(fork나 target)이 골라져 다른 프로젝트의 같은 번호 이슈에 댓글을 쓰거나 닫을 수 있다고 적는다.",
+        "출력은 부모 명세 이슈를 closing target으로 쓰지 말고 `Part of #<parent iid>`만 쓰라고 한다. 기본 패턴은 `Closes #4, #6`처럼 한 줄의 참조를 모두 닫으므로 closing 줄에는 티켓 하나만 적으라고 한다.",
+        "출력은 사람이 GitLab UI에서 **Merge**를 누르면 close를 승인한 것이라고 적는다. 리뷰 통과는 승인이 아니라고 함께 적는다. **Merge when pipeline succeeds**를 켜면 닫힐 이슈 목록이 고정되므로, 켜기 전에 위 검증을 끝내라고 한다."
       ]
     }
   ]

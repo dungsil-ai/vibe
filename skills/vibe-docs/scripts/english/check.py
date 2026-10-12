@@ -9,7 +9,7 @@ Usage:
     cat draft.txt | python3 check.py --mode procedural
 
 The tool ignores code blocks, inline code, URLs, and YAML frontmatter.
-Exit code 0 = no errors. Exit code 1 = one or more errors.
+Exit code 0 shows no errors. Exit code 1 shows one or more errors.
 """
 
 import argparse
@@ -82,7 +82,8 @@ def strip_markdown(text):
     text = re.sub(r"\[([^\]]*)\]\([^)]*\)", r"\1", text)             # links
     text = re.sub(r"https?://\S+", " URL ", text)                    # bare URLs
     text = re.sub(r"^>.*$", " ", text, flags=re.MULTILINE)           # block quotes
-    # quoted text counts as one word and is not controlled (rule 8.6)
+    # Quoted text counts as one word (rule 8.6).
+    # The STE rules do not control quoted text.
     text = re.sub(r"\"[^\"\n]*\"|“[^”\n]*”", " QUOTED ", text)
     return text
 

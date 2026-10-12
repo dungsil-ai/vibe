@@ -81,6 +81,6 @@
 
 > Before you change the configuration file, make a backup of the file.
 > An incorrect change can cause a failure of the application.
-> After such a failure, you must install the application again.
+> After such a failure, install the application again.
 
 바뀐 점: 명령형으로 쓰고, 조건 뒤에 쉼표를 두고, 동사의 `-ing` 형태를 없애고, 한 문장에 주제를 하나만 썼다.

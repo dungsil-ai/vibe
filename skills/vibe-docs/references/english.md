@@ -1,6 +1,6 @@
 # 영어 작성 규칙
 
-영어 글은 ASD-STE100 Simplified Technical English(STE) 규칙으로 쓴다. STE는 기술 문서를 위한 통제 언어이며, 영어에 익숙하지 않은 독자도 뜻을 분명하게 이해하도록 문장 형태와 어휘를 제한한다. 이 파일에는 STE 규칙 가운데 가장 중요한 규칙을 담았다. 전체 규칙은 `references/english/writing-rules.md`에, 승인 단어는 `references/english/word-list.md`에 있다. 이 파일에 적은 경로는 모두 이 스킬 디렉터리를 기준으로 한다.
+영어 글은 ASD-STE100 Simplified Technical English(STE) 규칙으로 쓴다. STE는 기술 문서에 쓰는 통제 언어이며, 영어에 익숙하지 않은 독자도 뜻을 분명하게 이해하도록 문장 형태와 어휘를 제한한다. 이 파일에는 STE 규칙 가운데 가장 중요한 규칙을 담았다. 전체 규칙은 `references/english/writing-rules.md`에, 승인 단어는 `references/english/word-list.md`에 있다. 이 파일에 적은 경로는 모두 이 스킬 디렉터리를 기준으로 한다.
 
 ## 적용 기준
 

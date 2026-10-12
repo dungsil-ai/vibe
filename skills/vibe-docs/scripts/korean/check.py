@@ -5,7 +5,7 @@
   python3 scripts/korean/check.py 'copy/**/*.md' --surface UI
   python3 scripts/korean/check.py --self-test
 
-의존성 없음. 위반이 있으면 종료 코드 1을 낸다.
+이 검사기는 외부 패키지를 쓰지 않는다. 위반이 있으면 종료 코드 1을 낸다.
 """
 import argparse
 import glob
@@ -24,12 +24,12 @@ SURFACES = {
 }
 
 # 어간 뒤에 어미가 붙으면 마지막 음절이 합쳐진다. `되어지` + `-ㅂ니다` 는 `되어집니다` 가
-# 되어 문자열 매칭이 뚫린다. 종성 결합과 모음 축약을 음절 단위로 펼쳐서 잡는다.
+# 되어 문자열 매칭이 일치하지 않는다. 종성 결합과 모음 축약을 음절 단위로 나누어 검사한다.
 _CONTRACT = {0: 1, 4: 5, 8: 9, 11: 12, 13: 14, 20: 6}  # ㅏ→ㅐ, ㅓ→ㅔ, ㅗ→ㅘ, ㅚ→ㅙ, ㅜ→ㅝ, ㅣ→ㅕ
 
 
 def syllable_class(ch):
-    """한 음절을 같은 초성 + 원·축약 중성 + 모든 종성의 문자 클래스로 편다."""
+    """한 음절을 같은 초성, 원래 중성이나 축약한 중성, 모든 종성을 허용하는 문자 클래스로 표현한다."""
     if not ("가" <= ch <= "힣"):
         return re.escape(ch)
     code = ord(ch) - 0xAC00
@@ -40,7 +40,7 @@ def syllable_class(ch):
 
 
 def stem_pattern(stem, open_ended=True):
-    """어간 문자열을 활용형까지 덮는 정규식으로 만든다."""
+    """어간과 활용형 모두에 일치하는 정규식으로 만든다."""
     tokens = stem.split()
     parts = []
     for i, tok in enumerate(tokens):
@@ -50,13 +50,13 @@ def stem_pattern(stem, open_ended=True):
             for j, c in enumerate(tok)
         )
         parts.append(body)
-    # 한글에는 \b 가 없다. 앞뒤에 한글이 붙으면 다른 단어다 — `등급` 의 `등` 을 잡지 않는다.
+    # 한글에는 \b 가 없다. 앞뒤에 한글이 붙으면 다른 단어다. 따라서 `등급`에서 `등`을 검출하지 않는다.
     body = r"\s*".join(parts)
     tail = r"[가-힣]*" if open_ended else r"(?![가-힣])"
     return r"(?<![가-힣])" + body + tail
 
 
-# 3.2 이중피동 — references/korean/substitutions.md B절과 같은 목록이다. --no-vocab 에서도 `필수` 규칙은 잡는다.
+# 3.2 이중피동: `references/korean/substitutions.md` B절과 같은 목록이다. --no-vocab 에서도 `필수` 규칙은 검출한다.
 DOUBLE_PASSIVE = re.compile("|".join(
     stem_pattern(s) for s in (
         "되어지", "보여지", "불려지", "쓰여지", "읽혀지", "잊혀지", "나뉘어지",
@@ -67,15 +67,16 @@ DOUBLE_PASSIVE = re.compile("|".join(
 TILDE_RANGE = re.compile(r"\d\s*~\s*\d")
 # 8.5 말줄임표 종결
 ELLIPSIS_END = re.compile(r"(?:\.\.\.|…)\s*$")
-# 10.4 앞 턴 되풀이 문두 (`대화` 표면)
+# 10.4 `대화` 표면에서 앞 문장을 되풀이하며 시작하기
 ECHO_OPEN = re.compile(r"^(좋은 질문|정확한 지적|말씀하신|말씀해 주신|확인해 보겠|살펴보겠|알겠습니다)")
 
 
 def load_dictionary(path=None):
-    """references/korean/substitutions.md 비승인 어간을 정규식으로 컴파일한다.
+    """`references/korean/substitutions.md`의 비승인 어간을 정규식으로 컴파일한다.
 
-    어간 표기 규칙 — `-`로 끝나면 활용형 전체, `다`로 끝나는 기본형도 활용형 전체,
-    표시가 없으면 그 형태 그대로다.
+    어간 표기 규칙:
+    `-`로 끝나는 어간과 `다`로 끝나는 기본형은 모든 활용형과 일치한다.
+    표기가 없으면 적힌 형태와만 일치한다.
     """
     path = Path(path) if path else ROOT / "references" / "korean" / "substitutions.md"
     if not path.exists():
@@ -100,7 +101,7 @@ def load_dictionary(path=None):
 
 
 def strip_noise(line):
-    """검사에서 뺄 것 — 인라인 코드, 링크 URL, 마크다운 강조."""
+    """인라인 코드, 링크 URL, 마크다운 강조는 검사하지 않는다."""
     line = re.sub(r"`[^`]*`", " ", line)
     line = re.sub(r"\[([^\]]*)\]\([^)]*\)", r"\1", line)
     line = re.sub(r"[*_#]", "", line)
@@ -109,10 +110,15 @@ def strip_noise(line):
 
 def prose_lines(text):
     """산문 줄만 (번호, 원문 문자열)로 낸다. 코드 펜스·표·인용·frontmatter는 건너뛴다."""
-    in_fence = in_front = False
+    fence_char = None
+    fence_length = 0
+    in_front = False
     for i, raw in enumerate(text.split("\n"), 1):
-        if raw.startswith("```"):
-            in_fence = not in_fence
+        marker = re.match(r"^\s*(`{3,}|~{3,})(.*)$", raw)
+        if fence_char is not None:
+            if (marker and marker[1][0] == fence_char
+                    and len(marker[1]) >= fence_length and not marker[2].strip()):
+                fence_char = None
             continue
         if i == 1 and raw.strip() == "---":
             in_front = True
@@ -121,9 +127,13 @@ def prose_lines(text):
             if raw.strip() == "---":
                 in_front = False
             continue
-        if in_fence or not raw.strip():
+        if marker:
+            fence_char = marker[1][0]
+            fence_length = len(marker[1])
             continue
-        if raw.lstrip().startswith(("|", ">", "    ", "\t")):
+        if not raw.strip():
+            continue
+        if raw.startswith(("    ", "\t")) or raw.lstrip().startswith(("|", ">")):
             continue
         yield i, raw
 
@@ -148,7 +158,7 @@ def check(path, surface, vocab):
             n = len(sent.split())
             if n > limit["eojeol"]:
                 hits.append((lineno, "4.1", f"{n}어절 (상한 {limit['eojeol']}) — {sent[:34]}…"))
-            # 4.8 은 산문에서만 센다. 제목과 목록은 같은 형태로 끝나는 것이 자연스럽다.
+            # 4.8 은 산문에서만 센다. 제목과 목록은 산문이 아니므로 반복 종결을 검사하지 않는다.
             words = sent.split()
             if words and not is_heading and not is_list:
                 tails.append(words[-1].rstrip(".!?"))
@@ -175,12 +185,13 @@ def check(path, surface, vocab):
         if run >= 3:
             hits.append((tail_lines[i], "4.8", f"`{tails[i]}`가 {run}문장 연속"))
 
-    # 4.7 문단 문장 수
-    for block in re.split(r"\n\s*\n", text):
-        if re.match(r"\s*(?:```|\||>|#|[-*+]\s|\d+\.\s)", block):
+    # 4.7 문단마다 문장 개수
+    prose = dict(prose_lines(text))
+    filtered = "\n".join(prose.get(i, "") for i, _ in enumerate(text.split("\n"), 1))
+    for block in re.split(r"\n\s*\n", filtered):
+        if re.match(r"\s*(?:#|[-*+]\s|\d+\.\s)", block):
             continue
-        joined = " ".join(l for _, l in prose_lines(block))
-        n = len(sentences(strip_noise(joined)))
+        n = len(sentences(strip_noise(" ".join(block.splitlines()))))
         if n > limit["para"]:
             first = block.strip().split("\n")[0][:28]
             hits.append((0, "4.7", f"문단에 {n}문장 (상한 {limit['para']}) — {first}…"))
@@ -207,6 +218,26 @@ def self_test():
         f.write(clean)
         q = f.name
     assert check(q, "대화", []) == [], check(q, "대화", [])
+    code = " ".join(["결과가 보여집니다."] * 8)
+    samples = [
+        "   ```python\n" + code + "\n\n" + code + "\n   ```",
+        "      ```sh\n" + code + "\n      ```",
+        "~~~python\n" + code + "\n\n" + code + "\n~~~",
+        "````\n```\n" + code + "\n````",
+        "```\n~~~\n" + code + "\n```",
+        "    " + code,
+        "\t" + code,
+    ]
+    with tempfile.TemporaryDirectory() as directory:
+        path = Path(directory) / "code.md"
+        for sample in samples:
+            path.write_text(sample, encoding="utf-8")
+            assert check(path, "문서", []) == [], sample
+            path.write_text(sample + "\n\n결과가 보여집니다.\n", encoding="utf-8")
+            hits = check(path, "문서", [])
+            assert [rule for _, rule, _ in hits] == ["3.2"], hits
+        path.write_text(" ".join(["문장을 쓴다."] * 7), encoding="utf-8")
+        assert any(rule == "4.7" for _, rule, _ in check(path, "문서", []))
     print("self-test OK")
 
 
